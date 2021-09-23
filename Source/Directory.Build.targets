@@ -1,0 +1,11 @@
+<Project>
+  <Target Name="AddGitMetadaAssemblyAttributes"
+          BeforeTargets="CoreGenerateAssemblyInfo">
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="$(CommitId) != ''" >
+        <_Parameter1>CommitId</_Parameter1>
+        <_Parameter2>$(CommitId)</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+</Project>

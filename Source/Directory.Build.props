@@ -1,0 +1,19 @@
+<Project>
+ <PropertyGroup>
+   <Deterministic>true</Deterministic>
+   <Version>0.0</Version>
+   <OutputPath>bin/$(Configuration)</OutputPath>
+   <Nullable>enable</Nullable>
+   <LangVersion>latest</LangVersion>
+   <Company>Hukano</Company>
+   <Authors>Kim Hugener-Ohlsen</Authors>
+   <Copyright>Kim Hugener-Ohlsen</Copyright>
+   <RepositoryUrl>https://github.com/sundews/Sundew.DiscriminatedUnions</RepositoryUrl>
+   <PackageProjectUrl>https://github.com/sundews/Sundew.DiscriminatedUnions</PackageProjectUrl>
+   <RepositoryType>git</RepositoryType>
+   <PackageLicenseExpression>MIT</PackageLicenseExpression>
+   <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+   <WarningsAsErrors />
+ </PropertyGroup>
+ <Import Project="Directory.Build.props.user" Condition="Exists('Directory.Build.props.user')"/>
+</Project>

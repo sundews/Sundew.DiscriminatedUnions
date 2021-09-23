@@ -70,7 +70,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type name &apos;{0}&apos; case is not handled.
+        ///   Looks up a localized string similar to &apos;{0}&apos; case is not handled.
         /// </summary>
         internal static string AllCasesNotHandledMessageFormat {
             get {
@@ -84,6 +84,60 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         internal static string AllCasesNotHandledTitle {
             get {
                 return ResourceManager.GetString("AllCasesNotHandledTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A switch on a discriminated union should not handle the default case.
+        /// </summary>
+        internal static string SwitchShouldNotHaveDefaultCaseDescription {
+            get {
+                return ResourceManager.GetString("SwitchShouldNotHaveDefaultCaseDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is a discriminated union and should not handle the default case.
+        /// </summary>
+        internal static string SwitchShouldNotHaveDefaultCaseMessageFormat {
+            get {
+                return ResourceManager.GetString("SwitchShouldNotHaveDefaultCaseMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default case should not be handled.
+        /// </summary>
+        internal static string SwitchShouldNotHaveDefaultCaseTitle {
+            get {
+                return ResourceManager.GetString("SwitchShouldNotHaveDefaultCaseTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A switch on a discriminated union should throw DiscriminatedUnionException in default case.
+        /// </summary>
+        internal static string SwitchShouldThrowInDefaultCaseDescription {
+            get {
+                return ResourceManager.GetString("SwitchShouldThrowInDefaultCaseDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is a discriminated union and should throw DiscriminatedUnionException in default case.
+        /// </summary>
+        internal static string SwitchShouldThrowInDefaultCaseMessageFormat {
+            get {
+                return ResourceManager.GetString("SwitchShouldThrowInDefaultCaseMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default case should throw DiscriminatedUnionException.
+        /// </summary>
+        internal static string SwitchShouldThrowInDefaultCaseTitle {
+            get {
+                return ResourceManager.GetString("SwitchShouldThrowInDefaultCaseTitle", resourceCulture);
             }
         }
     }

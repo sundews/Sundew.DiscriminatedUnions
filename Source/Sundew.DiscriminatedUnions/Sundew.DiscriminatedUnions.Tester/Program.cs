@@ -7,29 +7,92 @@ namespace Sundew.DiscriminatedUnions.Tester
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            Result result = Compute(false);
-            var isSucesss = result switch
+            Result result = Compute("Error");
+            var message = result switch
             {
-                Error error => error.Code.ToString(),
-                Success success => success.Message,
+                Error { Code: > 70 } error => $"Error code: {error.Code}",
+                Error error => $"Error code: {error.Code}",
+                Warning { Message: "Tough warning" } => "Not good",
+                Warning warning => warning.Message,
+                Success => "Great",
+                _ => throw new DiscriminatedUnionException(result),
             };
 
-            Console.WriteLine(isSucesss);
+            switch (result)
+            {
+                case Success:
+                    break;
+                case Warning { Message: "Tough warning" } warning:
+                    break;
+                case Warning:
+                    break;
+                case Error:
+                    break;
+                default:
+                    break;
+            }
+
+            Console.WriteLine(result);
+
+            SwitchReturn(result);
+            Switch(result);
         }
 
-        private static Result Compute(bool isSuccess)
+        private static bool SwitchReturn(Result result)
         {
-            return isSuccess ? new Success("It worked") : new Error(-1);
+            switch (result)
+            {
+                case Error error:
+                    return false;
+                case Warning { Message: "Tough Warning" } warning:
+                    return false;
+                case Warning warning:
+                    return true;
+                case Success:
+                    return true;
+                default:
+                    throw new DiscriminatedUnionException(result);
+            }
+        }
+
+        private static void Switch(Result result)
+        {
+            switch (result)
+            {
+                case Error error:
+                    break;
+                case Warning warning:
+                    break;
+                case Success:
+                    break;
+            }
+        }
+
+        private static Result Compute(string magic)
+        {
+            return magic switch
+            {
+                "Success" => new Success(),
+                "Error" => new Error(65),
+                _ => new Warning(magic),
+            };
         }
     }
 
     [Sundew.DiscriminatedUnions.DiscriminatedUnion]
     public abstract class Result
-    { }
-
-    public class Success : Result
     {
-        public Success(string message)
+        protected internal Result()
+        { }
+    }
+
+    public sealed class Success : Result
+    {
+    }
+
+    public sealed class Warning : Result
+    {
+        public Warning(string message)
         {
             this.Message = message;
         }
@@ -37,7 +100,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         public string Message { get; private set; }
     }
 
-    public class Error : Result
+    public sealed class Error : Result
     {
         public Error(int code)
         {

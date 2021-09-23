@@ -122,11 +122,29 @@
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="AllCasesNotHandledMessageFormat" xml:space="preserve">
-    <value>Type name '{0}' case is not handled</value>
+    <value>'{0}' case is not handled</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="AllCasesNotHandledTitle" xml:space="preserve">
     <value>All possible types not handled</value>
     <comment>The title of the diagnostic.</comment>
+  </data>
+  <data name="SwitchShouldNotHaveDefaultCaseDescription" xml:space="preserve">
+    <value>A switch on a discriminated union should not handle the default case</value>
+  </data>
+  <data name="SwitchShouldNotHaveDefaultCaseMessageFormat" xml:space="preserve">
+    <value>'{0}' is a discriminated union and should not handle the default case</value>
+  </data>
+  <data name="SwitchShouldNotHaveDefaultCaseTitle" xml:space="preserve">
+    <value>Default case should not be handled</value>
+  </data>
+  <data name="SwitchShouldThrowInDefaultCaseDescription" xml:space="preserve">
+    <value>A switch on a discriminated union should throw DiscriminatedUnionException in default case</value>
+  </data>
+  <data name="SwitchShouldThrowInDefaultCaseMessageFormat" xml:space="preserve">
+    <value>'{0}' is a discriminated union and should throw DiscriminatedUnionException in default case</value>
+  </data>
+  <data name="SwitchShouldThrowInDefaultCaseTitle" xml:space="preserve">
+    <value>Default case should throw DiscriminatedUnionException</value>
   </data>
 </root>

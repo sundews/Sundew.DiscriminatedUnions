@@ -5,7 +5,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 namespace Sundew.DiscriminatedUnions.Analyzer
@@ -13,31 +15,42 @@ namespace Sundew.DiscriminatedUnions.Analyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SundewDiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "SDU0001";
+        public const string AllCasesNotHandledDiagnosticId = "SDU0001"; 
+        // public const string SwitchShouldNotHaveDefaultCaseDiagnosticId = "SDU0002";
+        public const string SwitchShouldThrowInDefaultCaseDiagnosticId = "SDU9999";
 
         // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
         // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Localizing%20Analyzers.md for more on localization
         private const string Category = "Naming";
 
-        private static readonly DiagnosticDescriptor AllNotCasesHandledRule = DiagnosticDescriptorHelper.Create(
-            DiagnosticId, 
-            nameof(Resources.AllCasesNotHandledTitle), 
-            nameof(Resources.AllCasesNotHandledMessageFormat), 
-            Category, 
-            DiagnosticSeverity.Error, 
-            true, 
+        private static readonly DiagnosticDescriptor AllCasesNotHandledRule = DiagnosticDescriptorHelper.Create(
+            AllCasesNotHandledDiagnosticId,
+            nameof(Resources.AllCasesNotHandledTitle),
+            nameof(Resources.AllCasesNotHandledMessageFormat),
+            Category,
+            DiagnosticSeverity.Error,
+            true,
             nameof(Resources.AllCasesNotHandledDescription));
 
-        private static readonly DiagnosticDescriptor SwitchShouldNotHaveDefaultCaseRule = DiagnosticDescriptorHelper.Create(
-            DiagnosticId,
+        /*private static readonly DiagnosticDescriptor SwitchShouldNotHaveDefaultCaseRule = DiagnosticDescriptorHelper.Create(
+            SwitchShouldNotHaveDefaultCaseDiagnosticId,
             nameof(Resources.SwitchShouldNotHaveDefaultCaseTitle),
             nameof(Resources.SwitchShouldNotHaveDefaultCaseMessageFormat),
             Category,
             DiagnosticSeverity.Error,
             true,
-            nameof(Resources.SwitchShouldNotHaveDefaultCaseDescription));
+            nameof(Resources.SwitchShouldNotHaveDefaultCaseDescription));*/
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(AllNotCasesHandledRule, SwitchShouldNotHaveDefaultCaseRule); } }
+        private static readonly DiagnosticDescriptor SwitchShouldThrowInDefaultCaseRule = DiagnosticDescriptorHelper.Create(
+            SwitchShouldThrowInDefaultCaseDiagnosticId,
+            nameof(Resources.SwitchShouldThrowInDefaultCaseTitle),
+            nameof(Resources.SwitchShouldThrowInDefaultCaseMessageFormat),
+            Category,
+            DiagnosticSeverity.Error,
+            true,
+            nameof(Resources.SwitchShouldThrowInDefaultCaseDescription));
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AllCasesNotHandledRule, SwitchShouldThrowInDefaultCaseRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -58,14 +71,13 @@ namespace Sundew.DiscriminatedUnions.Analyzer
             }
 
             var semanticModel = context.SemanticModel;
-            var enumType = semanticModel.GetTypeInfo(switchExpressionSyntax.GoverningExpression, context.CancellationToken).Type as INamedTypeSymbol;
-
-            if (!IsDiscriminatedUnionSwitch(enumType))
+            var unionType = semanticModel.GetTypeInfo(switchExpressionSyntax.GoverningExpression, context.CancellationToken).Type as INamedTypeSymbol;
+            if (!IsDiscriminatedUnionSwitch(unionType))
             {
                 return;
             }
 
-            var caseTypes = GetAllTypes(enumType.ContainingNamespace).Where(x => SymbolEqualityComparer.Default.Equals(x.BaseType, enumType)).ToList<ITypeSymbol>();
+            var caseTypes = GetAllTypes(context.Compilation).Where(x => SymbolEqualityComparer.Default.Equals(x.BaseType, unionType)).ToList<ITypeSymbol>();
             var actualCaseTypes = switchExpressionSyntax.Arms.Select(switchExpressionArmSyntax =>
             {
                 if (switchExpressionArmSyntax.Pattern is DeclarationPatternSyntax declarationPatternSyntax && switchExpressionArmSyntax.WhenClause == null)
@@ -74,8 +86,40 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                     return typeInfo.ConvertedType;
                 }
 
+                if (switchExpressionArmSyntax.Pattern is ConstantPatternSyntax constantPatternSyntax &&
+                    constantPatternSyntax.Expression is IdentifierNameSyntax constantIdentifierNameSyntax)
+                {
+                    var typeInfo = semanticModel.GetTypeInfo(constantIdentifierNameSyntax);
+                    return typeInfo.Type;
+                }
+
+                /* if (switchExpressionArmSyntax.Pattern is DiscardPatternSyntax discardPatternSyntax)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(SwitchShouldNotHaveDefaultCaseRule, discardPatternSyntax.GetLocation(), unionType));
+                }*/
+
+                if (switchExpressionArmSyntax.Pattern is DiscardPatternSyntax discardPatternSyntax)
+                {
+                    if (!(switchExpressionArmSyntax.Expression is ThrowExpressionSyntax throwExpressionSyntax &&
+                        throwExpressionSyntax.Expression is ObjectCreationExpressionSyntax objectCreationExpressionSyntax &&
+                        objectCreationExpressionSyntax.Type is IdentifierNameSyntax typeIdentifierNameSyntax &&
+                        typeIdentifierNameSyntax.Identifier.ValueText == nameof(DiscriminatedUnionException) &&
+                            objectCreationExpressionSyntax.ArgumentList?.Arguments.SingleOrDefault(
+                                x =>
+                                 x.Expression is IdentifierNameSyntax identifierNameSyntax &&
+                                           identifierNameSyntax.Identifier.ValueText == switchExpressionSyntax.GoverningExpression.ToString()) != null))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(SwitchShouldThrowInDefaultCaseRule, discardPatternSyntax.GetLocation(), unionType));
+                    }
+                }
+
                 return null;
-            }).Where(x => x != null).ToList();
+            }).Where(x => x != null).Select(x => x!).ToList();
+
+            if (!switchExpressionSyntax.Arms.Any(x => x.Pattern is DiscardPatternSyntax))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(SwitchShouldThrowInDefaultCaseRule, switchExpressionSyntax.GetLocation(), unionType));
+            }
 
             ReportDiagnostics(caseTypes, actualCaseTypes, context);
         }
@@ -89,14 +133,14 @@ namespace Sundew.DiscriminatedUnions.Analyzer
             }
 
             var semanticModel = context.SemanticModel;
-            var enumType = semanticModel.GetTypeInfo(switchStatementSyntax.Expression, context.CancellationToken).Type as INamedTypeSymbol;
+            var unionType = semanticModel.GetTypeInfo(switchStatementSyntax.Expression, context.CancellationToken).Type as INamedTypeSymbol;
 
-            if (!IsDiscriminatedUnionSwitch(enumType))
+            if (!IsDiscriminatedUnionSwitch(unionType))
             {
                 return;
             }
 
-            var caseTypes = GetAllTypes(enumType.ContainingNamespace).Where(x => SymbolEqualityComparer.Default.Equals(x.BaseType, enumType)).ToList<ITypeSymbol>();
+            var caseTypes = GetAllTypes(context.Compilation).Where(x => SymbolEqualityComparer.Default.Equals(x.BaseType, unionType)).ToList<ITypeSymbol>();
             var actualCaseTypes = switchStatementSyntax.Sections.SelectMany(x => x.Labels.Select(switchLabelSyntax =>
             {
                 if (switchLabelSyntax is CasePatternSwitchLabelSyntax casePatternSwitchLabelSyntax)
@@ -107,13 +151,41 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                     }
                 }
 
+                if (switchLabelSyntax is CaseSwitchLabelSyntax caseSwitchLabelSyntax &&
+                    caseSwitchLabelSyntax.Value is IdentifierNameSyntax constantIdentifierNameSyntax)
+                {
+                    var typeInfo = semanticModel.GetTypeInfo(constantIdentifierNameSyntax);
+                    return typeInfo.Type;
+                }
+
+                /*if (switchLabelSyntax is DefaultSwitchLabelSyntax defaultSwitchLabelSyntax)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(SwitchShouldNotHaveDefaultCaseRule, defaultSwitchLabelSyntax.GetLocation(), unionType));
+                }*/
+
+                if (switchLabelSyntax is DefaultSwitchLabelSyntax defaultSwitchLabelSyntax)
+                {
+                    if (!(x.Statements.SingleOrDefault(x => x is ThrowStatementSyntax throwStatementSyntax &&
+                          throwStatementSyntax.Expression is ObjectCreationExpressionSyntax objectCreationExpressionSyntax &&
+                          objectCreationExpressionSyntax.Type is IdentifierNameSyntax typeIdentifierNameSyntax &&
+                          typeIdentifierNameSyntax.Identifier.ValueText == nameof(DiscriminatedUnionException) &&
+                          objectCreationExpressionSyntax.ArgumentList?.Arguments.SingleOrDefault(
+                              x =>
+                                  x.Expression is IdentifierNameSyntax identifierNameSyntax &&
+                                  identifierNameSyntax.Identifier.ValueText == switchStatementSyntax.Expression.ToString()) != null) != null))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(SwitchShouldThrowInDefaultCaseRule, defaultSwitchLabelSyntax.GetLocation(), unionType));
+                    }
+                }
+
                 return null;
-            })).Where(x => x != null).ToList();
+            })).Where(x => x != null).Select(x => x!).ToList();
 
             ReportDiagnostics(caseTypes, actualCaseTypes, context);
         }
 
-        private static void ReportDiagnostics(List<ITypeSymbol> caseTypes, List<ITypeSymbol> actualCaseTypes, SyntaxNodeAnalysisContext context)
+        private static void ReportDiagnostics(List<ITypeSymbol> caseTypes, List<ITypeSymbol> actualCaseTypes,
+            SyntaxNodeAnalysisContext context)
         {
             foreach (var actualCaseType in actualCaseTypes)
             {
@@ -123,26 +195,27 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                 }
             }
 
-            foreach (var typeSymbol in caseTypes)
+            if (caseTypes.Any())
             {
-                context.ReportDiagnostic(Diagnostic.Create(AllNotCasesHandledRule, context.Node.GetLocation(), $"{typeSymbol.Name} not handled in case."));
-                // missing case
+                context.ReportDiagnostic(Diagnostic.Create(AllCasesNotHandledRule, context.Node.GetLocation(),
+                    caseTypes.Aggregate(new StringBuilder(),
+                        (stringBuilder, typeSymbol) => stringBuilder.Append(typeSymbol.Name).Append(',').Append(' '),
+                        builder => builder.ToString(0, builder.Length - 2))));
             }
         }
 
 
-        private static bool IsDiscriminatedUnionSwitch(INamedTypeSymbol enumType)
+        private static bool IsDiscriminatedUnionSwitch([NotNullWhen(true)] INamedTypeSymbol? unionType)
         {
             //only allow switch on enum types
-            if (enumType == null || enumType.TypeKind != TypeKind.Enum && enumType.TypeKind != TypeKind.Class)
+            if (unionType == null || unionType.TypeKind != TypeKind.Class)
             {
                 return false;
             }
 
-            // ignore enums marked with Flags
-            return enumType.GetAttributes().Any(attribute =>
+            return unionType.GetAttributes().Any(attribute =>
             {
-                var containingClass = attribute.AttributeClass.ToDisplayString();
+                var containingClass = attribute.AttributeClass?.ToDisplayString();
                 return containingClass == typeof(Sundew.DiscriminatedUnions.DiscriminatedUnion).FullName;
             });
         }
@@ -173,9 +246,10 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         private static IEnumerable<INamedTypeSymbol> GetNestedTypes(INamedTypeSymbol type)
         {
             yield return type;
-            foreach (var nestedType in type.GetTypeMembers()
-                .SelectMany(nestedType => GetNestedTypes(nestedType)))
+            foreach (var nestedType in type.GetTypeMembers().SelectMany(GetNestedTypes))
+            {
                 yield return nestedType;
+            }
         }
     }
 }

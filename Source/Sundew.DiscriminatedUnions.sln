@@ -15,7 +15,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.csproj", "{4AC78087-C843-419B-A41E-543141E803E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sundew.DiscriminatedUnions.Tester", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.Tester\Sundew.DiscriminatedUnions.Tester.csproj", "{5EB1C48C-A98B-46DA-9C4B-13DF9D9838C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Tester", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.Tester\Sundew.DiscriminatedUnions.Tester.csproj", "{5EB1C48C-A98B-46DA-9C4B-13DF9D9838C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20465DEA-4F7F-4296-891D-A6454F437ADA}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.props.user = Directory.Build.props.user
+		Directory.Build.targets = Directory.Build.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
