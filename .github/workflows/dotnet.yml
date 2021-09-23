@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       solutionPath: ./Source/Sundew.DiscriminatedUnions.sln
-      versioningProjectPath: ./Source/Sundew.DiscriminatedUnions/Sundew.DiscriminatedUnions.csproj
+      versioningProjectPath: ./Source/Sundew.DiscriminatedUnions.Package/Sundew.DiscriminatedUnions.Package.csproj
       repository: 'https://sundew-dev:${{ secrets.SUNDEW_DEV_TOKEN }}@github.com/sundews/Sundew.DiscriminatedUnions.git'
       source: 'https://api.nuget.org/v3/index.json'
       dev-source: 'https://www.myget.org/F/sundew-dev/api/v2/package'
