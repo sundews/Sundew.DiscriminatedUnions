@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Test", "Sundew.DiscriminatedUnions.Test\Sundew.DiscriminatedUnions.Test.csproj", "{8E133CE7-CA71-442E-9C7F-C6A7ECF969F0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Vsix", "Sundew.DiscriminatedUnions.Vsix\Sundew.DiscriminatedUnions.Vsix.csproj", "{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.csproj", "{4AC78087-C843-419B-A41E-543141E803E7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Tester", "Sundew.DiscriminatedUnions.Tester\Sundew.DiscriminatedUnions.Tester.csproj", "{5EB1C48C-A98B-46DA-9C4B-13DF9D9838C6}"
@@ -47,10 +45,6 @@ Global
 		{8E133CE7-CA71-442E-9C7F-C6A7ECF969F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E133CE7-CA71-442E-9C7F-C6A7ECF969F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E133CE7-CA71-442E-9C7F-C6A7ECF969F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4AC78087-C843-419B-A41E-543141E803E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AC78087-C843-419B-A41E-543141E803E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AC78087-C843-419B-A41E-543141E803E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
