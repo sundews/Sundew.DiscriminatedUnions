@@ -7,7 +7,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            Result result = Compute("Error");
+            Result? result = Compute("Error");
             var message = result switch
             {
                 Error { Code: > 70 } error => $"Error code: {error.Code}",
@@ -15,7 +15,8 @@ namespace Sundew.DiscriminatedUnions.Tester
                 Warning { Message: "Tough warning" } => "Not good",
                 Warning warning => warning.Message,
                 Success => "Great",
-                _ => throw new DiscriminatedUnionException(result),
+                null => "dd",
+                _ => throw new DiscriminatedUnionException(typeof(Result)),
             };
 
             switch (result)
@@ -28,6 +29,8 @@ namespace Sundew.DiscriminatedUnions.Tester
                     break;
                 case Error:
                     break;
+                case null:
+                    break;
                 default:
                     break;
             }
@@ -38,7 +41,7 @@ namespace Sundew.DiscriminatedUnions.Tester
             Switch(result);
         }
 
-        private static bool SwitchReturn(Result result)
+        private static bool SwitchReturn(Result? result)
         {
             switch (result)
             {
@@ -51,11 +54,11 @@ namespace Sundew.DiscriminatedUnions.Tester
                 case Success:
                     return true;
                 default:
-                    throw new DiscriminatedUnionException(result);
+                    throw new DiscriminatedUnionException(typeof(Result));
             }
         }
 
-        private static void Switch(Result result)
+        private static void Switch(Result? result)
         {
             switch (result)
             {
@@ -68,12 +71,13 @@ namespace Sundew.DiscriminatedUnions.Tester
             }
         }
 
-        private static Result Compute(string magic)
+        private static Result? Compute(string magic)
         {
             return magic switch
             {
                 "Success" => new Success(),
                 "Error" => new Error(65),
+                "null" => null,
                 _ => new Warning(magic),
             };
         }

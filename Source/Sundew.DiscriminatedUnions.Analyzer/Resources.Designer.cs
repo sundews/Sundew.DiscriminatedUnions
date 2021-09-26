@@ -70,7 +70,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; case is not handled.
+        ///   Looks up a localized string similar to &apos;{0}&apos; case(s) not handled.
         /// </summary>
         internal static string AllCasesNotHandledMessageFormat {
             get {

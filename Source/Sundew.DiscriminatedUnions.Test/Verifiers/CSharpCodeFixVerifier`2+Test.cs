@@ -28,6 +28,11 @@ namespace Sundew.DiscriminatedUnions.Test
                     return solution;
                 });
             }
+
+            protected override ParseOptions CreateParseOptions()
+            {
+                return base.CreateParseOptions();
+            }
         }
     }
 }

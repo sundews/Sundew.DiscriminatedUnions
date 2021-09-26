@@ -122,7 +122,7 @@
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="AllCasesNotHandledMessageFormat" xml:space="preserve">
-    <value>'{0}' case is not handled</value>
+    <value>'{0}' case(s) not handled</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="AllCasesNotHandledTitle" xml:space="preserve">
