@@ -119,15 +119,30 @@
   </resheader>
   <data name="AllCasesNotHandledDescription" xml:space="preserve">
     <value>Switch should handle cases of all possible types</value>
-    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="AllCasesNotHandledMessageFormat" xml:space="preserve">
-    <value>'{0}' case(s) not handled</value>
-    <comment>The format-able message the diagnostic displays.</comment>
+    <value>'{0}' case{1} in {2} {3} not handled</value>
   </data>
   <data name="AllCasesNotHandledTitle" xml:space="preserve">
-    <value>All possible types not handled</value>
-    <comment>The title of the diagnostic.</comment>
+    <value>All possible cases not handled</value>
+  </data>
+  <data name="DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDescription" xml:space="preserve">
+    <value>Discriminated union constructors must be private protected so other libraries cannot derived from it.</value>
+  </data>
+  <data name="DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsMessageFormat" xml:space="preserve">
+    <value>'{0}' contains non private protected constructor(s).</value>
+  </data>
+  <data name="DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsTitle" xml:space="preserve">
+    <value>Discriminated union constructors must be private protected</value>
+  </data>
+  <data name="CasesShouldBeSealedDescription" xml:space="preserve">
+    <value>Cases should be sealed so that all cases a known at compile time.</value>
+  </data>
+  <data name="CasesShouldBeSealedMessageFormat" xml:space="preserve">
+    <value>'{0}' case is not sealed</value>
+  </data>
+  <data name="CasesShouldBeSealedTitle" xml:space="preserve">
+    <value>All cases should be sealed</value>
   </data>
   <data name="SwitchShouldNotHaveDefaultCaseDescription" xml:space="preserve">
     <value>A switch on a discriminated union should not handle the default case</value>
@@ -139,12 +154,12 @@
     <value>Default case should not be handled</value>
   </data>
   <data name="SwitchShouldThrowInDefaultCaseDescription" xml:space="preserve">
-    <value>A switch on a discriminated union should throw DiscriminatedUnionException in default case</value>
+    <value>A switch on a discriminated union should throw UnreachableCaseException in default case</value>
   </data>
   <data name="SwitchShouldThrowInDefaultCaseMessageFormat" xml:space="preserve">
-    <value>'{0}' is a discriminated union and should throw DiscriminatedUnionException in default case</value>
+    <value>'{0}' is a discriminated union and should throw UnreachableCaseException in default case</value>
   </data>
   <data name="SwitchShouldThrowInDefaultCaseTitle" xml:space="preserve">
-    <value>Default case should throw DiscriminatedUnionException</value>
+    <value>Default case should throw UnreachableCaseException</value>
   </data>
 </root>

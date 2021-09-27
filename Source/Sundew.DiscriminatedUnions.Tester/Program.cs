@@ -1,10 +1,17 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.cs" company="Hukano">
+// Copyright (c) Hukano. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Sundew.DiscriminatedUnions.Tester
 {
-    class Program
+    using System;
+
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
             Result? result = Compute("Error");
@@ -16,7 +23,7 @@ namespace Sundew.DiscriminatedUnions.Tester
                 Warning warning => warning.Message,
                 Success => "Great",
                 null => "dd",
-                _ => throw new DiscriminatedUnionException(typeof(Result)),
+                _ => throw new UnreachableCaseException(typeof(Result)),
             };
 
             switch (result)
@@ -54,7 +61,7 @@ namespace Sundew.DiscriminatedUnions.Tester
                 case Success:
                     return true;
                 default:
-                    throw new DiscriminatedUnionException(typeof(Result));
+                    throw new UnreachableCaseException(typeof(Result));
             }
         }
 
@@ -81,36 +88,5 @@ namespace Sundew.DiscriminatedUnions.Tester
                 _ => new Warning(magic),
             };
         }
-    }
-
-    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-    public abstract class Result
-    {
-        protected internal Result()
-        { }
-    }
-
-    public sealed class Success : Result
-    {
-    }
-
-    public sealed class Warning : Result
-    {
-        public Warning(string message)
-        {
-            this.Message = message;
-        }
-
-        public string Message { get; private set; }
-    }
-
-    public sealed class Error : Result
-    {
-        public Error(int code)
-        {
-            this.Code = code;
-        }
-
-        public int Code { get; private set; }
     }
 }

@@ -1,26 +1,33 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
-using Sundew.DiscriminatedUnions.Analyzer;
-using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.SundewDiscriminatedUnionsCodeFixProvider>;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SwitchExpressionCodeFixTests.cs" company="Hukano">
+// Copyright (c) Hukano. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Sundew.DiscriminatedUnions.Test
 {
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Sundew.DiscriminatedUnions.Analyzer;
+    using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.SundewDiscriminatedUnionsCodeFixProvider>;
+
     [TestClass]
     public class SwitchExpressionCodeFixTests
     {
-        //Diagnostic and CodeFix both triggered and checked for
-        [TestMethod, Ignore]
+        [TestMethod]
+        [Ignore]
         public async Task TestMethod2()
         {
             var test = $@"{TestData.Usings}
 
     namespace ConsoleApplication1
     {{
-        public class DiscriminatedUnionTests
+        public class DiscriminatedUnionSymbolAnalyzerTests
         {{   
             public bool Switch(Result result)
             {{
@@ -31,14 +38,14 @@ namespace Sundew.DiscriminatedUnions.Test
                     }}
             }}
         }}
-{TestData.ResultDiscriminatedUnion}
+{TestData.ValidResultDiscriminatedUnion}
     }}";
 
             var fixtest = $@"{TestData.Usings}
 
     namespace ConsoleApplication1
     {{
-        public class DiscriminatedUnionTests
+        public class DiscriminatedUnionSymbolAnalyzerTests
         {{   
             public bool Switch(Result result)
             {{
@@ -47,11 +54,11 @@ namespace Sundew.DiscriminatedUnions.Test
                         Success success => true,
                         Warning warning => true,
                         Error error => false,
-                        _ => throw new DiscriminatedUnionException(result),
+                        _ => throw new UnreachableCaseException(result),
                     }}
             }}
         }}
-{TestData.ResultDiscriminatedUnion}
+{TestData.ValidResultDiscriminatedUnion}
     }}";
 
             var expected = new[]
@@ -60,7 +67,7 @@ namespace Sundew.DiscriminatedUnions.Test
                     .WithArguments("Error")
                     .WithSpan(15, 17, 21, 18),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
-                    .WithArguments("ConsoleApplication1.Result")
+                    .WithArguments("Result")
                     .WithSpan(19, 21, 19, 29),
             };
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
