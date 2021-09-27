@@ -22,7 +22,8 @@ namespace Sundew.DiscriminatedUnions.Test
         {
             var test = $@"#nullable enable
 {TestData.Usings}
-
+    namespace ConsoleApplication1
+    {{
         [Sundew.DiscriminatedUnions.DiscriminatedUnion]
         public abstract class Result
         {{
@@ -52,17 +53,18 @@ namespace Sundew.DiscriminatedUnions.Test
             }}
 
             public int Code {{ get; private set; }}
-        }}";
+        }}
+    }}";
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer
                         .DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDiagnosticId)
-                    .WithArguments("Result")
-                    .WithSpan(14, 13, 15, 16),
+                    .WithArguments(TestData.ConsoleApplication1Result)
+                    .WithSpan(15, 13, 16, 16),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedDiagnosticId)
-                    .WithArguments("Success")
-                    .WithSpan(18, 9, 20, 10));
+                    .WithArguments("ConsoleApplication1.Success")
+                    .WithSpan(19, 9, 21, 10));
         }
     }
 }

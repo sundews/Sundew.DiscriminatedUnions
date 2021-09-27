@@ -140,7 +140,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                             context.ReportDiagnostic(Diagnostic.Create(
                                 DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsRule,
                                 declaringSyntaxReference.GetSyntax().GetLocation(),
-                                namedTypeSymbol.Name));
+                                namedTypeSymbol));
                         }
                     }
 
