@@ -57,6 +57,7 @@ namespace Sundew.DiscriminatedUnions.Test
                 FixedCode = fixedSource,
             };
 
+            test.SolutionTransforms.Add((solution, id) => solution.AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location)));
             test.ExpectedDiagnostics.AddRange(expected);
             await test.RunAsync(CancellationToken.None);
         }

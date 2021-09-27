@@ -1,0 +1,83 @@
+name: .NET
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      solutionPath: ./Source/Sundew.DiscriminatedUnions.sln
+      versioningProjectPath: ./Source/Sundew.DiscriminatedUnions.Package/Sundew.DiscriminatedUnions.Package.csproj
+      repository: 'https://sundew-dev:${{ secrets.SUNDEW_DEV_TOKEN }}@github.com/sundews/Sundew.DiscriminatedUnions.git'
+      source: 'https://api.nuget.org/v3/index.json'
+      dev-source: 'https://www.myget.org/F/sundew-dev/api/v2/package'
+      dev-source-latest-version: 'https://www.myget.org/F/sundew-dev/api/v3/index.json'
+      dev-symbols-source: 'https://www.myget.org/F/sundew-dev/api/v3/index.json'
+      packages-to-push: 'logs/packages.push'
+      source-packages-to-push: './Source/logs/packages.push'
+    steps:
+    - name: 'Await other builds'
+      uses: softprops/turnstyle@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup .NET 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Build setup
+      id: build-setup
+      run: >
+        dotnet tool update Sundew.Packaging.Tool -g --version 7.*
+
+        dotnet tool update CommandlineBatcher -g --version 3.*
+
+        git rev-parse --short=10 HEAD | cb -c "|::set-output name=git-hash::{0}" --batches-stdin
+    - name: Stage Build
+      id: stage-build
+      run: >
+        spt stage-build --project-file "${{ env.versioningProjectPath }}"
+        --production  "refs/heads/(?:master|main).*                                          => ${{ secrets.SPP_API_KEY }}@${{ env.source }}|${{ env.source }}||Configuration=Release"
+        --integration "refs/heads/release/.+                                                 => &u{DateTime}-{Stage} ${{ secrets.SPP_API_KEY }}@${{ env.source }}|${{ env.source }}||Configuration=Debug|DevFeedSource= -s ${{ env.dev-source-latest-version }}"
+        --development "refs/heads/(?:develop.*|feature/(?<Postfix>.+)|bugfix/(?<Postfix>.+)) => ${{ secrets.SPP_DEVELOPMENT_API_KEY }}@${{ env.dev-source }} {${{ env.dev-source-latest-version }}}|${{ secrets.SPP_DEVELOPMENT_API_KEY }}@${{ env.dev-symbols-source }}||Configuration=Debug|DevFeedSource= -s ${{ env.dev-source-latest-version }}"
+        --no-stage "Configuration=Release"
+        --stage "${{ github.ref }}"
+        --prerelease-format "u{DateTime}-{Stage}-{Postfix}-${{ steps.build-setup.outputs.git-hash }}"
+        --metadata ${{ steps.build-setup.outputs.git-hash }}
+        --force-version '"${{ secrets.SPP_FORCE_VERSION_IF_SET }}"'
+        --output-formats "Stage={Stage}, Version={Version}" "::set-output name=stage::{Stage}" "::set-output name=version::{Version}" "::set-output name=buildConfiguration::{Configuration}" 
+        "::set-output name=nuGetPackagesPath::{WorkingDirectory}/NuGet" "::set-output name=dev-package-source-if-set::{DevFeedSource}" "::set-output name=feedSource::{FeedSource}" 
+        "::set-output name=pushSource::{PushSource}" "::set-output name=apiKey::{ApiKey}" "::set-output name=fullVersion::{FullVersion}" "::set-output name=symbolsPushSource::{SymbolsPushSource}"
+        "::set-output name=symbolsApiKey::{SymbolsApiKey}"
+    - name: Restore
+      run: dotnet restore ${{ env.solutionPath }} --verbosity normal -s ${{ env.source }}${{ steps.build-setup.outputs.dev-package-source-if-set }}
+    - name: Build
+      id: build
+      run: >
+        dotnet build ${{ env.solutionPath }} --verbosity normal --configuration ${{ steps.stage-build.outputs.buildConfiguration }} --no-restore
+        -p:"ContinuousIntegrationBuild=true"
+        -p:"SppForceVersion=${{ steps.stage-build.outputs.fullVersion }}"
+        '-p:"SppAppendPublishFileLogFormats={PackageId},{DQ}{PackagePath}{DQ}{NL} > ${{ env.packages-to-push }}"'
+        -p:GeneratePackageOnBuild=true
+        -p:"PackageOutputPath=${{ steps.stage-build.outputs.nuGetPackagesPath }}"
+    - name: Test
+      run: dotnet test ${{ env.solutionPath }} --verbosity normal --configuration ${{ steps.stage-build.outputs.buildConfiguration }} --no-build
+    - name: 'Publish package(s)'
+      if: ${{ steps.stage-build.outputs.stage != 'none' }}
+      run: cb -c "spt|push -s ${{ steps.stage-build.outputs.pushSource }} -k ${{ steps.stage-build.outputs.apiKey }} -ss ${{ steps.stage-build.outputs.symbolsPushSource }} -sk ${{ steps.stage-build.outputs.symbolsApiKey }} {1}" -bs NewLine -bvs ',' -bf ${{ env.source-packages-to-push }}
+    - name: 'Tag stable version'
+      if: ${{ steps.stage-build.outputs.stage == 'production' }}
+      run: |
+        git config user.email "sundew-dev@outlook.com"
+        git config user.name "sundew-build"
+        git tag -a v.${{ steps.stage-build.outputs.version }} -m "v.${{ steps.stage-build.outputs.version }}"
+        git push ${{ env.repository }} v.${{ steps.stage-build.outputs.version }}
+    - name: 'Await stable package publish'
+      if: ${{ steps.stage-build.outputs.stage == 'production' }}
+      run: cb -c "spt|await -s ${{ steps.stage-build.outputs.feedSource }} {0}.${{ steps.stage-build.outputs.version }}" -bs NewLine -bvs ',' -bf ${{ env.source-packages-to-push }}

@@ -21,7 +21,7 @@ namespace Sundew.DiscriminatedUnions
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
-            get { return ImmutableArray.Create(SundewDiscriminatedUnionsAnalyzer.DiagnosticId); }
+            get { return ImmutableArray.Create(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId, SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId); }
         }
 
         public sealed override FixAllProvider GetFixAllProvider()
@@ -39,7 +39,11 @@ namespace Sundew.DiscriminatedUnions
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
             // Find the type declaration identified by the diagnostic.
-            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
+            var declaration = root?.FindToken(diagnosticSpan.Start).Parent?.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
+            if (declaration == null)
+            {
+                return;
+            }
 
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
@@ -59,9 +63,13 @@ namespace Sundew.DiscriminatedUnions
             // Get the symbol representing the type to be renamed.
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
             var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
+            var originalSolution = document.Project.Solution;
+            if (typeSymbol == null)
+            {
+                return originalSolution;
+            }
 
             // Produce a new solution that has all references to that type renamed, including the declaration.
-            var originalSolution = document.Project.Solution;
             var optionSet = originalSolution.Workspace.Options;
             var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, typeSymbol, newName, optionSet, cancellationToken).ConfigureAwait(false);
 

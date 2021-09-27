@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis.CodeFixes;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
@@ -15,13 +17,21 @@ namespace Sundew.DiscriminatedUnions.Test
             {
                 SolutionTransforms.Add((solution, projectId) =>
                 {
-                    var compilationOptions = solution.GetProject(projectId).CompilationOptions;
-                    compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(
+                    var compilationOptions = solution.GetProject(projectId)?.CompilationOptions;
+                    compilationOptions = compilationOptions?.WithSpecificDiagnosticOptions(
                         compilationOptions.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
-                    solution = solution.WithProjectCompilationOptions(projectId, compilationOptions);
+                    if (compilationOptions != null)
+                    {
+                        solution = solution.WithProjectCompilationOptions(projectId, compilationOptions);
+                    }
 
                     return solution;
                 });
+            }
+
+            protected override ParseOptions CreateParseOptions()
+            {
+                return base.CreateParseOptions();
             }
         }
     }

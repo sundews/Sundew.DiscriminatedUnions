@@ -3,19 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Analyzer", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj", "{EFD8C854-04DD-4C84-A44D-5B2FD7D6FB50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Analyzer", "Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj", "{EFD8C854-04DD-4C84-A44D-5B2FD7D6FB50}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.CodeFixes", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj", "{97F5BD15-6C9B-4257-9C55-F3457B0DB9CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.CodeFixes", "Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj", "{97F5BD15-6C9B-4257-9C55-F3457B0DB9CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Package", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.Package\Sundew.DiscriminatedUnions.Package.csproj", "{ACE6530A-8F7D-41D1-B761-D49AEC52CC14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Package", "Sundew.DiscriminatedUnions.Package\Sundew.DiscriminatedUnions.Package.csproj", "{ACE6530A-8F7D-41D1-B761-D49AEC52CC14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Test", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.Test\Sundew.DiscriminatedUnions.Test.csproj", "{8E133CE7-CA71-442E-9C7F-C6A7ECF969F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Test", "Sundew.DiscriminatedUnions.Test\Sundew.DiscriminatedUnions.Test.csproj", "{8E133CE7-CA71-442E-9C7F-C6A7ECF969F0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Vsix", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.Vsix\Sundew.DiscriminatedUnions.Vsix.csproj", "{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.csproj", "{4AC78087-C843-419B-A41E-543141E803E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.csproj", "{4AC78087-C843-419B-A41E-543141E803E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Tester", "Sundew.DiscriminatedUnions.Tester\Sundew.DiscriminatedUnions.Tester.csproj", "{5EB1C48C-A98B-46DA-9C4B-13DF9D9838C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sundew.DiscriminatedUnions.Tester", "Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.Tester\Sundew.DiscriminatedUnions.Tester.csproj", "{5EB1C48C-A98B-46DA-9C4B-13DF9D9838C6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20465DEA-4F7F-4296-891D-A6454F437ADA}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.props.user = Directory.Build.props.user
+		Directory.Build.targets = Directory.Build.targets
+		..\.github\workflows\dotnet.yml = ..\.github\workflows\dotnet.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +45,6 @@ Global
 		{8E133CE7-CA71-442E-9C7F-C6A7ECF969F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E133CE7-CA71-442E-9C7F-C6A7ECF969F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E133CE7-CA71-442E-9C7F-C6A7ECF969F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47F58A5B-DCB9-4F52-8BC1-81E5051F9297}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4AC78087-C843-419B-A41E-543141E803E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AC78087-C843-419B-A41E-543141E803E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AC78087-C843-419B-A41E-543141E803E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
