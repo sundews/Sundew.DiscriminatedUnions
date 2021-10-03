@@ -6,8 +6,7 @@ A poor man's implementation of discriminated unions for C# until a future versio
 A Roslyn analyzer asserts and reports errors in case switch statements or switch expression do not handle all cases.
 C# 8 and 9 already comes with great pattern matching support for evaluation.
 
-In order that the inheritance hierarchy remain closed (All cases in the same assembly), the base class constructor is private protected. Similarly all case classes should be sealed.
-There are thoughts to implement source generators for the unions, so no analyzers will be needed.
+In order that the inheritance hierarchy remain closed (All cases in the same assembly), the base class constructor is private. Similarly all case classes should be sealed.
 
 Create discriminated unions by inheriting from an abstract base class marked with the DiscriminatedUnion attribute to build various cases.
 
@@ -15,34 +14,34 @@ Create discriminated unions by inheriting from an abstract base class marked wit
 ### Defining a DU
 ```
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public abstract class Result
+public abstract record Result
 {
-    private protected Result()
+    private Result()
     { }
-}
 
-public sealed class Success : Result
-{
-}
-
-public sealed class Warning : Result
-{
-    public Warning(string message)
+    public sealed record Success : Result
     {
-        this.Message = message;
     }
 
-    public string Message { get; private set; }
-}
-
-public sealed class Error : Result
-{
-    public Error(int code)
+    public sealed record Warning : Result
     {
-        this.Code = code;
+        public Warning(string message)
+        {
+            this.Message = message;
+        }
+
+        public string Message { get; private set; }
     }
 
-    public int Code { get; private set; }
+    public sealed record Error : Result
+    {
+        public Error(int code)
+        {
+            this.Code = code;
+        }
+
+        public int Code { get; private set; }
+    }
 }
 ```
 
@@ -50,12 +49,12 @@ public sealed class Error : Result
 ```
 var message = result switch
 {
-    Error { Code: > 70 } error => $"High Error code: {error.Code}",
-    Error error => $"Error code: {error.Code}",
-    Warning { Message: "Tough warning" } => "Not good",
-    Warning warning => warning.Message,
-    Success => "Great",
-    _ => throw new Sundew.DiscriminatedUnions.DiscriminatedUnionException(typeof(Result)),
+    Result.Error { Code: > 70 } error => $"High Error code: {error.Code}",
+    Result.Error error => $"Error code: {error.Code}",
+    Result.Warning { Message: "Tough warning" } => "Not good",
+    Result.Warning warning => warning.Message,
+    Result.Success => "Great",
+    _ => throw new Sundew.DiscriminatedUnions.UnreachableCaseException(typeof(Result)),
 };
 ```
 

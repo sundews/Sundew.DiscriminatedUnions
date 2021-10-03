@@ -70,13 +70,13 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch (result)
                 {{
-                    case Success:
+                    case Result.Success:
                         return true;
-                    case Warning {{ Message: ""Tough warning"" }} warning:
+                    case Result.Warning {{ Message: ""Tough warning"" }} warning:
                         return false;
-                    case Warning warning:
+                    case Result.Warning warning:
                         return true;
-                    case Error error:
+                    case Result.Error error:
                         return false;
                     default:
                         return false;
@@ -107,13 +107,13 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch (result)
                 {{
-                    case Success:
+                    case Result.Success:
                         return true;
-                    case Warning {{ Message: ""Tough warning"" }} warning:
+                    case Result.Warning {{ Message: ""Tough warning"" }} warning:
                         return false;
-                    case Warning warning:
+                    case Result.Warning warning:
                         return true;
-                    case Error error:
+                    case Result.Error error:
                         return false;
                     default:
                         throw new Sundew.DiscriminatedUnions.UnreachableCaseException(typeof(Result));
@@ -140,11 +140,11 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch(result)
                 {{
-                    case Success:
+                    case Result.Success:
                         break;
-                    case Warning warning:
+                    case Result.Warning warning:
                         break;
-                    case Error error:
+                    case Result.Error error:
                         break;
                 }}
             }}
@@ -168,11 +168,11 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch(result)
                 {{
-                    case Success:
+                    case Result.Success:
                         break;
-                    case Warning warning:
+                    case Result.Warning warning:
                         break;
-                    case Error error:
+                    case Result.Error error:
                         break;
                     case null:
                         break;
@@ -199,11 +199,11 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch(result)
                 {{
-                    case Success:
+                    case Result.Success:
                         break;
-                    case Warning warning:
+                    case Result.Warning warning:
                         break;
-                    case Error error:
+                    case Result.Error error:
                         break;
                     default:
                         break;
@@ -234,11 +234,11 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch(result)
                 {{
-                    case Success:
+                    case Result.Success:
                         break;
-                    case Warning warning:
+                    case Result.Warning warning:
                         break;
-                    case Error error:
+                    case Result.Error error:
                         break;
                     default:
                         break;
@@ -268,11 +268,11 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch(result)
                 {{
-                    case Success:
+                    case Result.Success:
                         break;
-                    case Warning warning:
+                    case Result.Warning warning:
                         break;
-                    case Error error:
+                    case Result.Error error:
                         break;
                     default:
                         break;
@@ -288,7 +288,7 @@ namespace Sundew.DiscriminatedUnions.Test
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(24, 21, 25, 31),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
-                    .WithArguments("null", string.Empty, TestData.ConsoleApplication1Result, "is")
+                    .WithArguments("'null'", string.Empty, TestData.ConsoleApplication1Result, "is")
                     .WithSpan(16, 17, 26, 18));
         }
 
@@ -305,7 +305,7 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch(result)
                 {{
-                    case Success:
+                    case Result.Success:
                         break;
                 }}
             }}
@@ -316,7 +316,7 @@ namespace Sundew.DiscriminatedUnions.Test
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
-                    .WithArguments("Error, Warning, null", 's', TestData.ConsoleApplication1Result, "are")
+                    .WithArguments("'Error', 'Warning', 'null'", 's', TestData.ConsoleApplication1Result, "are")
                     .WithSpan(16, 17, 20, 18));
         }
 
@@ -334,7 +334,7 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch(result)
                 {{
-                    case Success:
+                    case Result.Success:
                         break;
                     default:
                         break;
@@ -347,7 +347,7 @@ namespace Sundew.DiscriminatedUnions.Test
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
-                    .WithArguments("Error, Warning, null", 's', TestData.ConsoleApplication1Result, "are")
+                    .WithArguments("'Error', 'Warning', 'null'", 's', TestData.ConsoleApplication1Result, "are")
                     .WithSpan(16, 17, 22, 18),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
                     .WithArguments(TestData.ConsoleApplication1Result)
@@ -368,13 +368,13 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 switch (result)
                 {{
-                    case Success:
+                    case Result.Success:
                         return true;
-                    case Warning {{ Message: ""Tough warning"" }} warning:
+                    case Result.Warning {{ Message: ""Tough warning"" }} warning:
                         return false;
-                    case Warning warning:
+                    case Result.Warning warning:
                         return true;
-                    case Error error:
+                    case Result.Error error:
                         return false;
                     case null:
                         return false;

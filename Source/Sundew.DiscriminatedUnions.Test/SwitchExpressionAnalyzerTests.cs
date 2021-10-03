@@ -39,10 +39,10 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success success => true,
-                        Warning {{ Message: ""Tough warning"" }} warning => false,
-                        Warning warning => true,
-                        Error error => false,
+                        Result.Success success => true,
+                        Result.Warning {{ Message: ""Tough warning"" }} warning => false,
+                        Result.Warning warning => true,
+                        Result.Error error => false,
                         _ => throw new UnreachableCaseException(typeof(Result)),
                     }};
             }}
@@ -66,10 +66,10 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success success => true,
-                        Warning {{ Message: ""Tough warning"" }} warning => false,
-                        Warning warning => true,
-                        Error error => false,
+                        Result.Success success => true,
+                        Result.Warning {{ Message: ""Tough warning"" }} warning => false,
+                        Result.Warning warning => true,
+                        Result.Error error => false,
                         null => false,
                         _ => throw new UnreachableCaseException(typeof(Result)),
                     }};
@@ -95,10 +95,10 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success => true,
-                        Warning {{ Message: ""Tough warning"" }} warning => false,
-                        Warning warning => true,
-                        Error error => false,
+                        Result.Error error => false,
+                        Result.Success => true,
+                        Result.Warning {{ Message: ""Tough warning"" }} warning => false,
+                        Result.Warning warning => true,
                     }};
             }}
         }}
@@ -108,7 +108,7 @@ namespace Sundew.DiscriminatedUnions.Test
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
-                    .WithArguments("ConsoleApplication1.Result")
+                    .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(17, 24, 23, 22));
         }
 
@@ -125,10 +125,10 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success => true,
-                        Warning {{ Message: ""Tough warning"" }} warning => false,
-                        Warning warning => true,
-                        Error error => false,
+                        Result.Success => true,
+                        Result.Warning {{ Message: ""Tough warning"" }} warning => false,
+                        Result.Warning warning => true,
+                        Result.Error error => false,
                         null => false,
                     }};
             }}
@@ -139,7 +139,7 @@ namespace Sundew.DiscriminatedUnions.Test
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
-                    .WithArguments("ConsoleApplication1.Result")
+                    .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(16, 24, 23, 22));
         }
 
@@ -157,10 +157,10 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success => true,
-                        Warning {{ Message: ""Tough warning"" }} warning => false,
-                        Warning warning => true,
-                        Error error => false,
+                        Result.Success => true,
+                        Result.Warning {{ Message: ""Tough warning"" }} warning => false,
+                        Result.Warning warning => true,
+                        Result.Error error => false,
                     }};
             }}
         }}
@@ -183,9 +183,9 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success => true,
-                        Warning warning => true,
-                        Error error => false,
+                        Result.Success => true,
+                        Result.Warning warning => true,
+                        Result.Error error => false,
                         _ => false,
                     }};
             }}
@@ -214,10 +214,10 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success => true,
-                        Warning {{ Message: ""Tough warning"" }} warning => false,
-                        Warning warning => true,
-                        Error error => false,
+                        Result.Success => true,
+                        Result.Warning {{ Message: ""Tough warning"" }} warning => false,
+                        Result.Warning warning => true,
+                        Result.Error error => false,
                         _ => false,
                     }};
             }}
@@ -228,7 +228,7 @@ namespace Sundew.DiscriminatedUnions.Test
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
-                    .WithArguments("ConsoleApplication1.Result")
+                    .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(23, 25, 23, 35));
         }
 
@@ -246,7 +246,7 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success => true,
+                        Result.Success => true,
                         _ => false,
                     }};
             }}
@@ -257,7 +257,7 @@ namespace Sundew.DiscriminatedUnions.Test
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
-                    .WithArguments("Error, Warning, null", 's', TestData.ConsoleApplication1Result, "are")
+                    .WithArguments("'Error', 'Warning', 'null'", 's', TestData.ConsoleApplication1Result, "are")
                     .WithSpan(16, 24, 20, 22),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
                     .WithArguments(TestData.ConsoleApplication1Result)
@@ -278,7 +278,7 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success => true,
+                        Result.Success => true,
                     }};
             }}
         }}
@@ -288,7 +288,7 @@ namespace Sundew.DiscriminatedUnions.Test
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
-                    .WithArguments("Error, Warning", 's', TestData.ConsoleApplication1Result, "are")
+                    .WithArguments("'Error', 'Warning'", 's', TestData.ConsoleApplication1Result, "are")
                     .WithSpan(17, 24, 20, 22),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
                     .WithArguments(TestData.ConsoleApplication1Result)
@@ -309,10 +309,10 @@ namespace Sundew.DiscriminatedUnions.Test
             {{
                 return result switch
                     {{
-                        Success success => true,
-                        Warning {{ Message: ""Tough warning"" }} warning => false,
-                        Warning warning => true,
-                        Error error => false,
+                        Result.Success success => true,
+                        Result.Warning {{ Message: ""Tough warning"" }} warning => false,
+                        Result.Warning warning => true,
+                        Result.Error error => false,
                         _ => throw new UnreachableCaseException(typeof(Result)),
                     }};
             }}
@@ -323,7 +323,7 @@ namespace Sundew.DiscriminatedUnions.Test
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
-                    .WithArguments("null", string.Empty, TestData.ConsoleApplication1Result, "is")
+                    .WithArguments("'null'", string.Empty, TestData.ConsoleApplication1Result, "is")
                     .WithSpan(17, 24, 24, 22));
         }
     }

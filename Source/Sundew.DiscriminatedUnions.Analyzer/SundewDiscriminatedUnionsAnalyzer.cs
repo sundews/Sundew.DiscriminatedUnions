@@ -7,13 +7,13 @@
 
 namespace Sundew.DiscriminatedUnions.Analyzer
 {
-    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
+    using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Operations;
@@ -35,12 +35,17 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// <summary>
         /// Diagnostic id indicating that discriminated union can only have private protected constructors.
         /// </summary>
-        public const string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDiagnosticId = "SDU9997";
+        public const string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDiagnosticId = "SDU0003";
 
         /// <summary>
-        /// Diagnostic id indicating that the cases should be sealed.
+        /// Diagnostic id indicating that the case should be sealed.
         /// </summary>
-        public const string CasesShouldBeSealedDiagnosticId = "SDU9998";
+        public const string CasesShouldBeSealedDiagnosticId = "SDU0004";
+
+        /// <summary>
+        /// Diagnostic id indicating that the case should be nested within the discriminated union.
+        /// </summary>
+        public const string CasesShouldBeNestedDiagnosticId = "SDU0005";
 
         /// <summary>
         /// Diagnostic id indicating that the switch should throw in default case.
@@ -67,14 +72,15 @@ namespace Sundew.DiscriminatedUnions.Analyzer
             true,
             nameof(Resources.SwitchShouldNotHaveDefaultCaseDescription));*/
 
-        private static readonly DiagnosticDescriptor DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsRule = DiagnosticDescriptorHelper.Create(
-            DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDiagnosticId,
-            nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsTitle),
-            nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsMessageFormat),
-            Category,
-            DiagnosticSeverity.Error,
-            true,
-            nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDescription));
+        private static readonly DiagnosticDescriptor DiscriminatedUnionCanOnlyHavePrivateConstructorsRule =
+            DiagnosticDescriptorHelper.Create(
+                DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDiagnosticId,
+                nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsTitle),
+                nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsMessageFormat),
+                Category,
+                DiagnosticSeverity.Error,
+                true,
+                nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDescription));
 
         private static readonly DiagnosticDescriptor CasesShouldBeSealedRule = DiagnosticDescriptorHelper.Create(
             CasesShouldBeSealedDiagnosticId,
@@ -85,19 +91,29 @@ namespace Sundew.DiscriminatedUnions.Analyzer
             true,
             nameof(Resources.CasesShouldBeSealedDescription));
 
-        private static readonly DiagnosticDescriptor SwitchShouldThrowInDefaultCaseRule = DiagnosticDescriptorHelper.Create(
-            SwitchShouldThrowInDefaultCaseDiagnosticId,
-            nameof(Resources.SwitchShouldThrowInDefaultCaseTitle),
-            nameof(Resources.SwitchShouldThrowInDefaultCaseMessageFormat),
+        private static readonly DiagnosticDescriptor CasesShouldNestedRule = DiagnosticDescriptorHelper.Create(
+            CasesShouldBeNestedDiagnosticId,
+            nameof(Resources.CasesShouldBeNestedTitle),
+            nameof(Resources.CasesShouldBeNestedMessageFormat),
             Category,
             DiagnosticSeverity.Error,
             true,
-            nameof(Resources.SwitchShouldThrowInDefaultCaseDescription));
+            nameof(Resources.CasesShouldBeNestedDescription));
+
+        private static readonly DiagnosticDescriptor SwitchShouldThrowInDefaultCaseRule =
+            DiagnosticDescriptorHelper.Create(
+                SwitchShouldThrowInDefaultCaseDiagnosticId,
+                nameof(Resources.SwitchShouldThrowInDefaultCaseTitle),
+                nameof(Resources.SwitchShouldThrowInDefaultCaseMessageFormat),
+                Category,
+                DiagnosticSeverity.Error,
+                true,
+                nameof(Resources.SwitchShouldThrowInDefaultCaseDescription));
 
         /// <summary>
         /// Gets a set of descriptors for the diagnostics that this analyzer is capable of producing.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AllCasesNotHandledRule, SwitchShouldThrowInDefaultCaseRule, DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsRule, CasesShouldBeSealedRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AllCasesNotHandledRule, DiscriminatedUnionCanOnlyHavePrivateConstructorsRule, CasesShouldBeSealedRule, CasesShouldNestedRule, SwitchShouldThrowInDefaultCaseRule);
 
         /// <summary>
         /// Called once at session start to register actions in the analysis context.
@@ -109,9 +125,9 @@ namespace Sundew.DiscriminatedUnions.Analyzer
             context.EnableConcurrentExecution();
 
             var discriminatedUnionAnalyzer = new DiscriminatedUnionAnalyzer();
-            context.RegisterOperationAction(discriminatedUnionAnalyzer.AnalyzeSwitchStatement, OperationKind.Switch);
+            context.RegisterSymbolAction(analysisContext => discriminatedUnionAnalyzer.AnalyzeDiscriminatedUnionsTypes(analysisContext), SymbolKind.NamedType);
             context.RegisterOperationAction(discriminatedUnionAnalyzer.AnalyzeSwitchExpression, OperationKind.SwitchExpression);
-            context.RegisterSymbolAction(discriminatedUnionAnalyzer.AnalyzeDiscriminatedUnionsTypes, SymbolKind.NamedType);
+            context.RegisterOperationAction(discriminatedUnionAnalyzer.AnalyzeSwitchStatement, OperationKind.Switch);
         }
 
         private class DiscriminatedUnionAnalyzer
@@ -120,8 +136,10 @@ namespace Sundew.DiscriminatedUnions.Analyzer
             private const string Is = "is";
             private const string Are = "are";
 
+            private readonly object discriminatedUnionsLock = new ();
+
             [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1024:Compare symbols correctly", Justification = "False positive... using SymbolEqualityComparer")]
-            private readonly ConcurrentDictionary<ISymbol, ImmutableHashSet<ITypeSymbol>> discriminatedUnions = new (SymbolEqualityComparer.Default);
+            private readonly ConcurrentDictionary<ISymbol, HashSet<ITypeSymbol>> discriminatedUnions = new (SymbolEqualityComparer.Default);
 
             public void AnalyzeDiscriminatedUnionsTypes(SymbolAnalysisContext context)
             {
@@ -132,23 +150,40 @@ namespace Sundew.DiscriminatedUnions.Analyzer
 
                 if (IsDiscriminatedUnion(namedTypeSymbol))
                 {
-                    var invalidConstructors = namedTypeSymbol.Constructors.Where(x => x.DeclaredAccessibility != Accessibility.ProtectedAndInternal).ToList();
+                    var invalidConstructors = namedTypeSymbol.Constructors
+                        .Where(x => x.DeclaredAccessibility != Accessibility.Private).ToList();
                     foreach (var invalidConstructor in invalidConstructors)
                     {
                         foreach (var declaringSyntaxReference in invalidConstructor.DeclaringSyntaxReferences)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(
-                                DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsRule,
+                                DiscriminatedUnionCanOnlyHavePrivateConstructorsRule,
                                 declaringSyntaxReference.GetSyntax().GetLocation(),
                                 namedTypeSymbol));
                         }
                     }
 
-                    this.discriminatedUnions.GetOrAdd(namedTypeSymbol, symbol => ImmutableHashSet.Create<ITypeSymbol>(SymbolEqualityComparer.Default));
                     return;
                 }
 
-                this.EnsureCaseExists(namedTypeSymbol, context.ReportDiagnostic);
+                if (namedTypeSymbol.BaseType != null && IsDiscriminatedUnion(namedTypeSymbol.BaseType))
+                {
+                    if (!namedTypeSymbol.IsSealed)
+                    {
+                        foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(CasesShouldBeSealedRule, declaringSyntaxReference.GetSyntax().GetLocation(), namedTypeSymbol));
+                        }
+                    }
+
+                    if (!SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ContainingType, namedTypeSymbol.BaseType))
+                    {
+                        foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(CasesShouldNestedRule, declaringSyntaxReference.GetSyntax().GetLocation(), namedTypeSymbol, namedTypeSymbol.BaseType));
+                        }
+                    }
+                }
             }
 
             public void AnalyzeSwitchExpression(OperationAnalysisContext context)
@@ -157,11 +192,12 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                 {
                     if (unionTypeInfo.Nullability.FlowState != NullableFlowState.NotNull)
                     {
-                        if (!switchExpressionOperation.Arms.Any(x => x.Pattern is IConstantPatternOperation constantPatternOperation &&
-                                                                     constantPatternOperation.Value is IConversionOperation conversionOperation &&
-                                                                     conversionOperation.Operand is ILiteralOperation literalOperation &&
-                                                                     literalOperation.ConstantValue.HasValue &&
-                                                                     literalOperation.ConstantValue.Value == null))
+                        if (!switchExpressionOperation.Arms.Any(x =>
+                            x.Pattern is IConstantPatternOperation constantPatternOperation &&
+                            constantPatternOperation.Value is IConversionOperation conversionOperation &&
+                            conversionOperation.Operand is ILiteralOperation literalOperation &&
+                            literalOperation.ConstantValue.HasValue &&
+                            literalOperation.ConstantValue.Value == null))
                         {
                             return true;
                         }
@@ -170,7 +206,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                     return false;
                 }
 
-                if (!(context.Operation is ISwitchExpressionOperation switchExpressionOperation) || switchExpressionOperation.SemanticModel == null)
+                if (!(context.Operation is ISwitchExpressionOperation switchExpressionOperation && switchExpressionOperation.SemanticModel != null))
                 {
                     return;
                 }
@@ -182,19 +218,18 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                     return;
                 }
 
-                this.discriminatedUnions.GetOrAdd(unionType, symbol => ImmutableHashSet.Create<ITypeSymbol>(SymbolEqualityComparer.Default));
-
                 var unionTypeWithoutNull = unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
                 var actualCaseTypes = switchExpressionOperation.Arms.Select(switchExpressionArmOperation =>
                 {
-                    if (switchExpressionArmOperation.Pattern is IDeclarationPatternOperation declarationPatternSyntax)
+                    if (switchExpressionArmOperation.Pattern is IDeclarationPatternOperation
+                        declarationPatternSyntax)
                     {
-                        return this.EnsureCaseExists(declarationPatternSyntax.MatchedType, context.ReportDiagnostic);
+                        return declarationPatternSyntax.MatchedType;
                     }
 
                     if (switchExpressionArmOperation.Pattern is ITypePatternOperation typePatternOperation)
                     {
-                        return this.EnsureCaseExists(typePatternOperation.MatchedType, context.ReportDiagnostic);
+                        return typePatternOperation.MatchedType;
                     }
 
                     /* if (switchExpressionArmSyntax.Pattern is DiscardPatternSyntax discardPatternSyntax)
@@ -208,9 +243,9 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                               exceptionConversionOperation.Operand.Type!.Name.EndsWith(nameof(UnreachableCaseException)) &&
                               exceptionConversionOperation.Operand is IObjectCreationOperation objectCreationOperation &&
                               objectCreationOperation.Arguments.SingleOrDefault(
-                            x =>
-                                x.Value is ITypeOfOperation typeOfOperation &&
-                                SymbolEqualityComparer.Default.Equals(typeOfOperation.TypeOperand, unionTypeWithoutNull)) != null))
+                                  x =>
+                                      x.Value is ITypeOfOperation typeOfOperation &&
+                                      SymbolEqualityComparer.Default.Equals(typeOfOperation.TypeOperand, unionTypeWithoutNull)) != null))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(SwitchShouldThrowInDefaultCaseRule, switchExpressionArmOperation.Syntax.GetLocation(), unionTypeWithoutNull));
                         }
@@ -218,10 +253,6 @@ namespace Sundew.DiscriminatedUnions.Analyzer
 
                     return default;
                 }).Where(x => x != null).Select(x => x!).ToList();
-                if (!this.discriminatedUnions.TryGetValue(unionTypeWithoutNull, out var caseTypes))
-                {
-                    return;
-                }
 
                 if (!switchExpressionOperation.Arms.Any(x => x.Pattern is IDiscardPatternOperation))
                 {
@@ -229,8 +260,10 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                 }
 
                 var isNullCaseMissing = IsNullCaseMissing(switchExpressionOperation.SemanticModel.GetTypeInfo(switchExpressionOperation.Value.Syntax), switchExpressionOperation);
+                var caseTypes = this.GetCaseTypes(unionTypeWithoutNull);
+
 #pragma warning disable RS1024 // Compare symbols correctly
-                ReportDiagnostics(new HashSet<ITypeSymbol>(caseTypes, SymbolEqualityComparer.Default), actualCaseTypes, isNullCaseMissing, unionTypeWithoutNull, context);
+                ReportDiagnostics(new HashSet<ITypeSymbol>(caseTypes, SymbolEqualityComparer.Default), actualCaseTypes, isNullCaseMissing, unionTypeWithoutNull, switchExpressionOperation, context);
 #pragma warning restore RS1024 // Compare symbols correctly
             }
 
@@ -242,10 +275,12 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                     {
                         if (!switchOperation.Cases.Any(x => x.Clauses.Any(
                             x => x is IPatternCaseClauseOperation patternCaseClauseOperation &&
-                            patternCaseClauseOperation.Pattern is IConstantPatternOperation constantPatternOperation &&
-                            constantPatternOperation.Value is IConversionOperation conversionOperation &&
-                            conversionOperation.Operand is ILiteralOperation literalOperation &&
-                            literalOperation.ConstantValue.HasValue && literalOperation.ConstantValue.Value == null)))
+                                 patternCaseClauseOperation.Pattern is IConstantPatternOperation
+                                     constantPatternOperation &&
+                                 constantPatternOperation.Value is IConversionOperation conversionOperation &&
+                                 conversionOperation.Operand is ILiteralOperation literalOperation &&
+                                 literalOperation.ConstantValue.HasValue &&
+                                 literalOperation.ConstantValue.Value == null)))
                         {
                             return true;
                         }
@@ -254,7 +289,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                     return false;
                 }
 
-                if (!(context.Operation is ISwitchOperation switchOperation) || switchOperation.SemanticModel == null)
+                if (!(context.Operation is ISwitchOperation switchOperation && switchOperation.SemanticModel != null))
                 {
                     return;
                 }
@@ -267,54 +302,54 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                     return;
                 }
 
-                this.discriminatedUnions.GetOrAdd(unionType, symbol => ImmutableHashSet.Create<ITypeSymbol>(SymbolEqualityComparer.Default));
-
                 var unionTypeWithoutNull = unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
-                var actualCaseTypes = switchOperation.Cases.SelectMany(switchCaseOperation => switchCaseOperation.Clauses.Select(caseClauseOperation =>
-                {
-                    if (caseClauseOperation is IPatternCaseClauseOperation patternCaseClauseOperation)
+                var actualCaseTypes = switchOperation.Cases.SelectMany(switchCaseOperation =>
+                    switchCaseOperation.Clauses.Select(caseClauseOperation =>
                     {
-                        if (patternCaseClauseOperation.Pattern is IDeclarationPatternOperation declarationPatternOperation)
+                        if (caseClauseOperation is IPatternCaseClauseOperation patternCaseClauseOperation)
                         {
-                            return this.EnsureCaseExists(declarationPatternOperation.MatchedType, context.ReportDiagnostic);
+                            if (patternCaseClauseOperation.Pattern is IDeclarationPatternOperation
+                                declarationPatternOperation)
+                            {
+                                return declarationPatternOperation.MatchedType;
+                            }
+
+                            if (patternCaseClauseOperation.Pattern is ITypePatternOperation typePatternOperation)
+                            {
+                                return typePatternOperation.MatchedType;
+                            }
                         }
 
-                        if (patternCaseClauseOperation.Pattern is ITypePatternOperation typePatternOperation)
+                        /*
+                        if (switchLabelSyntax is DefaultSwitchLabelSyntax defaultSwitchLabelSyntax)
                         {
-                            return this.EnsureCaseExists(typePatternOperation.MatchedType, context.ReportDiagnostic);
-                        }
-                    }
+                            context.ReportDiagnostic(Diagnostic.Create(SwitchShouldNotHaveDefaultCaseRule, defaultSwitchLabelSyntax.GetLocation(), unionType));
+                        }*/
 
-                    /*
-                    if (switchLabelSyntax is DefaultSwitchLabelSyntax defaultSwitchLabelSyntax)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(SwitchShouldNotHaveDefaultCaseRule, defaultSwitchLabelSyntax.GetLocation(), unionType));
-                    }*/
-
-                    if (caseClauseOperation is IDefaultCaseClauseOperation defaultCaseClauseOperation)
-                    {
-                        if (!(switchCaseOperation.Body.SingleOrDefault(x => x is IThrowOperation { Exception: IConversionOperation exceptionConversionOperation } &&
-                                                                            exceptionConversionOperation.Operand.Type!.Name.EndsWith(nameof(UnreachableCaseException)) &&
-                                                                            exceptionConversionOperation.Operand is IObjectCreationOperation objectCreationOperation &&
-                                                                            objectCreationOperation.Arguments.SingleOrDefault(
-                            x =>
-                                x.Value is ITypeOfOperation typeOfOperation &&
-                                SymbolEqualityComparer.Default.Equals(typeOfOperation.TypeOperand, unionTypeWithoutNull)) != null) != null))
+                        if (caseClauseOperation is IDefaultCaseClauseOperation)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(SwitchShouldThrowInDefaultCaseRule, switchCaseOperation.Syntax.GetLocation(), unionTypeWithoutNull));
+                            if (!(switchCaseOperation.Body.SingleOrDefault(x => x is IThrowOperation { Exception: IConversionOperation exceptionConversionOperation } &&
+                                exceptionConversionOperation.Operand.Type!.Name.EndsWith(
+                                    nameof(UnreachableCaseException)) &&
+                                exceptionConversionOperation.Operand is IObjectCreationOperation
+                                    objectCreationOperation &&
+                                objectCreationOperation.Arguments.SingleOrDefault(
+                                    x =>
+                                        x.Value is ITypeOfOperation typeOfOperation &&
+                                        SymbolEqualityComparer.Default.Equals(typeOfOperation.TypeOperand, unionTypeWithoutNull)) != null) != null))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(SwitchShouldThrowInDefaultCaseRule, switchCaseOperation.Syntax.GetLocation(), unionTypeWithoutNull));
+                            }
                         }
-                    }
 
-                    return null;
-                })).Where(x => x != null).Select(x => x!).ToList();
-                if (!this.discriminatedUnions.TryGetValue(unionTypeWithoutNull, out var caseTypes))
-                {
-                    return;
-                }
+                        return null;
+                    })).Where(x => x != null).Select(x => x!).ToList();
 
                 var isNullCaseMissing = IsNullCaseMissing(switchOperation.SemanticModel.GetTypeInfo(switchOperation.Value.Syntax), switchOperation);
+                var caseTypes = this.GetCaseTypes(unionTypeWithoutNull);
+
 #pragma warning disable RS1024 // Compare symbols correctly
-                ReportDiagnostics(new HashSet<ITypeSymbol>(caseTypes, SymbolEqualityComparer.Default), actualCaseTypes, isNullCaseMissing, unionTypeWithoutNull, context);
+                ReportDiagnostics(new HashSet<ITypeSymbol>(caseTypes, SymbolEqualityComparer.Default), actualCaseTypes, isNullCaseMissing, unionTypeWithoutNull, switchOperation, context);
 #pragma warning restore RS1024 // Compare symbols correctly
             }
 
@@ -323,13 +358,14 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                 List<ITypeSymbol> actualCaseTypes,
                 bool isNullCaseMissing,
                 ITypeSymbol unionType,
+                IOperation operation,
                 OperationAnalysisContext context)
             {
                 foreach (var actualCaseType in actualCaseTypes)
                 {
                     if (!caseTypes.Remove(actualCaseType))
                     {
-                        // Not Possible Case
+                        // Should not be possible
                     }
                 }
 
@@ -339,14 +375,14 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             AllCasesNotHandledRule,
-                            context.Operation.Syntax.GetLocation(),
+                            operation.Syntax.GetLocation(),
                             caseTypes.OrderBy(x => x.Name).Aggregate(
                                 new StringBuilder(),
                                 (stringBuilder, typeSymbol) =>
-                                    stringBuilder.Append(typeSymbol.Name).Append(',')
+                                    stringBuilder.Append('\'').Append(typeSymbol.Name).Append('\'').Append(',')
                                         .Append(' '),
                                 builder => isNullCaseMissing
-                                    ? builder.Append(Null).ToString()
+                                    ? builder.Append('\'').Append(Null).Append('\'').ToString()
                                     : builder.ToString(0, builder.Length - 2)),
                             hasMultiple ? 's' : string.Empty,
                             unionType,
@@ -373,28 +409,20 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                 });
             }
 
-            private ITypeSymbol? EnsureCaseExists(ITypeSymbol? caseType, Action<Diagnostic> reportDiagnostic)
+            private HashSet<ITypeSymbol> GetCaseTypes(ITypeSymbol unionType)
             {
-                if (caseType?.BaseType != null && IsDiscriminatedUnion(caseType.BaseType))
+                return this.discriminatedUnions.GetOrAdd(unionType, x =>
                 {
-                    this.discriminatedUnions.AddOrUpdate(
-                        caseType.BaseType,
-                        symbol =>
-                        {
-                            if (!caseType.IsSealed)
-                            {
-                                foreach (var declaringSyntaxReference in caseType.DeclaringSyntaxReferences)
-                                {
-                                    reportDiagnostic(Diagnostic.Create(CasesShouldBeSealedRule, declaringSyntaxReference.GetSyntax().GetLocation(), caseType));
-                                }
-                            }
+#pragma warning disable RS1024 // Compare symbols correctly
+                    var caseTypes = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
+#pragma warning restore RS1024 // Compare symbols correctly
+                    foreach (var caseType in unionType.GetTypeMembers().Where(x => SymbolEqualityComparer.Default.Equals(x.BaseType, unionType)))
+                    {
+                        caseTypes.Add(caseType);
+                    }
 
-                            return ImmutableHashSet.Create<ITypeSymbol>(SymbolEqualityComparer.Default, caseType);
-                        },
-                        (_, immutableHashSet) => immutableHashSet.Add(caseType));
-                }
-
-                return caseType;
+                    return caseTypes;
+                });
             }
         }
     }

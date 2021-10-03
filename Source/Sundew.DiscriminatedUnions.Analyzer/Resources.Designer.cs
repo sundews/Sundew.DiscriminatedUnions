@@ -70,7 +70,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; case{1} in {2} {3} not handled.
+        ///   Looks up a localized string similar to {0} case{1} in &apos;{2}&apos; {3} not handled.
         /// </summary>
         internal static string AllCasesNotHandledMessageFormat {
             get {
@@ -88,7 +88,34 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cases should be sealed so that all cases a known at compile time..
+        ///   Looks up a localized string similar to Cases should be nested within their discriminated union so that all cases are known at compile time..
+        /// </summary>
+        internal static string CasesShouldBeNestedDescription {
+            get {
+                return ResourceManager.GetString("CasesShouldBeNestedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; case is not nested within &apos;{1}&apos;.
+        /// </summary>
+        internal static string CasesShouldBeNestedMessageFormat {
+            get {
+                return ResourceManager.GetString("CasesShouldBeNestedMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All cases should be nested.
+        /// </summary>
+        internal static string CasesShouldBeNestedTitle {
+            get {
+                return ResourceManager.GetString("CasesShouldBeNestedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cases should be sealed so that all cases are known at compile time..
         /// </summary>
         internal static string CasesShouldBeSealedDescription {
             get {
@@ -115,7 +142,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Discriminated union constructors must be private protected so other libraries cannot derived from it..
+        ///   Looks up a localized string similar to Discriminated union constructors must be private so only nested types can derived from it..
         /// </summary>
         internal static string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDescription {
             get {
@@ -124,7 +151,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; contains non private protected constructor(s)..
+        ///   Looks up a localized string similar to &apos;{0}&apos; contains non private constructor(s)..
         /// </summary>
         internal static string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsMessageFormat {
             get {
@@ -133,7 +160,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Discriminated union constructors must be private protected.
+        ///   Looks up a localized string similar to Discriminated union constructors must be private.
         /// </summary>
         internal static string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsTitle {
             get {

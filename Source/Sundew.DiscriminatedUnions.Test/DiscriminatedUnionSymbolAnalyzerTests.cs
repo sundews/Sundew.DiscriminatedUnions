@@ -27,22 +27,22 @@ namespace Sundew.DiscriminatedUnions.Test
         [Sundew.DiscriminatedUnions.DiscriminatedUnion]
         public abstract class Result
         {{
-            protected internal Result()
+            protected Result()
             {{ }}
-        }}
 
-        public class Success : Result
-        {{
-        }}
-
-        public sealed class Warning : Result
-        {{
-            public Warning(string message)
+            public class Success : Result
             {{
-                this.Message = message;
             }}
 
-            public string Message {{ get; private set; }}
+            public sealed class Warning : Result
+            {{
+                public Warning(string message)
+                {{
+                    this.Message = message;
+                }}
+
+                public string Message {{ get; private set; }}
+            }}
         }}
 
         public sealed class Error : Result
@@ -63,8 +63,11 @@ namespace Sundew.DiscriminatedUnions.Test
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(15, 13, 16, 16),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedDiagnosticId)
-                    .WithArguments("ConsoleApplication1.Success")
-                    .WithSpan(19, 9, 21, 10));
+                    .WithArguments("ConsoleApplication1.Result.Success")
+                    .WithSpan(18, 13, 20, 14),
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeNestedDiagnosticId)
+                    .WithArguments("ConsoleApplication1.Error", TestData.ConsoleApplication1Result)
+                    .WithSpan(33, 9, 41, 10));
         }
     }
 }

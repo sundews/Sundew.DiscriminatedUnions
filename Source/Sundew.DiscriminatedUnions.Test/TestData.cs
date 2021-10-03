@@ -24,32 +24,32 @@ namespace Sundew.DiscriminatedUnions.Test
         [Sundew.DiscriminatedUnions.DiscriminatedUnion]
         public abstract class Result
         { 
-            protected private Result()
+            private Result()
             { }
-        }
 
-        public sealed class Success : Result
-        {
-        }
-
-        public sealed class Warning : Result
-        {
-            public Warning(string message)
+            public sealed class Success : Result
             {
-                this.Message = message;
             }
 
-            public string Message { get; private set; }
-        }
-
-        public sealed class Error : Result
-        {
-            public Error(int code)
+            public sealed class Warning : Result
             {
-                this.Code = code;
+                public Warning(string message)
+                {
+                    this.Message = message;
+                }
+
+                public string Message { get; private set; }
             }
 
-            public int Code { get; private set; }
+            public sealed class Error : Result
+            {
+                public Error(int code)
+                {
+                    this.Code = code;
+                }
+
+                public int Code { get; private set; }
+            }
         }";
 
         public const string InvalidResultDiscriminatedUnion = @"
@@ -58,20 +58,20 @@ namespace Sundew.DiscriminatedUnions.Test
         { 
             protected internal Result()
             { }
-        }
 
-        public class Success : Result
-        {
-        }
-
-        public sealed class Warning : Result
-        {
-            public Warning(string message)
+            public class Success : Result
             {
-                this.Message = message;
             }
 
-            public string Message { get; private set; }
+            public sealed class Warning : Result
+            {
+                public Warning(string message)
+                {
+                    this.Message = message;
+                }
+
+                public string Message { get; private set; }
+            }
         }
 
         public sealed class Error : Result
