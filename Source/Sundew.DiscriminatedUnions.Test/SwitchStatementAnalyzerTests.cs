@@ -12,7 +12,8 @@ namespace Sundew.DiscriminatedUnions.Test
     using Sundew.DiscriminatedUnions.Analyzer;
     using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.SundewDiscriminatedUnionsCodeFixProvider>;
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
     public class SwitchStatementAnalyzerTests
@@ -88,7 +89,7 @@ namespace Sundew.DiscriminatedUnions.Test
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(27, 21, 28, 38));
         }
@@ -250,7 +251,7 @@ namespace Sundew.DiscriminatedUnions.Test
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(25, 21, 26, 31));
         }
@@ -284,7 +285,7 @@ namespace Sundew.DiscriminatedUnions.Test
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(24, 21, 25, 31),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
@@ -346,10 +347,10 @@ namespace Sundew.DiscriminatedUnions.Test
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
                     .WithArguments("'Error', 'Warning', 'null'", 's', TestData.ConsoleApplication1Result, "are")
                     .WithSpan(16, 17, 22, 18),
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(20, 21, 21, 31));
         }
@@ -388,7 +389,7 @@ namespace Sundew.DiscriminatedUnions.Test
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
             .WithArguments(TestData.ConsoleApplication1Result)
                 .WithSpan(29, 21, 30, 38));
         }

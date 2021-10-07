@@ -61,7 +61,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Switch should handle cases of all possible types.
+        ///   Looks up a localized string similar to Switch should handle cases of all possible types..
         /// </summary>
         internal static string AllCasesNotHandledDescription {
             get {
@@ -70,7 +70,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} case{1} in &apos;{2}&apos; {3} not handled.
+        ///   Looks up a localized string similar to {0} case{1} in &apos;{2}&apos; {3} not handled..
         /// </summary>
         internal static string AllCasesNotHandledMessageFormat {
             get {
@@ -79,7 +79,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All possible cases not handled.
+        ///   Looks up a localized string similar to All possible cases not handled..
         /// </summary>
         internal static string AllCasesNotHandledTitle {
             get {
@@ -97,7 +97,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; case is not nested within &apos;{1}&apos;.
+        ///   Looks up a localized string similar to &apos;{0}&apos; case is not nested within &apos;{1}&apos;..
         /// </summary>
         internal static string CasesShouldBeNestedMessageFormat {
             get {
@@ -106,7 +106,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All cases should be nested.
+        ///   Looks up a localized string similar to All cases should be nested..
         /// </summary>
         internal static string CasesShouldBeNestedTitle {
             get {
@@ -124,7 +124,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; case is not sealed.
+        ///   Looks up a localized string similar to &apos;{0}&apos; case is not sealed..
         /// </summary>
         internal static string CasesShouldBeSealedMessageFormat {
             get {
@@ -133,7 +133,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All cases should be sealed.
+        ///   Looks up a localized string similar to All cases should be sealed..
         /// </summary>
         internal static string CasesShouldBeSealedTitle {
             get {
@@ -160,7 +160,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Discriminated union constructors must be private.
+        ///   Looks up a localized string similar to Discriminated union constructors must be private..
         /// </summary>
         internal static string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsTitle {
             get {
@@ -169,7 +169,43 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A switch on a discriminated union should not handle the default case.
+        ///   Looks up a localized string similar to Switches on non nullable types should not handle the null case..
+        /// </summary>
+        internal static string HasUnreachableNullCaseDescription {
+            get {
+                return ResourceManager.GetString("HasUnreachableNullCaseDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The null case is unreachable and should not be handled..
+        /// </summary>
+        internal static string HasUnreachableNullCaseMessageFormat {
+            get {
+                return ResourceManager.GetString("HasUnreachableNullCaseMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Null case should not be handled..
+        /// </summary>
+        internal static string HasUnreachableNullCaseTitle {
+            get {
+                return ResourceManager.GetString("HasUnreachableNullCaseTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch over a discriminated union, which is checked for exhaustiveness by another analyzer..
+        /// </summary>
+        internal static string SuppressCS8509Justification {
+            get {
+                return ResourceManager.GetString("SuppressCS8509Justification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A switch on a discriminated union should not handle the default case..
         /// </summary>
         internal static string SwitchShouldNotHaveDefaultCaseDescription {
             get {
@@ -178,7 +214,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is a discriminated union and should not handle the default case.
+        ///   Looks up a localized string similar to &apos;{0}&apos; is a discriminated union and should not handle the default case..
         /// </summary>
         internal static string SwitchShouldNotHaveDefaultCaseMessageFormat {
             get {
@@ -187,7 +223,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Default case should not be handled.
+        ///   Looks up a localized string similar to Default case should not be handled..
         /// </summary>
         internal static string SwitchShouldNotHaveDefaultCaseTitle {
             get {
@@ -196,7 +232,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A switch on a discriminated union should throw UnreachableCaseException in default case.
+        ///   Looks up a localized string similar to A switch on a discriminated union should throw UnreachableCaseException in default case..
         /// </summary>
         internal static string SwitchShouldThrowInDefaultCaseDescription {
             get {
@@ -205,7 +241,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is a discriminated union and should throw UnreachableCaseException in default case.
+        ///   Looks up a localized string similar to &apos;{0}&apos; is a discriminated union and should throw UnreachableCaseException in default case..
         /// </summary>
         internal static string SwitchShouldThrowInDefaultCaseMessageFormat {
             get {
@@ -214,7 +250,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Default case should throw UnreachableCaseException.
+        ///   Looks up a localized string similar to Default case should throw UnreachableCaseException..
         /// </summary>
         internal static string SwitchShouldThrowInDefaultCaseTitle {
             get {

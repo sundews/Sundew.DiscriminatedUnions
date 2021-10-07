@@ -7,16 +7,18 @@
 
 namespace Sundew.DiscriminatedUnions.Test
 {
-    using Microsoft.CodeAnalysis;
+    using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing.Verifiers;
+    using Sundew.DiscriminatedUnions.Analyzer;
 
-    public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
+    public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppressor>
         where TAnalyzer : DiagnosticAnalyzer, new()
         where TCodeFix : CodeFixProvider, new()
+        where TSuppressor : DiagnosticSuppressor, new()
     {
         public class Test : CSharpCodeFixTest<TAnalyzer, TCodeFix, MSTestVerifier>
         {
@@ -36,9 +38,9 @@ namespace Sundew.DiscriminatedUnions.Test
                 });
             }
 
-            protected override ParseOptions CreateParseOptions()
+            protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
             {
-                return base.CreateParseOptions();
+                return base.GetDiagnosticAnalyzers().Concat(new DiagnosticAnalyzer[] { new TSuppressor() });
             }
         }
     }

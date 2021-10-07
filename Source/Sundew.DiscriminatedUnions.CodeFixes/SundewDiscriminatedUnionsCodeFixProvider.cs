@@ -5,23 +5,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions
+namespace Sundew.DiscriminatedUnions.Analyzer
 {
-    using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Rename;
-    using Microsoft.CodeAnalysis.Text;
-    using Sundew.DiscriminatedUnions.Analyzer;
 
     /// <summary>
     /// Code fix for diagnostics related to discriminated unions.
@@ -34,7 +24,7 @@ namespace Sundew.DiscriminatedUnions
         /// <summary>
         /// Gets the list of diagnostic IDs that this provider can provide fixes for.
         /// </summary>
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId, SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId, SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseDiagnosticId);
 
         /// <summary>
         /// Gets an optional <see cref="T:Microsoft.CodeAnalysis.CodeFixes.FixAllProvider" /> that can fix all/multiple occurrences of diagnostics fixed by this code fix provider.

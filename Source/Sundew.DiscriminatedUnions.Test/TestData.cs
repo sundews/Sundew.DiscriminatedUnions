@@ -10,6 +10,7 @@ namespace Sundew.DiscriminatedUnions.Test
     public static class TestData
     {
         public const string ConsoleApplication1Result = "ConsoleApplication1.Result";
+        public const string ConsoleApplication1OptionInt = "ConsoleApplication1.Option<int>";
 
         public const string Usings = @"
     using System;
@@ -52,36 +53,24 @@ namespace Sundew.DiscriminatedUnions.Test
             }
         }";
 
-        public const string InvalidResultDiscriminatedUnion = @"
+        public const string ValidGenericOptionalDiscriminatedUnion = @"
         [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-        public abstract class Result
-        { 
-            protected internal Result()
-            { }
-
-            public class Success : Result
+        public abstract record Option<T>
+            where T : notnull
+        {
+            public sealed record Some : Option<T>
             {
-            }
-
-            public sealed class Warning : Result
-            {
-                public Warning(string message)
+                public Some(T value)
                 {
-                    this.Message = message;
+                    Value = value;
                 }
 
-                public string Message { get; private set; }
+                public T Value { get; }
             }
-        }
 
-        public sealed class Error : Result
-        {
-            public Error(int code)
+            public sealed record None : Option<T>
             {
-                this.Code = code;
             }
-
-            public int Code { get; private set; }
         }";
     }
 }

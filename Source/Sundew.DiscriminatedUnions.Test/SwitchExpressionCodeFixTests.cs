@@ -14,7 +14,8 @@ namespace Sundew.DiscriminatedUnions.Test
     using Sundew.DiscriminatedUnions.Analyzer;
     using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.SundewDiscriminatedUnionsCodeFixProvider>;
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
     public class SwitchExpressionCodeFixTests
@@ -66,9 +67,6 @@ namespace Sundew.DiscriminatedUnions.Test
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
                     .WithArguments("Error")
                     .WithSpan(15, 17, 21, 18),
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseDiagnosticId)
-                    .WithArguments("Result")
-                    .WithSpan(19, 21, 19, 29),
             };
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }

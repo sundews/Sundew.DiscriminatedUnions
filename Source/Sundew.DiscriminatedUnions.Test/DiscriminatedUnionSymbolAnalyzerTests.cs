@@ -12,7 +12,8 @@ namespace Sundew.DiscriminatedUnions.Test
     using Sundew.DiscriminatedUnions.Analyzer;
     using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
         Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-        Sundew.DiscriminatedUnions.SundewDiscriminatedUnionsCodeFixProvider>;
+        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsCodeFixProvider,
+        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
     public class DiscriminatedUnionSymbolAnalyzerTests
