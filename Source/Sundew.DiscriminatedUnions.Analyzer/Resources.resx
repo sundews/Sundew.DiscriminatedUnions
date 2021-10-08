@@ -126,13 +126,13 @@
   <data name="AllCasesNotHandledMessageFormat" xml:space="preserve">
     <value>{0} case{1} in '{2}' {3} not handled.</value>
   </data>
-  <data name="DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsTitle" xml:space="preserve">
+  <data name="DiscriminatedUnionCanOnlyHavePrivateConstructorsTitle" xml:space="preserve">
     <value>Discriminated union constructors must be private.</value>
   </data>
-  <data name="DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDescription" xml:space="preserve">
+  <data name="DiscriminatedUnionCanOnlyHavePrivateConstructorsDescription" xml:space="preserve">
     <value>Discriminated union constructors must be private so only nested types can derived from it.</value>
   </data>
-  <data name="DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsMessageFormat" xml:space="preserve">
+  <data name="DiscriminatedUnionCanOnlyHavePrivateConstructorsMessageFormat" xml:space="preserve">
     <value>'{0}' contains non private constructor(s).</value>
   </data>
   <data name="CasesShouldBeSealedTitle" xml:space="preserve">
@@ -170,6 +170,15 @@
   </data>
   <data name="HasUnreachableNullCaseMessageFormat" xml:space="preserve">
     <value>The null case is unreachable and should not be handled.</value>
+  </data>
+  <data name="MustHavePrivateConstructorTitle" xml:space="preserve">
+    <value>Discriminated unions should only have private constructors.</value>
+  </data>
+  <data name="MustHavePrivateConstructorDescription" xml:space="preserve">
+    <value>Discriminated unions should only have private constructors, so that all cases are known at compile time</value>
+  </data>
+  <data name="MustHavePrivateConstructorMessageFormat" xml:space="preserve">
+    <value>'{0}' has an undeclared non private constructor: '{1}'.</value>
   </data>
   <data name="SwitchShouldThrowInDefaultCaseTitle" xml:space="preserve">
     <value>Default case should throw UnreachableCaseException.</value>

@@ -23,7 +23,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         private const string Are = "are";
 
         [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1024:Compare symbols correctly", Justification = "False positive... using SymbolEqualityComparer")]
-        private readonly ConcurrentDictionary<ISymbol, HashSet<ITypeSymbol>> discriminatedUnions = new (SymbolEqualityComparer.Default);
+        private readonly ConcurrentDictionary<ISymbol, HashSet<ITypeSymbol>> discriminatedUnions = new(SymbolEqualityComparer.Default);
 
         private enum SwitchNullabilityError
         {

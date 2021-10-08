@@ -38,7 +38,12 @@ namespace Sundew.DiscriminatedUnions.Test
         {
             var test = new Test
             {
-                TestCode = source,
+                TestCode = source + @"
+
+namespace System.Runtime.CompilerServices
+{
+      internal static class IsExternalInit {}
+}",
             };
 
             test.SolutionTransforms.Add((solution, id) => solution.AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location)));

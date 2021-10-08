@@ -23,34 +23,16 @@ namespace Sundew.DiscriminatedUnions.Test
 
         public const string ValidResultDiscriminatedUnion = @"
         [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-        public abstract class Result
+        public abstract record Result
         { 
             private Result()
             { }
 
-            public sealed class Success : Result
-            {
-            }
+            public sealed record Success : Result;
 
-            public sealed class Warning : Result
-            {
-                public Warning(string message)
-                {
-                    this.Message = message;
-                }
+            public sealed record Warning(string Message) : Result;
 
-                public string Message { get; private set; }
-            }
-
-            public sealed class Error : Result
-            {
-                public Error(int code)
-                {
-                    this.Code = code;
-                }
-
-                public int Code { get; private set; }
-            }
+            public sealed record Error(int Code) : Result;
         }";
 
         public const string ValidGenericOptionalDiscriminatedUnion = @"
@@ -58,19 +40,12 @@ namespace Sundew.DiscriminatedUnions.Test
         public abstract record Option<T>
             where T : notnull
         {
-            public sealed record Some : Option<T>
-            {
-                public Some(T value)
-                {
-                    Value = value;
-                }
+            private Option()
+            { }
 
-                public T Value { get; }
-            }
+            public sealed record Some(T Value) : Option<T>;
 
-            public sealed record None : Option<T>
-            {
-            }
+            public sealed record None : Option<T>;
         }";
     }
 }

@@ -144,27 +144,27 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         /// <summary>
         ///   Looks up a localized string similar to Discriminated union constructors must be private so only nested types can derived from it..
         /// </summary>
-        internal static string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDescription {
+        internal static string DiscriminatedUnionCanOnlyHavePrivateConstructorsDescription {
             get {
-                return ResourceManager.GetString("DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDescription", resourceCulture);
+                return ResourceManager.GetString("DiscriminatedUnionCanOnlyHavePrivateConstructorsDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; contains non private constructor(s)..
         /// </summary>
-        internal static string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsMessageFormat {
+        internal static string DiscriminatedUnionCanOnlyHavePrivateConstructorsMessageFormat {
             get {
-                return ResourceManager.GetString("DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsMessageFormat", resourceCulture);
+                return ResourceManager.GetString("DiscriminatedUnionCanOnlyHavePrivateConstructorsMessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Discriminated union constructors must be private..
         /// </summary>
-        internal static string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsTitle {
+        internal static string DiscriminatedUnionCanOnlyHavePrivateConstructorsTitle {
             get {
-                return ResourceManager.GetString("DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsTitle", resourceCulture);
+                return ResourceManager.GetString("DiscriminatedUnionCanOnlyHavePrivateConstructorsTitle", resourceCulture);
             }
         }
         
@@ -192,6 +192,33 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         internal static string HasUnreachableNullCaseTitle {
             get {
                 return ResourceManager.GetString("HasUnreachableNullCaseTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discriminated unions should only have private constructors, so that all cases are known at compile time.
+        /// </summary>
+        internal static string MustHavePrivateConstructorDescription {
+            get {
+                return ResourceManager.GetString("MustHavePrivateConstructorDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; has an undeclared non private constructor: &apos;{1}&apos;..
+        /// </summary>
+        internal static string MustHavePrivateConstructorMessageFormat {
+            get {
+                return ResourceManager.GetString("MustHavePrivateConstructorMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discriminated unions should only have private constructors..
+        /// </summary>
+        internal static string MustHavePrivateConstructorTitle {
+            get {
+                return ResourceManager.GetString("MustHavePrivateConstructorTitle", resourceCulture);
             }
         }
         

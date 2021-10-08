@@ -20,7 +20,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
     public class SundewDiscriminatedUnionSwitchWarningSuppressor : DiagnosticSuppressor
     {
         private static readonly SuppressionDescriptor SuppressSwitchExpressionNotExhaustiveForDiscriminatedUnion =
-            new (
+            new(
                 "SNE0001",
                 "CS8509",
                 Resources.SuppressCS8509Justification);

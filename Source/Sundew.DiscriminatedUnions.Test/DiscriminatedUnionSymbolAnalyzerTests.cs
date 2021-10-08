@@ -26,49 +26,55 @@ namespace Sundew.DiscriminatedUnions.Test
     namespace ConsoleApplication1
     {{
         [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-        public abstract class Result
+        public abstract record Result
         {{
             protected Result()
             {{ }}
 
-            public class Success : Result
-            {{
-            }}
+            public record Success : Result;
 
-            public sealed class Warning : Result
-            {{
-                public Warning(string message)
-                {{
-                    this.Message = message;
-                }}
-
-                public string Message {{ get; private set; }}
-            }}
+            public sealed record Warning(string Message) : Result;
         }}
 
-        public sealed class Error : Result
-        {{
-            public Error(int code)
-            {{
-                this.Code = code;
-            }}
+        public sealed record Error(int Code) : Result;
+    }}";
 
-            public int Code {{ get; private set; }}
+            await VerifyCS.VerifyAnalyzerAsync(
+                test,
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer
+                        .DiscriminatedUnionCanOnlyHavePrivateConstructorsDiagnosticId)
+                    .WithArguments(TestData.ConsoleApplication1Result)
+                    .WithSpan(15, 13, 16, 16),
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedDiagnosticId)
+                    .WithArguments("ConsoleApplication1.Result.Success")
+                    .WithSpan(18, 13, 18, 44),
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeNestedDiagnosticId)
+                    .WithArguments("ConsoleApplication1.Error", TestData.ConsoleApplication1Result)
+                    .WithSpan(23, 9, 23, 55));
+        }
+
+        [TestMethod]
+        public async Task Given_DiscriminatedUnion_When_ConstructorIsNotPrivateProtectedAndCaseIsNotSealed_Then_DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsAndCasesShouldBeSealedAreReported2()
+        {
+            var test = $@"#nullable enable
+{TestData.Usings}
+    namespace ConsoleApplication1
+    {{
+        [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+        public abstract record Result
+        {{
+            public sealed record Success : Result;
+
+            public sealed record Warning(string Message) : Result;
         }}
     }}";
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer
-                        .DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDiagnosticId)
-                    .WithArguments(TestData.ConsoleApplication1Result)
-                    .WithSpan(15, 13, 16, 16),
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedDiagnosticId)
-                    .WithArguments("ConsoleApplication1.Result.Success")
-                    .WithSpan(18, 13, 20, 14),
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeNestedDiagnosticId)
-                    .WithArguments("ConsoleApplication1.Error", TestData.ConsoleApplication1Result)
-                    .WithSpan(33, 9, 41, 10));
+                        .MustHavePrivateConstructorRule)
+                    .WithArguments("ConsoleApplication1.Result", "ConsoleApplication1.Result.Result()")
+                    .WithSpan(12, 9, 18, 10));
         }
     }
 }

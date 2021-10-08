@@ -22,9 +22,23 @@ namespace Sundew.DiscriminatedUnions.Analyzer
 
             if (DiscriminatedUnionHelper.IsDiscriminatedUnion(namedTypeSymbol))
             {
-                var invalidConstructors = namedTypeSymbol.Constructors.Where(x => x.DeclaredAccessibility != Accessibility.Private);
+                var invalidConstructors = namedTypeSymbol.Constructors
+                    .Where(x => !SymbolEqualityComparer.Default.Equals(x.Parameters.SingleOrDefault()?.Type, namedTypeSymbol) &&
+                                x.DeclaredAccessibility != Accessibility.Private);
                 foreach (var invalidConstructor in invalidConstructors)
                 {
+                    if (invalidConstructor.DeclaringSyntaxReferences.IsEmpty)
+                    {
+                        foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(
+                                SundewDiscriminatedUnionsAnalyzer.MustHavePrivateConstructorRule,
+                                declaringSyntaxReference.GetSyntax().GetLocation(),
+                                namedTypeSymbol,
+                                invalidConstructor));
+                        }
+                    }
+
                     foreach (var declaringSyntaxReference in invalidConstructor.DeclaringSyntaxReferences)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(

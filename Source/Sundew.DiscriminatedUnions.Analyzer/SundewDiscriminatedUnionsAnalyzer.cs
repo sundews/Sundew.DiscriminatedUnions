@@ -29,9 +29,9 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         public const string SwitchShouldNotHaveDefaultCaseDiagnosticId = "SDU0002";
 
         /// <summary>
-        /// Diagnostic id indicating that discriminated union can only have private protected constructors.
+        /// Diagnostic id indicating that discriminated union can only have private constructors.
         /// </summary>
-        public const string DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDiagnosticId = "SDU0003";
+        public const string DiscriminatedUnionCanOnlyHavePrivateConstructorsDiagnosticId = "SDU0003";
 
         /// <summary>
         /// Diagnostic id indicating that the case should be sealed.
@@ -47,6 +47,11 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// Diagnostic id indicating that the switch has an unreachable null case.
         /// </summary>
         public const string HasUnreachableNullCaseDiagnosticId = "SDU0006";
+
+        /// <summary>
+        /// Diagnostic id indicating that the discriminated union must have a private constructor.
+        /// </summary>
+        public const string MustHavePrivateConstructorDiagnosticId = "SDU0007";
 
         /// <summary>
         /// Diagnostic id indicating that the switch should throw in default case.
@@ -82,13 +87,13 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// </summary>
         public static readonly DiagnosticDescriptor DiscriminatedUnionCanOnlyHavePrivateConstructorsRule =
             DiagnosticDescriptorHelper.Create(
-                DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDiagnosticId,
-                nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsTitle),
-                nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsMessageFormat),
+                DiscriminatedUnionCanOnlyHavePrivateConstructorsDiagnosticId,
+                nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateConstructorsTitle),
+                nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateConstructorsMessageFormat),
                 Category,
                 DiagnosticSeverity.Error,
                 true,
-                nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsDescription));
+                nameof(Resources.DiscriminatedUnionCanOnlyHavePrivateConstructorsDescription));
 
         /// <summary>
         /// The cases should be sealed rule.
@@ -130,6 +135,19 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// <summary>
         /// The switch should throw in default case rule.
         /// </summary>
+        public static readonly DiagnosticDescriptor MustHavePrivateConstructorRule =
+            DiagnosticDescriptorHelper.Create(
+                MustHavePrivateConstructorDiagnosticId,
+                nameof(Resources.MustHavePrivateConstructorTitle),
+                nameof(Resources.MustHavePrivateConstructorMessageFormat),
+                Category,
+                DiagnosticSeverity.Error,
+                true,
+                nameof(Resources.MustHavePrivateConstructorDescription));
+
+        /// <summary>
+        /// The switch should throw in default case rule.
+        /// </summary>
         public static readonly DiagnosticDescriptor SwitchShouldThrowInDefaultCaseRule =
             DiagnosticDescriptorHelper.Create(
                 SwitchShouldThrowInDefaultCaseDiagnosticId,
@@ -152,6 +170,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
             CasesShouldBeSealedRule,
             CasesShouldNestedRule,
             HasUnreachableNullCaseRule,
+            MustHavePrivateConstructorRule,
             SwitchShouldThrowInDefaultCaseRule);
 
         /// <summary>
