@@ -14,7 +14,7 @@ namespace Sundew.DiscriminatedUnions.Test
     using Sundew.DiscriminatedUnions.Analyzer;
     using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
@@ -55,7 +55,6 @@ namespace Sundew.DiscriminatedUnions.Test
                         Success success => true,
                         Warning warning => true,
                         Error error => false,
-                        _ => throw new UnreachableCaseException(result),
                     }}
             }}
         }}

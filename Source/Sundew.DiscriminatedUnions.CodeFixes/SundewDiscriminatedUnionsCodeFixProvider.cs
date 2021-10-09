@@ -5,13 +5,19 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Analyzer
+namespace Sundew.DiscriminatedUnions.CodeFixes
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Editing;
+    using Sundew.DiscriminatedUnions.Analyzer;
 
     /// <summary>
     /// Code fix for diagnostics related to discriminated unions.
@@ -21,10 +27,21 @@ namespace Sundew.DiscriminatedUnions.Analyzer
     [Shared]
     public class SundewDiscriminatedUnionsCodeFixProvider : CodeFixProvider
     {
+        private readonly Dictionary<string, ICodeFixer> codeFixers;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SundewDiscriminatedUnionsCodeFixProvider"/> class.
+        /// </summary>
+        public SundewDiscriminatedUnionsCodeFixProvider()
+        {
+            this.codeFixers = new ICodeFixer[] { new CaseNotSealedCodeFixer(), new MustHavePrivateConstructorCodeFixer() }.ToDictionary(x => x.DiagnosticId);
+            this.FixableDiagnosticIds = ImmutableArray.CreateRange(this.codeFixers.Keys);
+        }
+
         /// <summary>
         /// Gets the list of diagnostic IDs that this provider can provide fixes for.
         /// </summary>
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId, SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseDiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; }
 
         /// <summary>
         /// Gets an optional <see cref="T:Microsoft.CodeAnalysis.CodeFixes.FixAllProvider" /> that can fix all/multiple occurrences of diagnostics fixed by this code fix provider.
@@ -46,7 +63,31 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// <returns>An async task.</returns>
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var diagnostic = context.Diagnostics.First();
+            var document = context.Document;
+            var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            if (root == null)
+            {
+                return;
+            }
+
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            if (semanticModel == null)
+            {
+                return;
+            }
+
+            var node = root.FindNode(diagnostic.Location.SourceSpan);
+            if (this.codeFixers.TryGetValue(diagnostic.Id, out var codeFixer))
+            {
+                var (title, equivalenceKey) = codeFixer.GetNames(node, semanticModel);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        title,
+                        cancellationToken => codeFixer.Fix(document, root, node, semanticModel, cancellationToken),
+                        equivalenceKey),
+                    diagnostic);
+            }
         }
     }
 }

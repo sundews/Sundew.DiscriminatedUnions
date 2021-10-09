@@ -38,12 +38,7 @@ namespace Sundew.DiscriminatedUnions.Test
         {
             var test = new Test
             {
-                TestCode = source + @"
-
-namespace System.Runtime.CompilerServices
-{
-      internal static class IsExternalInit {}
-}",
+                TestCode = source + CSharpVerifierHelper.IsExternalInit,
             };
 
             test.SolutionTransforms.Add((solution, id) => solution.AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location)));
@@ -64,8 +59,8 @@ namespace System.Runtime.CompilerServices
         {
             var test = new Test
             {
-                TestCode = source,
-                FixedCode = fixedSource,
+                TestCode = source + CSharpVerifierHelper.IsExternalInit,
+                FixedCode = fixedSource + CSharpVerifierHelper.IsExternalInit,
             };
 
             test.SolutionTransforms.Add((solution, id) => solution.AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location)));

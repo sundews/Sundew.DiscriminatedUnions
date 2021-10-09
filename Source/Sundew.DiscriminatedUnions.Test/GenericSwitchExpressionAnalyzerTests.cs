@@ -13,7 +13,7 @@ namespace Sundew.DiscriminatedUnions.Test
 
     using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
 Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsCodeFixProvider,
+Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
 Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
@@ -25,28 +25,28 @@ Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppres
             var test = $@"#nullable enable
 {TestData.Usings}
 
-    namespace ConsoleApplication1
-    {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public bool Switch<T>(Option<T> option)
-                where T : notnull
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public bool Switch<T>(Option<T> option)
+            where T : notnull
+        {{
+            return option switch
             {{
-                return option switch
-                {{
-                    Option<T>.Some some => true,
-                    Option<T>.None => false,
-                    null => false,
-                }};
-            }}
+                Option<T>.Some some => true,
+                Option<T>.None => false,
+                null => false,
+            }};
         }}
+    }}
 {TestData.ValidGenericOptionalDiscriminatedUnion}
-    }}";
+}}";
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.HasUnreachableNullCaseRule)
-                    .WithSpan(18, 24, 23, 18));
+                    .WithSpan(18, 20, 23, 14));
         }
 
         [TestMethod]
@@ -85,33 +85,33 @@ Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppres
             var test = $@"#nullable enable
 {TestData.Usings}
 
-    namespace ConsoleApplication1
-    {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public int Switch()
-            {{
-                var option = Compute(""test"");
-                return option switch
-                    {{
-                        Option<int>.Some some => some.Value,
-                        Option<int>.None => 0,
-                        null => -1,
-                    }};
-            }}
-
-            private static Option<int> Compute(string test)
-            {{
-                if (test == ""test"")
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public int Switch()
+        {{
+            var option = Compute(""test"");
+            return option switch
                 {{
-                    return new Option<int>.Some(45);
-                }}
-
-                return new Option<int>.None();
-            }}
+                    Option<int>.Some some => some.Value,
+                    Option<int>.None => 0,
+                    null => -1,
+                }};
         }}
+
+        private static Option<int> Compute(string test)
+        {{
+            if (test == ""test"")
+            {{
+                return new Option<int>.Some(45);
+            }}
+
+            return new Option<int>.None();
+        }}
+    }}
 {TestData.ValidGenericOptionalDiscriminatedUnion}
-    }}";
+}}";
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
@@ -124,28 +124,28 @@ Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppres
         {
             var test = $@"{TestData.Usings}
 
-    namespace ConsoleApplication1
-    {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public bool Switch<T>(Option<T> option)
-                where T : notnull
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public bool Switch<T>(Option<T> option)
+            where T : notnull
+        {{
+            return option switch
             {{
-                return option switch
-                {{
-                    Option<T>.Some some => true,
-                    Option<T>.None => false,
-                }};
-            }}
+                Option<T>.Some some => true,
+                Option<T>.None => false,
+            }};
         }}
+    }}
 {TestData.ValidGenericOptionalDiscriminatedUnion}
-    }}";
+}}";
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
                     .WithArguments("'null'", string.Empty, "ConsoleApplication1.Option<T>", "is")
-                    .WithSpan(17, 24, 21, 18));
+                    .WithSpan(17, 20, 21, 14));
         }
 
         [TestMethod]
@@ -153,22 +153,22 @@ Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppres
         {
             var test = $@"{TestData.Usings}
 
-    namespace ConsoleApplication1
-    {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public int Switch(Option<int> option)
-            {{
-                return option switch
-                    {{
-                        Option<int>.Some some => some.Value,
-                        Option<int>.None => 0,
-                        null => -1,
-                    }};
-            }}
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public int Switch(Option<int> option)
+        {{
+            return option switch
+                {{
+                    Option<int>.Some some => some.Value,
+                    Option<int>.None => 0,
+                    null => -1,
+                }};
         }}
+    }}
 {TestData.ValidGenericOptionalDiscriminatedUnion}
-    }}";
+}}";
 
             await VerifyCS.VerifyAnalyzerAsync(test);
         }

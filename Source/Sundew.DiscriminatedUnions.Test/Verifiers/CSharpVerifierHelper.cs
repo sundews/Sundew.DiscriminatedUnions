@@ -14,6 +14,13 @@ namespace Sundew.DiscriminatedUnions.Test
 
     internal static class CSharpVerifierHelper
     {
+        public const string IsExternalInit = @"
+
+namespace System.Runtime.CompilerServices
+{
+    internal static class IsExternalInit { }
+}";
+
         /// <summary>
         /// Gets the nullable warnings.
         /// By default, the compiler reports diagnostics for nullable reference types at

@@ -35,7 +35,7 @@ namespace Sundew.DiscriminatedUnions.Test
         {
             var test = new Test
             {
-                TestCode = source,
+                TestCode = source + CSharpVerifierHelper.IsExternalInit,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
