@@ -59,7 +59,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
 
         private static void SuppressIfDiscriminatedUnion(SuppressionAnalysisContext context, ITypeSymbol? switchType, Diagnostic diagnostic)
         {
-            if (DiscriminatedUnionHelper.IsDiscriminatedUnionSwitch(switchType))
+            if (DiscriminatedUnionHelper.IsDiscriminatedUnion(switchType))
             {
                 context.ReportSuppression(
                     Suppression.Create(

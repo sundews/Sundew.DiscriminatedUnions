@@ -15,7 +15,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
     {
         string DiagnosticId { get; }
 
-        (string Title, string EquivalenceKey) GetNames(SyntaxNode syntaxNode, SemanticModel semanticModel);
+        CodeFixStatus GetCodeFixState(SyntaxNode syntaxNode, SemanticModel semanticModel, CancellationToken cancellationToken);
 
         Task<Document> Fix(Document document, SyntaxNode root, SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken);
     }

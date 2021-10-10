@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Case" xml:space="preserve">
+    <value>case</value>
+  </data>
+  <data name="Cases" xml:space="preserve">
+    <value>cases</value>
+  </data>
+  <data name="Are" xml:space="preserve">
+    <value>are</value>
+  </data>
+  <data name="Is" xml:space="preserve">
+    <value>is</value>
+  </data>
   <data name="AllCasesNotHandledTitle" xml:space="preserve">
     <value>All possible cases not handled.</value>
   </data>
@@ -124,7 +136,7 @@
     <value>Switch should handle cases of all possible types.</value>
   </data>
   <data name="AllCasesNotHandledMessageFormat" xml:space="preserve">
-    <value>{0} case{1} in '{2}' {3} not handled.</value>
+    <value>{0} {1} in '{2}' {3} not handled.</value>
   </data>
   <data name="DiscriminatedUnionCanOnlyHavePrivateConstructorsTitle" xml:space="preserve">
     <value>Discriminated union constructors must be private.</value>

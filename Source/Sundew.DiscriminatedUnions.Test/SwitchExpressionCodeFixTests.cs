@@ -7,9 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Test
 {
-    using System;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Sundew.DiscriminatedUnions.Analyzer;
     using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
@@ -21,51 +19,100 @@ namespace Sundew.DiscriminatedUnions.Test
     public class SwitchExpressionCodeFixTests
     {
         [TestMethod]
-        [Ignore]
-        public async Task TestMethod2()
+        public async Task Given_SwitchExpression_When_NullableContextIsEnabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithoutNullShouldBeHandled()
         {
-            var test = $@"{TestData.Usings}
+            var test = $@"#nullable enable
+{TestData.Usings}
 
-    namespace ConsoleApplication1
-    {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public bool Switch(Result result)
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public bool Switch(Result result)
+        {{
+            return result switch
             {{
-                return result switch
-                    {{
-                        Success success => true,
-                        _ => false,
-                    }}
-            }}
+                Result.Success success => true,
+            }};
         }}
+    }}
 {TestData.ValidResultDiscriminatedUnion}
-    }}";
+}}";
 
-            var fixtest = $@"{TestData.Usings}
+            var fixtest = $@"#nullable enable
+{TestData.Usings}
 
-    namespace ConsoleApplication1
-    {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public bool Switch(Result result)
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public bool Switch(Result result)
+        {{
+            return result switch
             {{
-                return result switch
-                    {{
-                        Success success => true,
-                        Warning warning => true,
-                        Error error => false,
-                    }}
-            }}
+                Result.Success success => true,
+                Result.Warning warning => throw new System.NotImplementedException(),
+                Result.Error error => throw new System.NotImplementedException(),
+            }};
         }}
+    }}
 {TestData.ValidResultDiscriminatedUnion}
-    }}";
+}}";
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
-                    .WithArguments("Error")
-                    .WithSpan(15, 17, 21, 18),
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                    .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
+                    .WithSpan(17, 20, 20, 14),
+            };
+            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        }
+
+        [TestMethod]
+        public async Task Given_SwitchExpression_When_NullableContextIsDisableAndMultipleCasesAreNotHandled_Then_RemainingCasesWithNullShouldBeHandled()
+        {
+            var test = $@"{TestData.Usings}
+
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public bool Switch(Result result)
+        {{
+            return result switch
+            {{
+                Result.Success success => true,
+            }};
+        }}
+    }}
+{TestData.ValidResultDiscriminatedUnion}
+}}";
+
+            var fixtest = $@"{TestData.Usings}
+
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public bool Switch(Result result)
+        {{
+            return result switch
+            {{
+                Result.Success success => true,
+                Result.Warning warning => throw new System.NotImplementedException(),
+                Result.Error error => throw new System.NotImplementedException(),
+                null => throw new System.NotImplementedException(),
+            }};
+        }}
+    }}
+{TestData.ValidResultDiscriminatedUnion}
+}}";
+
+            var expected = new[]
+            {
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                    .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
+                    .WithSpan(16, 20, 19, 14),
             };
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }

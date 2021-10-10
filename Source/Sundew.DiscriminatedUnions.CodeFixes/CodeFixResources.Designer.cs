@@ -70,6 +70,15 @@ namespace Sundew.DiscriminatedUnions.CodeFixes {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Populate missing cases.
+        /// </summary>
+        internal static string PopulateMissingCases {
+            get {
+                return ResourceManager.GetString("PopulateMissingCases", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Seal case &apos;{0}&apos;.
         /// </summary>
         internal static string SealCase {

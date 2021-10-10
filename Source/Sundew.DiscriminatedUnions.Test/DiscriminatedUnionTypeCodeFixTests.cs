@@ -65,7 +65,7 @@ namespace ConsoleApplication1
         }
 
         [TestMethod]
-        public async Task Given_DiscriminatedUnion_When_NoPrivateDefaultConstructorIsDeclared_Then_DefaultConstructorShouldBeDeclared()
+        public async Task Given_DiscriminatedUnion_When_NoPrivateDefaultConstructorIsDeclared_Then_DefaultConstructorShouldBeDeclaredAfterLastConsecutiveField()
         {
             var test = $@"{TestData.Usings}
 
@@ -74,7 +74,9 @@ namespace ConsoleApplication1
     [Sundew.DiscriminatedUnions.DiscriminatedUnion]
     public abstract record Option<T>
     {{
-        public int Yay;
+        public const string ConstField = ""Const"";
+        
+        public int Field;
 
         public sealed record Success(T Value) : Option<T>;
 
@@ -89,7 +91,9 @@ namespace ConsoleApplication1
     [Sundew.DiscriminatedUnions.DiscriminatedUnion]
     public abstract record Option<T>
     {{
-        public int Yay;
+        public const string ConstField = ""Const"";
+
+        public int Field;
 
         private Option()
         {{
@@ -105,7 +109,7 @@ namespace ConsoleApplication1
             {
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.MustHavePrivateConstructorRule)
                     .WithArguments("ConsoleApplication1.Option<T>", "ConsoleApplication1.Option<T>.Option()")
-                    .WithSpan(12, 5, 20, 6),
+                    .WithSpan(12, 5, 22, 6),
             };
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }

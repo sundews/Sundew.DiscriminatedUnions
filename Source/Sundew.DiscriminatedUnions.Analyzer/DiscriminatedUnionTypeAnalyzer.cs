@@ -51,7 +51,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                 return;
             }
 
-            if (namedTypeSymbol.BaseType == null || !DiscriminatedUnionHelper.IsDiscriminatedUnion(namedTypeSymbol.BaseType))
+            if (!DiscriminatedUnionHelper.IsDiscriminatedUnion(namedTypeSymbol.BaseType))
             {
                 return;
             }

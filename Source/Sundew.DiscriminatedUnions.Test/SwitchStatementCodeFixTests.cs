@@ -20,61 +20,61 @@ namespace Sundew.DiscriminatedUnions.Test
     [TestClass]
     public class SwitchStatementCodeFixTests
     {
-        // Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        [Ignore]
-        public async Task TestMethod2()
+        public async Task Given_SwitchStatement_WhenNullableContextIsDisableAndMultipleCasesAreMissing_Then_RemainingCasesWithNullShouldBeHandled()
         {
             var test = $@"{TestData.Usings}
 
-    namespace ConsoleApplication1
-    {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public void Switch(Result result)
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public void Switch(Result result)
+        {{
+            switch(result)
             {{
-                switch(result)
-                {{
-                    case Success success:
-                        break;
-                    default:
-                        break;
-                }}
+                case Result.Success success:
+                    break;
+                default:
+                    throw new Sundew.DiscriminatedUnions.UnreachableCaseException(typeof(Result));
             }}
         }}
+    }}
 {TestData.ValidResultDiscriminatedUnion}
-    }}";
+}}";
 
             var fixtest = $@"{TestData.Usings}
 
-    namespace ConsoleApplication1
-    {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public void Switch(Result result)
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public void Switch(Result result)
+        {{
+            switch (result)
             {{
-                switch(result)
-                {{
-                    case Success success:
-                        break;
-                    case Warning warning:
-                        break;
-                    case Error error:
-                        break;
-                    default:
-                        throw new UnreachableCaseException(result);
-                }}
+                case Result.Success success:
+                    break;
+                case Result.Warning warning:
+                    throw new System.NotImplementedException();
+                case Result.Error error:
+                    throw new System.NotImplementedException();
+                case null:
+                    throw new System.NotImplementedException();
+                default:
+                    throw new Sundew.DiscriminatedUnions.UnreachableCaseException(typeof(Result));
             }}
         }}
+    }}
 {TestData.ValidResultDiscriminatedUnion}
-    }}";
-
+}}";
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
-                    .WithArguments("Error")
-                    .WithSpan(15, 17, 21, 18),
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                    .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
+                    .WithSpan(16, 13, 22, 14),
             };
+
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }
     }

@@ -11,13 +11,10 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Editing;
-    using Sundew.DiscriminatedUnions.Analyzer;
 
     /// <summary>
     /// Code fix for diagnostics related to discriminated unions.
@@ -34,7 +31,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
         /// </summary>
         public SundewDiscriminatedUnionsCodeFixProvider()
         {
-            this.codeFixers = new ICodeFixer[] { new CaseNotSealedCodeFixer(), new MustHavePrivateConstructorCodeFixer() }.ToDictionary(x => x.DiagnosticId);
+            this.codeFixers = new ICodeFixer[] { new AllCasesNotHandledCodeFixer(), new CaseNotSealedCodeFixer(), new MustHavePrivateConstructorCodeFixer() }.ToDictionary(x => x.DiagnosticId);
             this.FixableDiagnosticIds = ImmutableArray.CreateRange(this.codeFixers.Keys);
         }
 
@@ -71,22 +68,29 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                 return;
             }
 
-            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            if (semanticModel == null)
-            {
-                return;
-            }
-
             var node = root.FindNode(diagnostic.Location.SourceSpan);
             if (this.codeFixers.TryGetValue(diagnostic.Id, out var codeFixer))
             {
-                var (title, equivalenceKey) = codeFixer.GetNames(node, semanticModel);
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        title,
-                        cancellationToken => codeFixer.Fix(document, root, node, semanticModel, cancellationToken),
-                        equivalenceKey),
-                    diagnostic);
+                var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+                if (semanticModel == null)
+                {
+                    return;
+                }
+
+                var codeFixState = codeFixer.GetCodeFixState(node, semanticModel, context.CancellationToken);
+                switch (codeFixState)
+                {
+                    case CodeFixStatus.CanFix canFix:
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                canFix.Title,
+                                cancellationToken => codeFixer.Fix(document, root, node, semanticModel, cancellationToken),
+                                canFix.EquivalenceKey),
+                            diagnostic);
+                        return;
+                    case CodeFixStatus.CannotFix cannotFix:
+                        break;
+                }
             }
         }
     }

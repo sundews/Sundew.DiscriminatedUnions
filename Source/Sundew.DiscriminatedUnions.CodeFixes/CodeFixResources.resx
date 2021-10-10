@@ -123,4 +123,7 @@
   <data name="SealCase" xml:space="preserve">
     <value>Seal case '{0}'</value>
   </data>
+  <data name="PopulateMissingCases" xml:space="preserve">
+    <value>Populate missing cases</value>
+  </data>
 </root>

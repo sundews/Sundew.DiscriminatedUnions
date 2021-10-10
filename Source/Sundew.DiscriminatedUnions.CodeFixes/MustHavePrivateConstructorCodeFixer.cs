@@ -20,10 +20,10 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
     {
         public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.MustHavePrivateConstructorDiagnosticId;
 
-        public (string Title, string EquivalenceKey) GetNames(SyntaxNode syntaxNode, SemanticModel semanticModel)
+        public CodeFixStatus GetCodeFixState(SyntaxNode syntaxNode, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var name = CodeFixResources.CreatePrivateDefaultConstructor;
-            return (name, name);
+            return new CodeFixStatus.CanFix(name, nameof(MustHavePrivateConstructorCodeFixer));
         }
 
         public async Task<Document> Fix(Document document, SyntaxNode root, SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -37,12 +37,12 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                 return document;
             }
 
-            var index = GetIndex(generator.GetMembers(node));
+            var index = GetMemberInsertionIndex(generator.GetMembers(node));
             var newNode = generator.InsertMembers(node, index, generator.ConstructorDeclaration(name, null, Accessibility.Private)).WithAdditionalAnnotations(Formatter.Annotation);
             return document.WithSyntaxRoot(root.ReplaceNode(node, newNode));
         }
 
-        private static int GetIndex(IReadOnlyList<SyntaxNode> members)
+        private static int GetMemberInsertionIndex(IReadOnlyList<SyntaxNode> members)
         {
             var i = 0;
             for (; i < members.Count; i++)

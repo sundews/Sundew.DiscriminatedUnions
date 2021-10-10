@@ -39,9 +39,15 @@ var message = result switch
 };
 ```
 
+## Features:
+- Analyzer and CodeFix for incomplete switch statements and expressions
+- Analyzer and CodeFix for unsealed cases classes
+- Analyzer and CodeFix for non-private default constructor
+- Analyzer for any other declared non-private constructor
+- F# equivalent Option&lt;T&gt;
+
 ## Issues/Todos
 * The analyzer is compatible with C# 9, however currently it references are more recent version (3.11) of the Microsoft.CodeAnalysis package, meaning it will fail to load on Visual Studio versions shipping with older ones. Still need to figure out with version first shipped with C# 9 support.
 * Experimental generics support, but still have some issues with nullability.
-* CodeFixes not yet implemented
 * SourceGenerator not yet implemented: https://github.com/dotnet/csharplang/blob/main/proposals/discriminated-unions.md
 * When installing via NuGet the package must be manually added to all projects that evaluate DUs.

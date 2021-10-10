@@ -136,7 +136,7 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
-                    .WithArguments("'Error', 'Warning', 'null'", 's', TestData.ConsoleApplication1Result, "are")
+                    .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(16, 20, 20, 18),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
@@ -167,7 +167,7 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
-                    .WithArguments("'Error', 'Warning'", 's', TestData.ConsoleApplication1Result, "are")
+                    .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(17, 20, 20, 18));
         }
 
@@ -198,7 +198,7 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
-                    .WithArguments("'null'", string.Empty, TestData.ConsoleApplication1Result, "is")
+                    .WithArguments("'null'", Resources.Case, TestData.ConsoleApplication1Result, Resources.Is)
                     .WithSpan(17, 20, 23, 18));
         }
     }

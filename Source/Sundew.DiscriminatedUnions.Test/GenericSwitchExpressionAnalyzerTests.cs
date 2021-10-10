@@ -144,7 +144,7 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
-                    .WithArguments("'null'", string.Empty, "ConsoleApplication1.Option<T>", "is")
+                    .WithArguments("'null'", Resources.Case, "ConsoleApplication1.Option<T>", Resources.Is)
                     .WithSpan(17, 20, 21, 14));
         }
 
@@ -198,7 +198,7 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
-                    .WithArguments("'null'", string.Empty, TestData.ConsoleApplication1OptionInt, "is")
+                    .WithArguments("'null'", Resources.Case, TestData.ConsoleApplication1OptionInt, Resources.Is)
                     .WithSpan(17, 24, 21, 22));
         }
     }

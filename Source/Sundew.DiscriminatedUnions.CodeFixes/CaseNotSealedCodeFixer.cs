@@ -18,11 +18,16 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
     {
         public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedDiagnosticId;
 
-        public (string Title, string EquivalenceKey) GetNames(SyntaxNode syntaxNode, SemanticModel semanticModel)
+        public CodeFixStatus GetCodeFixState(SyntaxNode syntaxNode, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var typeInfo = semanticModel.GetTypeInfo(syntaxNode);
-            var name = string.Format(CodeFixResources.SealCase, typeInfo.Type?.Name ?? "unknown error");
-            return (name, name);
+            var declaredSymbol = semanticModel.GetDeclaredSymbol(syntaxNode, cancellationToken);
+            if (declaredSymbol == null)
+            {
+                return new CodeFixStatus.CannotFix();
+            }
+
+            var name = string.Format(CodeFixResources.SealCase, declaredSymbol.Name);
+            return new CodeFixStatus.CanFix(name, nameof(CaseNotSealedCodeFixer));
         }
 
         public async Task<Document> Fix(Document document, SyntaxNode root, SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
