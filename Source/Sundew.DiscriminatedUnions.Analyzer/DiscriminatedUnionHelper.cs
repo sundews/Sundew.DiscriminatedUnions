@@ -11,7 +11,6 @@ namespace Sundew.DiscriminatedUnions.Analyzer
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Operations;
 
     /// <summary>
@@ -55,23 +54,23 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// </summary>
         /// <param name="switchExpressionOperation">The switch expression operation.</param>
         /// <returns>The handled case types.</returns>
-        public static IReadOnlyList<ITypeSymbol> GetHandledCaseTypes(ISwitchExpressionOperation switchExpressionOperation)
+        public static IEnumerable<(ITypeSymbol Type, int Index, bool HandlesCase)> GetHandledCaseTypes(ISwitchExpressionOperation switchExpressionOperation)
         {
-            return switchExpressionOperation.Arms.Select(switchExpressionArmOperation =>
+            return switchExpressionOperation.Arms.Select((switchExpressionArmOperation, index) =>
             {
                 if (switchExpressionArmOperation.Pattern is IDeclarationPatternOperation
                     declarationPatternSyntax)
                 {
-                    return declarationPatternSyntax.MatchedType;
+                    return (Type: declarationPatternSyntax.MatchedType, index, HandlesCase: true);
                 }
 
                 if (switchExpressionArmOperation.Pattern is ITypePatternOperation typePatternOperation)
                 {
-                    return typePatternOperation.MatchedType;
+                    return (Type: typePatternOperation.MatchedType, index, HandlesCase: true);
                 }
 
-                return default;
-            }).Where(x => x != null).Select(x => x!).ToList();
+                return (Type: switchExpressionArmOperation.Pattern.NarrowedType, index, HandlesCase: false);
+            }).Where(x => x.Type != null).Select(x => (x.Type!, x.index, x.HandlesCase));
         }
 
         /// <summary>
@@ -97,8 +96,9 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// </summary>
         /// <param name="switchOperation">The switch operation.</param>
         /// <returns>The handled case types.</returns>
-        public static IReadOnlyList<ITypeSymbol> GetHandledCaseTypes(ISwitchOperation switchOperation)
+        public static IEnumerable<(ITypeSymbol Type, int Index, bool HandlesCase)> GetHandledCaseTypes(ISwitchOperation switchOperation)
         {
+            var index = 0;
             return switchOperation.Cases.SelectMany(switchCaseOperation =>
                 switchCaseOperation.Clauses.Select(caseClauseOperation =>
                 {
@@ -107,13 +107,15 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                         if (patternCaseClauseOperation.Pattern is IDeclarationPatternOperation
                             declarationPatternOperation)
                         {
-                            return declarationPatternOperation.MatchedType;
+                            return (Type: declarationPatternOperation.MatchedType, Index: index++, HandlesCase: true);
                         }
 
                         if (patternCaseClauseOperation.Pattern is ITypePatternOperation typePatternOperation)
                         {
-                            return typePatternOperation.MatchedType;
+                            return (Type: typePatternOperation.MatchedType, Index: index++, HandlesCase: true);
                         }
+
+                        return (Type: patternCaseClauseOperation.Pattern.NarrowedType, Index: index++, HandlesCase: false);
                     }
 
                     /*if (caseClauseOperation is IDefaultCaseClauseOperation defaultCaseClauseOperation)
@@ -121,8 +123,8 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                         context.ReportDiagnostic(Diagnostic.Create(SwitchShouldNotHaveDefaultCaseRule, defaultCaseClauseOperation.Syntax.GetLocation(), unionType));
                     }*/
 
-                    return null;
-                })).Where(x => x != null).Select(x => x!).ToList();
+                    return (Type: null, Index: -1, HandlesCase: false);
+                }).Where(x => x.Type != null).Select(x => (x.Type!, x.Index, x.HandlesCase)));
         }
 
         /// <summary>

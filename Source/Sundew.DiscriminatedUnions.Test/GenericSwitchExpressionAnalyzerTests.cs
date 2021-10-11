@@ -40,7 +40,7 @@ namespace ConsoleApplication1
             }};
         }}
     }}
-{TestData.ValidGenericOptionalDiscriminatedUnion}
+{TestData.ValidGenericOptionDiscriminatedUnion}
 }}";
 
             await VerifyCS.VerifyAnalyzerAsync(
@@ -69,7 +69,7 @@ namespace ConsoleApplication1
                     }};
             }}
         }}
-{TestData.ValidGenericOptionalDiscriminatedUnion}
+{TestData.ValidGenericOptionDiscriminatedUnion}
     }}";
 
             await VerifyCS.VerifyAnalyzerAsync(
@@ -80,7 +80,7 @@ namespace ConsoleApplication1
 
         [TestMethod]
         [Ignore]
-        public async Task Given_SwitchExpressionInEnabledNullableContext_When_ValueIsNotNullAndAllCasesAndNullCaseAreHandled_Then_HasUnreachableNullCaseIsReported2()
+        public async Task Given_SwitchExpressionInEnabledNullableContext_When_ValueComeFromAMethodAndIsNotNullAndAllCasesAndNullCaseAreHandled_Then_HasUnreachableNullCaseIsReported()
         {
             var test = $@"#nullable enable
 {TestData.Usings}
@@ -110,7 +110,7 @@ namespace ConsoleApplication1
             return new Option<int>.None();
         }}
     }}
-{TestData.ValidGenericOptionalDiscriminatedUnion}
+{TestData.ValidGenericOptionDiscriminatedUnion}
 }}";
 
             await VerifyCS.VerifyAnalyzerAsync(
@@ -138,7 +138,7 @@ namespace ConsoleApplication1
             }};
         }}
     }}
-{TestData.ValidGenericOptionalDiscriminatedUnion}
+{TestData.ValidGenericOptionDiscriminatedUnion}
 }}";
 
             await VerifyCS.VerifyAnalyzerAsync(
@@ -167,7 +167,7 @@ namespace ConsoleApplication1
                 }};
         }}
     }}
-{TestData.ValidGenericOptionalDiscriminatedUnion}
+{TestData.ValidGenericOptionDiscriminatedUnion}
 }}";
 
             await VerifyCS.VerifyAnalyzerAsync(test);
@@ -192,7 +192,7 @@ namespace ConsoleApplication1
                     }};
             }}
         }}
-{TestData.ValidGenericOptionalDiscriminatedUnion}
+{TestData.ValidGenericOptionDiscriminatedUnion}
     }}";
 
             await VerifyCS.VerifyAnalyzerAsync(

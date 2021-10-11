@@ -66,7 +66,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
 
             ReportDiagnostics(
                 caseTypes,
-                actualCaseTypes,
+                actualCaseTypes.Where(x => x.HandlesCase).Select(x => x.Type),
                 switchNullabilityError,
                 unionTypeWithoutNull,
                 switchExpressionOperation,
@@ -120,7 +120,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
 
             ReportDiagnostics(
                 caseTypes,
-                handledCaseTypes,
+                handledCaseTypes.Where(x => x.HandlesCase).Select(x => x.Type),
                 switchNullabilityError,
                 unionTypeWithoutNull,
                 switchOperation,
@@ -129,7 +129,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
 
         private static void ReportDiagnostics(
             IReadOnlyList<ITypeSymbol> caseTypes,
-            IReadOnlyList<ITypeSymbol> handledCaseTypes,
+            IEnumerable<ITypeSymbol> handledCaseTypes,
             SwitchNullability switchNullability,
             ITypeSymbol unionType,
             IOperation operation,

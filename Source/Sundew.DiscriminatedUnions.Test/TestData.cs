@@ -35,7 +35,7 @@ public abstract record Result
     public sealed record Error(int Code) : Result;
 }";
 
-        public const string ValidGenericOptionalDiscriminatedUnion = @"
+        public const string ValidGenericOptionDiscriminatedUnion = @"
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record Option<T>
     where T : notnull

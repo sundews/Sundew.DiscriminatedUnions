@@ -8,6 +8,7 @@
 namespace Sundew.DiscriminatedUnions.CodeFixes
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -59,7 +60,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                 return document;
             }
 
-            var caseTypes = DiscriminatedUnionHelper.GetAllCaseTypes(switchType);
+            var cases = DiscriminatedUnionHelper.GetAllCaseTypes(switchType).Select((caseType, index) => (caseType, index)).ToList();
             var handledCaseTypes = DiscriminatedUnionHelper.GetHandledCaseTypes(switchExpressionOperation);
 
             if (switchExpressionOperation.Syntax is not SwitchExpressionSyntax switchExpressionSyntax)
@@ -68,14 +69,22 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
             }
 
             var arms = switchExpressionSyntax.Arms;
-            var missingCaseTypes = caseTypes.Except<ITypeSymbol>(handledCaseTypes, SymbolEqualityComparer.Default);
-            arms = arms.AddRange(missingCaseTypes.Select(missingCaseType => SyntaxFactory.SwitchExpressionArm(
-                    SyntaxFactory.DeclarationPattern(
-                        (TypeSyntax)generator.TypeExpression(missingCaseType),
-                        SyntaxFactory.SingleVariableDesignation(
-                            SyntaxFactory.ParseToken(Uncapitalize(missingCaseType.Name)))),
-                    ThrowNotImplementExceptionExpression(generator))
-                .WithAdditionalAnnotations(Formatter.Annotation)));
+            foreach (var (missingCaseType, index) in cases)
+            {
+                var caseInfo = FindIndex(handledCaseTypes, missingCaseType, index);
+                if (!caseInfo.WasHandled)
+                {
+                    arms = arms.Insert(
+                        caseInfo.Index,
+                        SyntaxFactory.SwitchExpressionArm(
+                                SyntaxFactory.DeclarationPattern(
+                                    (TypeSyntax)generator.TypeExpression(missingCaseType),
+                                    SyntaxFactory.SingleVariableDesignation(
+                                        SyntaxFactory.ParseToken(Uncapitalize(missingCaseType.Name)))),
+                                ThrowNotImplementExceptionExpression(generator))
+                            .WithAdditionalAnnotations(Formatter.Annotation));
+                }
+            }
 
             var unionTypeInfo = semanticModel.GetTypeInfo(switchExpressionOperation.Value.Syntax);
             if (unionTypeInfo.ConvertedNullability.FlowState != NullableFlowState.NotNull &&
@@ -112,7 +121,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                 return document;
             }
 
-            var caseTypes = DiscriminatedUnionHelper.GetAllCaseTypes(switchType);
+            var cases = DiscriminatedUnionHelper.GetAllCaseTypes(switchType).Select((caseType, index) => (caseType, index)).ToList();
             var handledCaseTypes = DiscriminatedUnionHelper.GetHandledCaseTypes(switchOperation);
 
             if (switchOperation.Syntax is not SwitchStatementSyntax switchStatementSyntax)
@@ -121,24 +130,35 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
             }
 
             var sections = switchStatementSyntax.Sections;
-            var missingCaseTypes = caseTypes.Except<ITypeSymbol>(handledCaseTypes, SymbolEqualityComparer.Default);
-            var missingCases = missingCaseTypes.Select(missingCaseType => SyntaxFactory.SwitchSection(
-                SyntaxFactory.List(
-                    new SwitchLabelSyntax[]
-                    {
-                        SyntaxFactory.CasePatternSwitchLabel(
-                            SyntaxFactory.DeclarationPattern(
-                                (TypeSyntax)generator.TypeExpression(missingCaseType),
-                                SyntaxFactory.SingleVariableDesignation(
-                                    SyntaxFactory.ParseToken(Uncapitalize(missingCaseType.Name)))),
-                            SyntaxFactory.Token(SyntaxKind.ColonToken)),
-                    }),
-                SyntaxFactory.List(new[] { ThrowNotImplementExceptionStatement(generator), }))).ToList();
+            foreach (var (missingCaseType, index) in cases)
+            {
+                var caseInfo = FindIndex(handledCaseTypes, missingCaseType, index);
+                if (!caseInfo.WasHandled)
+                {
+                    sections = sections.Insert(
+                        caseInfo.Index,
+                        SyntaxFactory.SwitchSection(
+                            SyntaxFactory.List(
+                                new SwitchLabelSyntax[]
+                                {
+                                    SyntaxFactory.CasePatternSwitchLabel(
+                                        SyntaxFactory.DeclarationPattern(
+                                            (TypeSyntax)generator.TypeExpression(missingCaseType),
+                                            SyntaxFactory.SingleVariableDesignation(
+                                                SyntaxFactory.ParseToken(Uncapitalize(missingCaseType.Name)))),
+                                        SyntaxFactory.Token(SyntaxKind.ColonToken)),
+                                }),
+                            SyntaxFactory.List(new[] { ThrowNotImplementExceptionStatement(generator), })));
+                }
+            }
+
             var unionTypeInfo = semanticModel.GetTypeInfo(switchOperation.Value.Syntax);
             if (unionTypeInfo.ConvertedNullability.FlowState != NullableFlowState.NotNull &&
                 !DiscriminatedUnionHelper.HasNullCase(switchOperation))
             {
-                missingCases.Add(SyntaxFactory.SwitchSection(
+                sections = sections.Insert(
+                    HasDefaultCase(sections) ? sections.Count - 1 : sections.Count,
+                    SyntaxFactory.SwitchSection(
                     SyntaxFactory.List(
                         new SwitchLabelSyntax[]
                         {
@@ -147,19 +167,50 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                     SyntaxFactory.List(new[] { ThrowNotImplementExceptionStatement(generator), })));
             }
 
-            var index = sections.IndexOf(x => x.Labels.Any(x => x is DefaultSwitchLabelSyntax));
-            if (index == -1)
-            {
-                index = sections.Count - 1;
-            }
-
-            sections = sections.InsertRange(index, missingCases);
-
             return document.WithSyntaxRoot(
                 root.ReplaceNode(
                 node,
                 switchStatementSyntax.WithSections(SyntaxFactory.List(sections))
                     .WithAdditionalAnnotations(Formatter.Annotation)));
+        }
+
+        private static bool HasDefaultCase(SyntaxList<SwitchSectionSyntax> sections)
+        {
+            return sections.LastOrDefault()?.Labels.Any(x => x is DefaultSwitchLabelSyntax) ?? false;
+        }
+
+        private static (int Index, bool WasHandled) FindIndex(IEnumerable<(ITypeSymbol Type, int Index, bool HandlesCase)> handledCases, ITypeSymbol caseType, int caseIndex)
+        {
+            var index = 0;
+            var hadMatch = false;
+            var insertionIndex = 0;
+            foreach (var pair in handledCases)
+            {
+                var isMatch = SymbolEqualityComparer.Default.Equals(pair.Type, caseType);
+                if (isMatch && pair.HandlesCase)
+                {
+                    return (-1, true);
+                }
+
+                if (hadMatch && !isMatch)
+                {
+                    insertionIndex = index + 1;
+                }
+
+                if (isMatch)
+                {
+                    hadMatch = true;
+                }
+
+                index++;
+            }
+
+            if (!hadMatch)
+            {
+                return (caseIndex, false);
+            }
+
+            return (insertionIndex, false);
         }
 
         private static ExpressionSyntax ThrowNotImplementExceptionExpression(SyntaxGenerator generator)
