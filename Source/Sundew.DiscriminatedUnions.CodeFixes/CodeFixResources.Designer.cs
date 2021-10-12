@@ -79,6 +79,15 @@ namespace Sundew.DiscriminatedUnions.CodeFixes {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove default case.
+        /// </summary>
+        internal static string RemoveDefaultCase {
+            get {
+                return ResourceManager.GetString("RemoveDefaultCase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Seal case &apos;{0}&apos;.
         /// </summary>
         internal static string SealCase {

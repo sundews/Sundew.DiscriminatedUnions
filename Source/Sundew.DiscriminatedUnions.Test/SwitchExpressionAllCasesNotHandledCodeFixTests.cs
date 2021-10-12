@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SwitchExpressionCodeFixTests.cs" company="Hukano">
+// <copyright file="SwitchExpressionAllCasesNotHandledCodeFixTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,7 +16,7 @@ namespace Sundew.DiscriminatedUnions.Test
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
-    public class SwitchExpressionCodeFixTests
+    public class SwitchExpressionAllCasesNotHandledCodeFixTests
     {
         [TestMethod]
         public async Task Given_SwitchExpression_When_NullableContextIsEnabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithoutNullShouldBeHandled()

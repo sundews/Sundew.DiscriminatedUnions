@@ -31,7 +31,13 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
         /// </summary>
         public SundewDiscriminatedUnionsCodeFixProvider()
         {
-            this.codeFixers = new ICodeFixer[] { new AllCasesNotHandledCodeFixer(), new CaseNotSealedCodeFixer(), new MustHavePrivateConstructorCodeFixer() }.ToDictionary(x => x.DiagnosticId);
+            this.codeFixers = new ICodeFixer[]
+            {
+                new AllCasesNotHandledCodeFixer(),
+                new SwitchShouldNotHaveDefaultCaseCodeFixer(),
+                new CaseNotSealedCodeFixer(),
+                new MustHavePrivateConstructorCodeFixer(),
+            }.ToDictionary(x => x.DiagnosticId);
             this.FixableDiagnosticIds = ImmutableArray.CreateRange(this.codeFixers.Keys);
         }
 

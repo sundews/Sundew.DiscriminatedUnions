@@ -126,4 +126,7 @@
   <data name="PopulateMissingCases" xml:space="preserve">
     <value>Populate missing cases</value>
   </data>
+  <data name="RemoveDefaultCase" xml:space="preserve">
+    <value>Remove default case</value>
+  </data>
 </root>
