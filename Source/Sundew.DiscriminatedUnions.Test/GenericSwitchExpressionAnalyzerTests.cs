@@ -79,11 +79,16 @@ namespace ConsoleApplication1
         }
 
         [TestMethod]
-        [Ignore]
         public async Task Given_SwitchExpressionInEnabledNullableContext_When_ValueComeFromAMethodAndIsNotNullAndAllCasesAndNullCaseAreHandled_Then_HasUnreachableNullCaseIsReported()
         {
             var test = $@"#nullable enable
-{TestData.Usings}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using Sundew.DiscriminatedUnions;
 
 namespace ConsoleApplication1
 {{
@@ -110,7 +115,19 @@ namespace ConsoleApplication1
             return new Option<int>.None();
         }}
     }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
+
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    public abstract record Result
+    {{
+        private Result()
+        {{ }}
+
+        public sealed record Success : Result;
+
+        public sealed record Warning(string Message) : Result;
+
+        public sealed record Error(int Code) : Result;
+    }}
 }}";
 
             await VerifyCS.VerifyAnalyzerAsync(
