@@ -53,7 +53,13 @@ namespace ConsoleApplication1
         public async Task Given_SwitchExpressionInEnabledNullableContext_When_ValueIsNotNullAndAllCasesAndNullCaseAreHandled_Then_HasUnreachableNullCaseIsReported()
         {
             var test = $@"#nullable enable
-{TestData.Usings}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using Sundew.DiscriminatedUnions;
 
     namespace ConsoleApplication1
     {{
@@ -69,71 +75,24 @@ namespace ConsoleApplication1
                     }};
             }}
         }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
-    }}";
-
-            await VerifyCS.VerifyAnalyzerAsync(
-                test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.HasUnreachableNullCaseRule)
-                    .WithSpan(17, 24, 22, 22));
-        }
-
-        [TestMethod]
-        public async Task Given_SwitchExpressionInEnabledNullableContext_When_ValueComeFromAMethodAndIsNotNullAndAllCasesAndNullCaseAreHandled_Then_HasUnreachableNullCaseIsReported()
-        {
-            var test = $@"#nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using Sundew.DiscriminatedUnions;
-
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public int Switch()
-        {{
-            var option = Compute(""test"");
-            return option switch
-                {{
-                    Option<int>.Some some => some.Value,
-                    Option<int>.None => 0,
-                    null => -1,
-                }};
-        }}
-
-        private static Option<int> Compute(string test)
-        {{
-            if (test == ""test"")
-            {{
-                return new Option<int>.Some(45);
-            }}
-
-            return new Option<int>.None();
-        }}
-    }}
 
     [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-    public abstract record Result
+    public abstract record Option<T>
+        where T : notnull
     {{
-        private Result()
+        private Option()
         {{ }}
 
-        public sealed record Success : Result;
+        public sealed record Some(T Value) : Option<T>;
 
-        public sealed record Warning(string Message) : Result;
-
-        public sealed record Error(int Code) : Result;
+        public sealed record None : Option<T>;
     }}
 }}";
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.HasUnreachableNullCaseRule)
-                    .WithSpan(17, 24, 22, 22));
+                    .WithSpan(16, 24, 21, 22));
         }
 
         [TestMethod]
