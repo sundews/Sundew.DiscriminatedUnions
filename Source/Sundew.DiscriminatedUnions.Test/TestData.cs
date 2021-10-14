@@ -22,30 +22,30 @@ using System.Diagnostics;
 using Sundew.DiscriminatedUnions;";
 
         public const string ValidResultDiscriminatedUnion = @"
-[Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public abstract record Result
-{ 
-    private Result()
-    { }
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    public abstract record Result
+    { 
+        private Result()
+        { }
 
-    public sealed record Success : Result;
+        public sealed record Success : Result;
 
-    public sealed record Warning(string Message) : Result;
+        public sealed record Warning(string Message) : Result;
 
-    public sealed record Error(int Code) : Result;
-}";
+        public sealed record Error(int Code) : Result;
+    }";
 
         public const string ValidGenericOptionDiscriminatedUnion = @"
-[Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public abstract record Option<T>
-    where T : notnull
-{
-    private Option()
-    { }
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    public abstract record Option<T>
+        where T : notnull
+    {
+        private Option()
+        { }
 
-    public sealed record Some(T Value) : Option<T>;
+        public sealed record Some(T Value) : Option<T>;
 
-    public sealed record None : Option<T>;
-}";
+        public sealed record None : Option<T>;
+    }";
     }
 }
