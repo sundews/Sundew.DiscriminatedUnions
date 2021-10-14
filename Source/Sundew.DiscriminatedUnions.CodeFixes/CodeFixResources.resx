@@ -129,4 +129,10 @@
   <data name="RemoveDefaultCase" xml:space="preserve">
     <value>Remove default case</value>
   </data>
+  <data name="HasUnreachableNullCase" xml:space="preserve">
+    <value>Remove null case</value>
+  </data>
+  <data name="DiscriminatedUnionCanOnlyHavePrivateConstructors" xml:space="preserve">
+    <value>Make constructor private</value>
+  </data>
 </root>

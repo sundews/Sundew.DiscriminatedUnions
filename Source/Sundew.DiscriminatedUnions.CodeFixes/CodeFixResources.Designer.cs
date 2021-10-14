@@ -70,6 +70,24 @@ namespace Sundew.DiscriminatedUnions.CodeFixes {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make constructor private.
+        /// </summary>
+        internal static string DiscriminatedUnionCanOnlyHavePrivateConstructors {
+            get {
+                return ResourceManager.GetString("DiscriminatedUnionCanOnlyHavePrivateConstructors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove null case.
+        /// </summary>
+        internal static string HasUnreachableNullCase {
+            get {
+                return ResourceManager.GetString("HasUnreachableNullCase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Populate missing cases.
         /// </summary>
         internal static string PopulateMissingCases {

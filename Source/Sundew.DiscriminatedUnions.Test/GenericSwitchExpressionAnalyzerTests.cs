@@ -46,7 +46,7 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.HasUnreachableNullCaseRule)
-                    .WithSpan(18, 20, 23, 14));
+                    .WithSpan(22, 17, 22, 30));
         }
 
         [TestMethod]
@@ -75,7 +75,7 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.HasUnreachableNullCaseRule)
-                    .WithSpan(17, 24, 22, 22));
+                    .WithSpan(21, 25, 21, 35));
         }
 
         [TestMethod]

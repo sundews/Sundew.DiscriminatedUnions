@@ -37,6 +37,8 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                 new SwitchShouldNotHaveDefaultCaseCodeFixer(),
                 new CaseNotSealedCodeFixer(),
                 new MustHavePrivateConstructorCodeFixer(),
+                new SwitchHasUnreachableNullCaseCodeFixer(),
+                new DiscriminatedUnionCanOnlyHavePrivateConstructorsCodeFixer(),
             }.ToDictionary(x => x.DiagnosticId);
             this.FixableDiagnosticIds = ImmutableArray.CreateRange(this.codeFixers.Keys);
         }

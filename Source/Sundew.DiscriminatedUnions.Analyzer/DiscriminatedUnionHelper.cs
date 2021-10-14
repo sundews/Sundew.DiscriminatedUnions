@@ -54,23 +54,23 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// </summary>
         /// <param name="switchExpressionOperation">The switch expression operation.</param>
         /// <returns>The handled case types.</returns>
-        public static IEnumerable<(ITypeSymbol Type, int Index, bool HandlesCase)> GetHandledCaseTypes(ISwitchExpressionOperation switchExpressionOperation)
+        public static IEnumerable<(ITypeSymbol Type, bool HandlesCase)> GetHandledCaseTypes(ISwitchExpressionOperation switchExpressionOperation)
         {
-            return switchExpressionOperation.Arms.Select((switchExpressionArmOperation, index) =>
+            return switchExpressionOperation.Arms.Select((switchExpressionArmOperation) =>
             {
                 if (switchExpressionArmOperation.Pattern is IDeclarationPatternOperation
                     declarationPatternSyntax)
                 {
-                    return (Type: declarationPatternSyntax.MatchedType, index, HandlesCase: true);
+                    return (Type: declarationPatternSyntax.MatchedType, HandlesCase: true);
                 }
 
                 if (switchExpressionArmOperation.Pattern is ITypePatternOperation typePatternOperation)
                 {
-                    return (Type: typePatternOperation.MatchedType, index, HandlesCase: true);
+                    return (Type: typePatternOperation.MatchedType, HandlesCase: true);
                 }
 
-                return (Type: switchExpressionArmOperation.Pattern.NarrowedType, index, HandlesCase: false);
-            }).Where(x => x.Type != null).Select(x => (x.Type!, x.index, x.HandlesCase));
+                return (Type: switchExpressionArmOperation.Pattern.NarrowedType, HandlesCase: false);
+            }).Where(x => x.Type != null).Select(x => (x.Type!, x.HandlesCase));
         }
 
         /// <summary>
@@ -80,15 +80,14 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// <returns>
         ///   <c>true</c> if [has null case] [the specified switch expression operation]; otherwise, <c>false</c>.
         /// </returns>
-        public static bool HasNullCase(ISwitchExpressionOperation switchExpressionOperation)
+        public static ISwitchExpressionArmOperation? GetNullCase(ISwitchExpressionOperation switchExpressionOperation)
         {
-            return switchExpressionOperation.Arms.Any(x =>
-                x.Pattern is IConstantPatternOperation constantPatternOperation &&
-                ((constantPatternOperation.Value is IConversionOperation conversionOperation &&
-                  conversionOperation.Operand is ILiteralOperation conversionLiteralOperation &&
-                  IsNullLiteral(conversionLiteralOperation)) ||
-                 (constantPatternOperation.Value is ILiteralOperation literalOperation &&
-                  IsNullLiteral(literalOperation))));
+            return switchExpressionOperation.Arms.FirstOrDefault(x => x.Pattern is IConstantPatternOperation constantPatternOperation &&
+                                                                      ((constantPatternOperation.Value is IConversionOperation conversionOperation &&
+                                                                        conversionOperation.Operand is ILiteralOperation conversionLiteralOperation &&
+                                                                        IsNullLiteral(conversionLiteralOperation)) ||
+                                                                       (constantPatternOperation.Value is ILiteralOperation literalOperation &&
+                                                                        IsNullLiteral(literalOperation))));
         }
 
         /// <summary>
@@ -96,9 +95,8 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// </summary>
         /// <param name="switchOperation">The switch operation.</param>
         /// <returns>The handled case types.</returns>
-        public static IEnumerable<(ITypeSymbol Type, int Index, bool HandlesCase)> GetHandledCaseTypes(ISwitchOperation switchOperation)
+        public static IEnumerable<(ITypeSymbol Type, bool HandlesCase)> GetHandledCaseTypes(ISwitchOperation switchOperation)
         {
-            var index = 0;
             return switchOperation.Cases.SelectMany(switchCaseOperation =>
                 switchCaseOperation.Clauses.Select(caseClauseOperation =>
                 {
@@ -107,15 +105,15 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                         if (patternCaseClauseOperation.Pattern is IDeclarationPatternOperation
                             declarationPatternOperation)
                         {
-                            return (Type: declarationPatternOperation.MatchedType, Index: index++, HandlesCase: true);
+                            return (Type: declarationPatternOperation.MatchedType, HandlesCase: true);
                         }
 
                         if (patternCaseClauseOperation.Pattern is ITypePatternOperation typePatternOperation)
                         {
-                            return (Type: typePatternOperation.MatchedType, Index: index++, HandlesCase: true);
+                            return (Type: typePatternOperation.MatchedType, HandlesCase: true);
                         }
 
-                        return (Type: patternCaseClauseOperation.Pattern.NarrowedType, Index: index++, HandlesCase: false);
+                        return (Type: patternCaseClauseOperation.Pattern.NarrowedType, HandlesCase: false);
                     }
 
                     /*if (caseClauseOperation is IDefaultCaseClauseOperation defaultCaseClauseOperation)
@@ -123,8 +121,8 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                         context.ReportDiagnostic(Diagnostic.Create(SwitchShouldNotHaveDefaultCaseRule, defaultCaseClauseOperation.Syntax.GetLocation(), unionType));
                     }*/
 
-                    return (Type: null, Index: -1, HandlesCase: false);
-                }).Where(x => x.Type != null).Select(x => (x.Type!, x.Index, x.HandlesCase)));
+                    return (Type: null, HandlesCase: false);
+                }).Where(x => x.Type != null).Select(x => (x.Type!, x.HandlesCase)));
         }
 
         /// <summary>
@@ -134,9 +132,9 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// <returns>
         ///   <c>true</c> if [has null case] [the specified switch operation]; otherwise, <c>false</c>.
         /// </returns>
-        public static bool HasNullCase(ISwitchOperation switchOperation)
+        public static ISwitchCaseOperation? GetNullCase(ISwitchOperation switchOperation)
         {
-            return switchOperation.Cases.Any(x => x.Clauses.Any(
+            return switchOperation.Cases.FirstOrDefault(x => x.Clauses.Any(
                 x => x is IPatternCaseClauseOperation patternCaseClauseOperation &&
                      patternCaseClauseOperation.Pattern is IConstantPatternOperation constantPatternOperation &&
                      ((constantPatternOperation.Value is IConversionOperation conversionOperation &&

@@ -57,16 +57,18 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                     unionType));
             }
 
+            var nullCase = DiscriminatedUnionHelper.GetNullCase(switchExpressionOperation);
             var switchNullabilityError = EvaluateSwitchNullability(
                 switchExpressionOperation.Value,
                 switchExpressionOperation.SemanticModel,
-                DiscriminatedUnionHelper.HasNullCase(switchExpressionOperation));
+                nullCase != null);
 
             var caseTypes = this.GetCaseTypes(unionTypeWithoutNull);
 
             ReportDiagnostics(
                 caseTypes,
                 actualCaseTypes.Where(x => x.HandlesCase).Select(x => x.Type),
+                nullCase,
                 switchNullabilityError,
                 unionTypeWithoutNull,
                 switchExpressionOperation,
@@ -90,57 +92,80 @@ namespace Sundew.DiscriminatedUnions.Analyzer
 
             var unionTypeWithoutNull = unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
             var handledCaseTypes = DiscriminatedUnionHelper.GetHandledCaseTypes(switchOperation);
-
-            if (switchOperation.Cases
-                .SelectMany(switchCaseOperation => switchCaseOperation.Clauses
-                    .OfType<IDefaultCaseClauseOperation>()
-                    .Select(x => switchCaseOperation))
-                .SingleOrDefault() is { } switchCaseOperation)
+            if (GetDefaultSwitchCaseOperation(switchOperation) is { } defaultSwitchCaseOperation)
             {
-                if (!(switchCaseOperation.Body.SingleOrDefault(x =>
-                    x is IThrowOperation { Exception: IConversionOperation exceptionConversionOperation } &&
-                    exceptionConversionOperation.Operand.Type!.Name.EndsWith(
-                        nameof(UnreachableCaseException)) &&
-                    exceptionConversionOperation.Operand is IObjectCreationOperation
-                        objectCreationOperation &&
-                    objectCreationOperation.Arguments.SingleOrDefault(
-                        x =>
-                            x.Value is ITypeOfOperation typeOfOperation && SymbolEqualityComparer.Default.Equals(typeOfOperation.TypeOperand, unionTypeWithoutNull)) != null) != null))
+                if (CanSwitchReachEnd(switchOperation))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(
-                        SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule,
-                        switchCaseOperation.Syntax.GetLocation(),
-                        unionTypeWithoutNull));
+                        SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
+                        defaultSwitchCaseOperation.Syntax.GetLocation(),
+                        unionType));
+                }
+                else
+                {
+                    if (!(defaultSwitchCaseOperation.Body.SingleOrDefault(x =>
+                        x is IThrowOperation { Exception: IConversionOperation exceptionConversionOperation } &&
+                        exceptionConversionOperation.Operand.Type!.Name.EndsWith(
+                            nameof(UnreachableCaseException)) &&
+                        exceptionConversionOperation.Operand is IObjectCreationOperation
+                            objectCreationOperation &&
+                        objectCreationOperation.Arguments.SingleOrDefault(
+                            x =>
+                                x.Value is ITypeOfOperation typeOfOperation &&
+                                SymbolEqualityComparer.Default.Equals(typeOfOperation.TypeOperand, unionTypeWithoutNull)) != null) != null))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule,
+                            defaultSwitchCaseOperation.Syntax.GetLocation(),
+                            unionTypeWithoutNull));
+                    }
                 }
             }
 
-            var switchNullabilityError = EvaluateSwitchNullability(switchOperation.Value, switchOperation.SemanticModel, DiscriminatedUnionHelper.HasNullCase(switchOperation));
+            var nullCase = DiscriminatedUnionHelper.GetNullCase(switchOperation);
+            var switchNullabilityError = EvaluateSwitchNullability(switchOperation.Value, switchOperation.SemanticModel, nullCase != null);
 
             var caseTypes = this.GetCaseTypes(unionTypeWithoutNull);
 
             ReportDiagnostics(
                 caseTypes,
                 handledCaseTypes.Where(x => x.HandlesCase).Select(x => x.Type),
+                nullCase,
                 switchNullabilityError,
                 unionTypeWithoutNull,
                 switchOperation,
                 context);
         }
 
+        private static bool CanSwitchReachEnd(ISwitchOperation switchOperation)
+        {
+            return switchOperation.Cases.Where(x => !x.Clauses.OfType<IDefaultCaseClauseOperation>().Any()).SelectMany(x => x.Body).Any(x => x.Kind == OperationKind.Branch);
+        }
+
+        private static ISwitchCaseOperation? GetDefaultSwitchCaseOperation(ISwitchOperation switchOperation)
+        {
+            return switchOperation.Cases
+                .SelectMany(switchCaseOperation => switchCaseOperation.Clauses
+                    .OfType<IDefaultCaseClauseOperation>()
+                    .Select(x => switchCaseOperation))
+                .FirstOrDefault();
+        }
+
         private static void ReportDiagnostics(
             IReadOnlyList<ITypeSymbol> caseTypes,
             IEnumerable<ITypeSymbol> handledCaseTypes,
+            IOperation? nullCase,
             SwitchNullability switchNullability,
             ITypeSymbol unionType,
             IOperation operation,
             OperationAnalysisContext context)
         {
-            var missingCaseTypes = caseTypes.Except(handledCaseTypes, SymbolEqualityComparer.Default).Where(x => x != null).Select(x => x!).ToList();
-            if (switchNullability == SwitchNullability.HasUnreachableNullCase)
+            var missingCaseTypes = caseTypes.Except(handledCaseTypes, SymbolEqualityComparer.Default).Where(x => x != null).Select(x => x!);
+            if (nullCase != null && switchNullability == SwitchNullability.HasUnreachableNullCase)
             {
                 context.ReportDiagnostic(Diagnostic.Create(
                     SundewDiscriminatedUnionsAnalyzer.HasUnreachableNullCaseRule,
-                    operation.Syntax.GetLocation(),
+                    nullCase.Syntax.GetLocation(),
                     DiagnosticSeverity.Error));
             }
 

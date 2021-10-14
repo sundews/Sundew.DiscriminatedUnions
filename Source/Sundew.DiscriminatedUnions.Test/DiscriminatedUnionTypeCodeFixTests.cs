@@ -113,5 +113,59 @@ namespace ConsoleApplication1
             };
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }
+
+        [TestMethod]
+        public async Task Given_DiscriminatedUnion_When_NonPrivateConstructorIsDeclared_Then_ConstructorShouldBePrivate()
+        {
+            var test = $@"{TestData.Usings}
+
+namespace ConsoleApplication1
+{{
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    public abstract record Option<T>
+    {{
+        public const string ConstField = ""Const"";
+
+        public int Field;
+
+        public Option()
+        {{
+        }}
+
+        public sealed record Success(T Value) : Option<T>;
+
+        public sealed record None : Option<T>;
+    }}
+}}";
+
+            var fixtest = $@"{TestData.Usings}
+
+namespace ConsoleApplication1
+{{
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    public abstract record Option<T>
+    {{
+        public const string ConstField = ""Const"";
+
+        public int Field;
+
+        private Option()
+        {{
+        }}
+
+        public sealed record Success(T Value) : Option<T>;
+
+        public sealed record None : Option<T>;
+    }}
+}}";
+
+            var expected = new[]
+            {
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionCanOnlyHavePrivateConstructorsRule)
+                    .WithArguments("ConsoleApplication1.Option<T>", "ConsoleApplication1.Option<T>.Option()")
+                    .WithSpan(19, 9, 21, 10),
+            };
+            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        }
     }
 }

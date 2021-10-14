@@ -95,39 +95,6 @@ namespace ConsoleApplication1
         }
 
         [TestMethod]
-        public async Task Given_SwitchStatement_When_AllCasesAreHandled_Then_NoDiagnosticsAreReported()
-        {
-            var test = $@"#nullable enable
-{TestData.Usings}
-
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch(Result result)
-        {{
-            switch (result)
-            {{
-                case Result.Success:
-                    return true;
-                case Result.Warning {{ Message: ""Tough warning"" }} warning:
-                    return false;
-                case Result.Warning warning:
-                    return true;
-                case Result.Error error:
-                    return false;
-                default:
-                    throw new Sundew.DiscriminatedUnions.UnreachableCaseException(typeof(Result));
-            }}
-        }}
-    }}
-{TestData.ValidResultDiscriminatedUnion}
-}}";
-
-            await VerifyCS.VerifyAnalyzerAsync(test);
-        }
-
-        [TestMethod]
         public async Task Given_SwitchStatement_When_ExactlyAllCasesAreHandled_Then_NoDiagnosticsAreReported()
         {
             var test = $@"#nullable enable
@@ -186,11 +153,11 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(test);
         }
 
-        /*
         [TestMethod]
         public async Task Given_SwitchStatement_When_DefaultCaseIsHandled_Then_SwitchShouldNotHaveDefaultCaseIsReported()
         {
-            var test = $@"{TestData.Usings}
+            var test = $@"#nullable enable
+{TestData.Usings}
 
     namespace ConsoleApplication1
     {{
@@ -216,11 +183,12 @@ namespace ConsoleApplication1
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseDiagnosticId)
-                    .WithArguments("ConsoleApplication1.Result")
-                    .WithSpan(24, 21, 24, 29));
-        }*/
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                    .WithArguments(TestData.ConsoleApplication1Result)
+                    .WithSpan(25, 21, 26, 31));
+        }
 
+        /*
         [TestMethod]
         public async Task Given_SwitchStatement_When_DefaultCaseIsHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
         {
@@ -230,7 +198,7 @@ namespace ConsoleApplication1
 namespace ConsoleApplication1
 {{
     public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
+    {{
         public void Switch(Result result)
         {{
             switch(result)
@@ -251,13 +219,48 @@ namespace ConsoleApplication1
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                    .WithArguments(TestData.ConsoleApplication1Result)
+                    .WithSpan(25, 17, 26, 27));
+        }*/
+
+        [TestMethod]
+        public async Task Given_SwitchStatement_When_AllCasesReturnAndDefaultCaseIsHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
+        {
+            var test = $@"#nullable enable
+{TestData.Usings}
+
+namespace ConsoleApplication1
+{{
+    public class DiscriminatedUnionSymbolAnalyzerTests
+    {{   
+        public void Switch(Result result)
+        {{
+            switch(result)
+            {{
+                case Result.Success:
+                    return;
+                case Result.Warning warning:
+                    return;
+                case Result.Error error:
+                    return;
+                default:
+                    break;
+            }}
+        }}
+    }}
+{TestData.ValidResultDiscriminatedUnion}
+}}";
+
+            await VerifyCS.VerifyAnalyzerAsync(
+                test,
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(25, 17, 26, 27));
         }
 
         [TestMethod]
-        public async Task Given_SwitchStatement_When_ValueMayBeNullAndDefaultCaseIsHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
+        public async Task Given_SwitchStatement_When_ValueMayBeNullAndDefaultCaseIsHandled_Then_SwitchShouldNotHaveDefaultCaseIsReported()
         {
             var test = $@"{TestData.Usings}
 
@@ -285,7 +288,7 @@ namespace ConsoleApplication1
 
             await VerifyCS.VerifyAnalyzerAsync(
                 test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(24, 17, 25, 27),
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId)
@@ -350,13 +353,13 @@ namespace ConsoleApplication1
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
                     .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(16, 13, 22, 14),
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(20, 17, 21, 27));
         }
 
         [TestMethod]
-        public async Task Given_SwitchStatement_When_ValueMayBeNullAndAllCasesExceptDefaultCaseAreHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
+        public async Task Given_SwitchStatement_When_ValueMayBeNullAndAllCasesAreHandledAndDefaultCaseDoesNotThrow_Then_SwitchShouldThrowInDefaultCaseIsReported()
         {
             var test = $@"#nullable enable
 {TestData.Usings}
