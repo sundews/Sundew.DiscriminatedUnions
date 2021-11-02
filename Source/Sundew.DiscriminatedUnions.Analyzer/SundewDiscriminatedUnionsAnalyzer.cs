@@ -181,12 +181,32 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-
+/*
             var discriminatedUnionTypeAnalyzer = new DiscriminatedUnionTypeAnalyzer();
             context.RegisterSymbolAction(analysisContext => discriminatedUnionTypeAnalyzer.AnalyzeDiscriminatedUnionsTypes(analysisContext), SymbolKind.NamedType);
             var discriminatedUnionSwitchAnalyzer = new DiscriminatedUnionSwitchAnalyzer();
             context.RegisterOperationAction(discriminatedUnionSwitchAnalyzer.AnalyzeSwitchExpression, OperationKind.SwitchExpression);
             context.RegisterOperationAction(discriminatedUnionSwitchAnalyzer.AnalyzeSwitchStatement, OperationKind.Switch);
+*/
+            context.RegisterCompilationStartAction(analysisContext =>
+            {
+                var discriminatedUnionRegistry = new DiscriminatedUnionRegistry();
+                var discriminatedUnionPartAnalyzer = new DiscriminatedUnionPartAnalyzer(discriminatedUnionRegistry);
+                var discriminatedUnionSymbolAnalyzer = new DiscriminatedUnionSymbolAnalyzer();
+                var discriminatedUnionSwitchExpressionAnalyzer = new DiscriminatedUnionSwitchExpressionAnalyzer();
+                var discriminatedUnionSwitchStatementAnalyzer = new DiscriminatedUnionSwitchStatementAnalyzer();
+                analysisContext.RegisterSymbolAction(
+                    x => discriminatedUnionPartAnalyzer.AnalyzePart(
+                        discriminatedUnionSymbolAnalyzer.AnalyzeSymbol(x.Symbol)),
+                    SymbolKind.NamedType);
+                context.RegisterOperationAction(discriminatedUnionSwitchExpressionAnalyzer.RegisterAndAnalyze, OperationKind.SwitchExpression);
+                context.RegisterOperationAction(discriminatedUnionSwitchStatementAnalyzer.RegisterAndAnalyze, OperationKind.Switch);
+                analysisContext.RegisterCompilationEndAction(x =>
+                {
+                    discriminatedUnionSwitchExpressionAnalyzer.AnalyzeCases(x, discriminatedUnionRegistry);
+                    discriminatedUnionSwitchStatementAnalyzer.AnalyzeCases(x, discriminatedUnionRegistry);
+                });
+            });
         }
     }
 }

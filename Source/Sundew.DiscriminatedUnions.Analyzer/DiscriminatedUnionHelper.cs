@@ -54,7 +54,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// </summary>
         /// <param name="switchExpressionOperation">The switch expression operation.</param>
         /// <returns>The handled case types.</returns>
-        public static IEnumerable<(ITypeSymbol Type, bool HandlesCase)> GetHandledCaseTypes(ISwitchExpressionOperation switchExpressionOperation)
+        public static IEnumerable<CaseInfo> GetHandledCaseTypes(ISwitchExpressionOperation switchExpressionOperation)
         {
             return switchExpressionOperation.Arms.Select((switchExpressionArmOperation) =>
             {
@@ -70,7 +70,8 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                 }
 
                 return (Type: switchExpressionArmOperation.Pattern.NarrowedType, HandlesCase: false);
-            }).Where(x => x.Type != null).Select(x => (x.Type!, x.HandlesCase));
+            }).Where(x => x.Type != null)
+                .Select(x => new CaseInfo { Type = x.Type!, HandlesCase = x.HandlesCase });
         }
 
         /// <summary>
@@ -95,34 +96,30 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// </summary>
         /// <param name="switchOperation">The switch operation.</param>
         /// <returns>The handled case types.</returns>
-        public static IEnumerable<(ITypeSymbol Type, bool HandlesCase)> GetHandledCaseTypes(ISwitchOperation switchOperation)
+        public static IEnumerable<CaseInfo> GetHandledCaseTypes(ISwitchOperation switchOperation)
         {
             return switchOperation.Cases.SelectMany(switchCaseOperation =>
                 switchCaseOperation.Clauses.Select(caseClauseOperation =>
-                {
-                    if (caseClauseOperation is IPatternCaseClauseOperation patternCaseClauseOperation)
                     {
-                        if (patternCaseClauseOperation.Pattern is IDeclarationPatternOperation
-                            declarationPatternOperation)
+                        if (caseClauseOperation is IPatternCaseClauseOperation patternCaseClauseOperation)
                         {
-                            return (Type: declarationPatternOperation.MatchedType, HandlesCase: true);
+                            if (patternCaseClauseOperation.Pattern is IDeclarationPatternOperation
+                                declarationPatternOperation)
+                            {
+                                return (Type: declarationPatternOperation.MatchedType, HandlesCase: true);
+                            }
+
+                            if (patternCaseClauseOperation.Pattern is ITypePatternOperation typePatternOperation)
+                            {
+                                return (Type: typePatternOperation.MatchedType, HandlesCase: true);
+                            }
+
+                            return (Type: patternCaseClauseOperation.Pattern.NarrowedType, HandlesCase: false);
                         }
 
-                        if (patternCaseClauseOperation.Pattern is ITypePatternOperation typePatternOperation)
-                        {
-                            return (Type: typePatternOperation.MatchedType, HandlesCase: true);
-                        }
-
-                        return (Type: patternCaseClauseOperation.Pattern.NarrowedType, HandlesCase: false);
-                    }
-
-                    /*if (caseClauseOperation is IDefaultCaseClauseOperation defaultCaseClauseOperation)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(SwitchShouldNotHaveDefaultCaseRule, defaultCaseClauseOperation.Syntax.GetLocation(), unionType));
-                    }*/
-
-                    return (Type: null, HandlesCase: false);
-                }).Where(x => x.Type != null).Select(x => (x.Type!, x.HandlesCase)));
+                        return (Type: null, HandlesCase: false);
+                    }).Where(x => x.Type != null)
+                    .Select(x => new CaseInfo { Type = x.Type!, HandlesCase = x.HandlesCase }));
         }
 
         /// <summary>
@@ -144,10 +141,35 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                        IsNullLiteral(literalOperation)))));
         }
 
+        internal static SwitchNullability EvaluateSwitchNullability(IOperation operation, SemanticModel semanticModel, bool hasNullCase)
+        {
+            var unionTypeInfo = semanticModel.GetTypeInfo(operation.Syntax);
+            var isNullableEnabled = IsNullableEnabled(semanticModel, operation);
+            var isNullable = unionTypeInfo.ConvertedNullability.Annotation != NullableAnnotation.NotAnnotated;
+            var maybeNull = unionTypeInfo.ConvertedNullability.FlowState != NullableFlowState.NotNull;
+            var nullableStates = (isNullableEnabled, isNullable, maybeNull, hasNullCase);
+            var switchNullabilityError = nullableStates switch
+            {
+                (true, false, _, true) => SwitchNullability.HasUnreachableNullCase,
+                (_, _, true, false) => SwitchNullability.IsMissingNullCase,
+                (_, _, false, true) => SwitchNullability.HasUnreachableNullCase,
+                (_, _, true, true) => SwitchNullability.None,
+                (_, _, false, false) => SwitchNullability.None,
+            };
+            return switchNullabilityError;
+        }
+
         private static bool IsNullLiteral(ILiteralOperation literalOperation)
         {
             return literalOperation.ConstantValue.HasValue &&
                    literalOperation.ConstantValue.Value == null;
+        }
+
+        private static bool IsNullableEnabled(SemanticModel semanticModel, IOperation operation)
+        {
+            return (semanticModel.GetNullableContext(operation.Syntax.GetLocation()
+                       .SourceSpan.Start) & NullableContext.Enabled) == NullableContext.Enabled ||
+                   semanticModel.Compilation.Options.NullableContextOptions != NullableContextOptions.Disable;
         }
     }
 }

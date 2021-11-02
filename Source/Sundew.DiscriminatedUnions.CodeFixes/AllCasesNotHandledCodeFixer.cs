@@ -78,7 +78,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                     continue;
                 }
 
-                handledCaseTypes.Insert(caseInfo.Index, (missingCaseType, true));
+                handledCaseTypes.Insert(caseInfo.Index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
                 arms = arms.Insert(
                         caseInfo.Index,
                         SyntaxFactory.SwitchExpressionArm(
@@ -142,7 +142,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                     continue;
                 }
 
-                handledCaseTypes.Insert(caseInfo.Index, (missingCaseType, true));
+                handledCaseTypes.Insert(caseInfo.Index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
                 sections = sections.Insert(
                     caseInfo.Index,
                     SyntaxFactory.SwitchSection(
@@ -187,7 +187,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
         }
 
         private static (int Index, bool WasHandled) FindIndex(
-            List<(ITypeSymbol Type, bool HandlesCase)> handledCases,
+            List<CaseInfo> handledCases,
             ITypeSymbol caseType,
             ITypeSymbol? previousCaseType)
         {

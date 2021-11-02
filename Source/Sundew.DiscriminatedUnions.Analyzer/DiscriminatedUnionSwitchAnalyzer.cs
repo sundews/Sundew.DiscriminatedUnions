@@ -24,13 +24,6 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1024:Compare symbols correctly", Justification = "False positive... using SymbolEqualityComparer")]
         private readonly ConcurrentDictionary<ISymbol, List<ITypeSymbol>> discriminatedUnions = new(SymbolEqualityComparer.Default);
 
-        private enum SwitchNullability
-        {
-            None,
-            IsMissingNullCase,
-            HasUnreachableNullCase,
-        }
-
         public void AnalyzeSwitchExpression(OperationAnalysisContext context)
         {
             if (!(context.Operation is ISwitchExpressionOperation switchExpressionOperation && switchExpressionOperation.SemanticModel != null))
@@ -139,7 +132,9 @@ namespace Sundew.DiscriminatedUnions.Analyzer
 
         private static bool CanSwitchReachEnd(ISwitchOperation switchOperation)
         {
-            return switchOperation.Cases.Where(x => !x.Clauses.OfType<IDefaultCaseClauseOperation>().Any()).SelectMany(x => x.Body).Any(x => x.Kind == OperationKind.Branch);
+            return switchOperation.Cases.Where(x => !x.Clauses.OfType<IDefaultCaseClauseOperation>().Any())
+                .SelectMany(x => x.Body)
+                .Any(x => x.Kind == OperationKind.Branch);
         }
 
         private static ISwitchCaseOperation? GetDefaultSwitchCaseOperation(ISwitchOperation switchOperation)

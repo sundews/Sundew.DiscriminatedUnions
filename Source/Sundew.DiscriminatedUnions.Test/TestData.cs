@@ -47,5 +47,26 @@ using Sundew.DiscriminatedUnions;";
 
         public sealed record None : Option<T>;
     }";
+
+        public const string ValidDiscriminatedUnionWithSubUnions = @"
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    public abstract record Expression
+    {
+        private protected Expression()
+        { }
+    }
+
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    public abstract record ArithmeticExpression : Expression
+    {
+        private protected ArithmeticExpression()
+        { }
+    }
+
+    public sealed record AddExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
+
+    public sealed record SubtractExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
+
+    public sealed record ValueExpression(int Value) : Expression;";
     }
 }

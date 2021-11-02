@@ -30,9 +30,27 @@ namespace Sundew.DiscriminatedUnions.Tester
         public string Message { get; init; }
     }
 
-    public sealed class Error : Result
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    public abstract class ErrorResult : Result
+    {
+        private protected ErrorResult()
+        {
+        }
+    }
+
+    public sealed class Error : ErrorResult
     {
         public Error(int code)
+        {
+            this.Code = code;
+        }
+
+        public int Code { get; init; }
+    }
+    
+    public sealed class FatalError : ErrorResult
+    {
+        public FatalError(int code)
         {
             this.Code = code;
         }
