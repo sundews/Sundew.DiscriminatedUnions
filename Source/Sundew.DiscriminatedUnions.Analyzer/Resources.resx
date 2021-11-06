@@ -129,23 +129,23 @@
   <data name="Is" xml:space="preserve">
     <value>is</value>
   </data>
-  <data name="AllCasesNotHandledTitle" xml:space="preserve">
+  <data name="SwitchAllCasesNotHandledTitle" xml:space="preserve">
     <value>All possible cases not handled.</value>
   </data>
-  <data name="AllCasesNotHandledDescription" xml:space="preserve">
+  <data name="SwitchAllCasesNotHandledDescription" xml:space="preserve">
     <value>Switch should handle cases of all possible types.</value>
   </data>
-  <data name="AllCasesNotHandledMessageFormat" xml:space="preserve">
+  <data name="SwitchAllCasesNotHandledMessageFormat" xml:space="preserve">
     <value>{0} {1} in '{2}' {3} not handled.</value>
   </data>
-  <data name="DiscriminatedUnionCanOnlyHavePrivateConstructorsTitle" xml:space="preserve">
-    <value>Discriminated union constructors must be private.</value>
+  <data name="DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsTitle" xml:space="preserve">
+    <value>Discriminated union constructors must be private protected.</value>
   </data>
-  <data name="DiscriminatedUnionCanOnlyHavePrivateConstructorsDescription" xml:space="preserve">
-    <value>Discriminated union constructors must be private so only nested types can derived from it.</value>
+  <data name="DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsDescription" xml:space="preserve">
+    <value>Discriminated union constructors must be private protected, so only nested types can derived from it.</value>
   </data>
-  <data name="DiscriminatedUnionCanOnlyHavePrivateConstructorsMessageFormat" xml:space="preserve">
-    <value>'{0}' contains non private constructor(s).</value>
+  <data name="DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsMessageFormat" xml:space="preserve">
+    <value>'{0}' contains non private protected constructor(s).</value>
   </data>
   <data name="CasesShouldBeSealedTitle" xml:space="preserve">
     <value>All cases should be sealed.</value>
@@ -156,15 +156,6 @@
   <data name="CasesShouldBeSealedMessageFormat" xml:space="preserve">
     <value>'{0}' case is not sealed.</value>
   </data>
-  <data name="CasesShouldBeNestedTitle" xml:space="preserve">
-    <value>All cases should be nested.</value>
-  </data>
-  <data name="CasesShouldBeNestedDescription" xml:space="preserve">
-    <value>Cases should be nested within their discriminated union so that all cases are known at compile time.</value>
-  </data>
-  <data name="CasesShouldBeNestedMessageFormat" xml:space="preserve">
-    <value>'{0}' case is not nested within '{1}'.</value>
-  </data>
   <data name="SwitchShouldNotHaveDefaultCaseTitle" xml:space="preserve">
     <value>Default case should not be handled.</value>
   </data>
@@ -174,23 +165,50 @@
   <data name="SwitchShouldNotHaveDefaultCaseMessageFormat" xml:space="preserve">
     <value>'{0}' is a discriminated union and should not handle the default case.</value>
   </data>
-  <data name="HasUnreachableNullCaseTitle" xml:space="preserve">
+  <data name="SwitchHasUnreachableNullCaseTitle" xml:space="preserve">
     <value>Null case should not be handled.</value>
   </data>
-  <data name="HasUnreachableNullCaseDescription" xml:space="preserve">
+  <data name="SwitchHasUnreachableNullCaseDescription" xml:space="preserve">
     <value>Switches on non nullable types should not handle the null case.</value>
   </data>
-  <data name="HasUnreachableNullCaseMessageFormat" xml:space="preserve">
+  <data name="SwitchHasUnreachableNullCaseMessageFormat" xml:space="preserve">
     <value>The null case is unreachable and should not be handled.</value>
   </data>
-  <data name="MustHavePrivateConstructorTitle" xml:space="preserve">
-    <value>Discriminated unions should only have private constructors.</value>
+  <data name="DiscriminatedUnionsMustHavePrivateProtectedConstructorTitle" xml:space="preserve">
+    <value>Discriminated unions should only have private protected constructors.</value>
   </data>
-  <data name="MustHavePrivateConstructorDescription" xml:space="preserve">
-    <value>Discriminated unions should only have private constructors, so that all cases are known at compile time</value>
+  <data name="DiscriminatedUnionsMustHavePrivateProtectedConstructorDescription" xml:space="preserve">
+    <value>Discriminated unions should only have private protected constructors, so that all cases are known at compile time</value>
   </data>
-  <data name="MustHavePrivateConstructorMessageFormat" xml:space="preserve">
-    <value>'{0}' has an undeclared non private constructor: '{1}'.</value>
+  <data name="DiscriminatedUnionsMustHavePrivateProtectedConstructorMessageFormat" xml:space="preserve">
+    <value>'{0}' has an undeclared non private protected constructor: '{1}'.</value>
+  </data>
+  <data name="ClassDiscriminatedUnionsMustBeAbstractDescription" xml:space="preserve">
+    <value>A discriminated union declared for a class/class record must be abstract.</value>
+  </data>
+  <data name="ClassDiscriminatedUnionsMustBeAbstractTitle" xml:space="preserve">
+    <value>Class-based discriminated union must be abstract.</value>
+  </data>
+  <data name="ClassDiscriminatedUnionsMustBeAbstractMessageFormat" xml:space="preserve">
+    <value>'{0}' discriminated union is not abstract.</value>
+  </data>
+  <data name="InterfaceDiscriminatedUnionsMustBeInternalDescription" xml:space="preserve">
+    <value>A discriminated declared for an interface must be internal.</value>
+  </data>
+  <data name="InterfaceDiscriminatedUnionsMustBeInternalTitle" xml:space="preserve">
+    <value>Interface-based discriminated union must be internal.</value>
+  </data>
+  <data name="InterfaceDiscriminatedUnionsMustBeInternalMessageFormat" xml:space="preserve">
+    <value>{0} discriminated union must be internal.</value>
+  </data>
+  <data name="UnnestedCasesShouldHaveFactoryMethodDescription" xml:space="preserve">
+    <value>Discriminated unions with unnested cases should declare factory methods.</value>
+  </data>
+  <data name="UnnestedCasesShouldHaveFactoryMethodTitle" xml:space="preserve">
+    <value>Unnested cases should have factory method.</value>
+  </data>
+  <data name="UnnestedCasesShouldHaveFactoryMethodMessageFormat" xml:space="preserve">
+    <value>Case '{0}' should have factory method in '{1}'.</value>
   </data>
   <data name="SwitchShouldThrowInDefaultCaseTitle" xml:space="preserve">
     <value>Default case should throw UnreachableCaseException.</value>

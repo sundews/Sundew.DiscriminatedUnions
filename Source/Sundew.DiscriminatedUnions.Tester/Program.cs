@@ -13,6 +13,22 @@ namespace Sundew.DiscriminatedUnions.Tester
     {
         public static void Main(string[] args)
         {
+            var expression = new AddExpression(new ValueExpression(5),
+                new SubtractExpression(new ValueExpression(3), new ValueExpression(1)));
+
+            int Evaluate(Expression expression)
+            {
+                return expression switch
+                {
+                    AddExpression addExpression => Evaluate(addExpression.Lhs) + Evaluate(addExpression.Rhs),
+                    SubtractExpression subtractExpression => Evaluate(subtractExpression.Lhs) - Evaluate(subtractExpression.Rhs),
+                    ValueExpression valueExpression => valueExpression.Value,
+                    _ => throw new ArgumentOutOfRangeException(nameof(expression))
+                };
+            }
+            
+            Console.WriteLine(Evaluate(expression));
+
             Console.WriteLine("Hello World!");
             Result? result = Compute("Error");
             var message = result switch

@@ -54,6 +54,12 @@ using Sundew.DiscriminatedUnions;";
     {
         private protected Expression()
         { }
+
+        public static Expression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+        public static Expression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
+     
+        public static Expression ValueExpression(int value) => new ValueExpression(value);
     }
 
     [Sundew.DiscriminatedUnions.DiscriminatedUnion]
@@ -61,6 +67,13 @@ using Sundew.DiscriminatedUnions;";
     {
         private protected ArithmeticExpression()
         { }
+
+        public static ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+        public static ArithmeticExpression SubtractExpression(Expression lhs, Expression rhs)
+        {
+            return new SubtractExpression(lhs, rhs);
+        }
     }
 
     public sealed record AddExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
@@ -68,5 +81,47 @@ using Sundew.DiscriminatedUnions;";
     public sealed record SubtractExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
 
     public sealed record ValueExpression(int Value) : Expression;";
+/*
+        public const string ValidDiscriminatedUnionWithInterfaceSubUnion = @"
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    public abstract record Expression
+    {
+        private protected Expression()
+        { }
+
+        public static Expression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+        public static Expression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
+
+        public static Expression ValueExpression(int value) => new ValueExpression(value);
+    }
+
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    internal interface IArithmeticExpression
+    {
+        public static ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+        public static ArithmeticExpression SubtractExpression(Expression lhs, Expression rhs)
+        {
+            return new SubtractExpression(lhs, rhs);
+        }
+    }
+
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    internal interface IExpression
+    {
+        public static ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+        public static ArithmeticExpression SubtractExpression(Expression lhs, Expression rhs)
+        {
+            return new SubtractExpression(lhs, rhs);
+        }
+    }
+
+    public sealed record AddExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
+
+    public sealed record SubtractExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
+
+    public sealed record ValueExpression(int Value) : Expression;";*/
     }
 }

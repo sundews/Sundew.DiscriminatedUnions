@@ -8,7 +8,6 @@
 namespace Sundew.DiscriminatedUnions.CodeFixes.Collections
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     internal static class EnumerableExtensions
     {

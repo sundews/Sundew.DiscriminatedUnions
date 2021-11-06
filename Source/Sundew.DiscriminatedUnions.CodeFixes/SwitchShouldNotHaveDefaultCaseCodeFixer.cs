@@ -7,6 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.CodeFixes
 {
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -16,14 +17,24 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
 
     internal class SwitchShouldNotHaveDefaultCaseCodeFixer : ICodeFixer
     {
-        public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseDiagnosticId;
+        public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule.Id;
 
-        public CodeFixStatus GetCodeFixState(SyntaxNode syntaxNode, SemanticModel semanticModel, CancellationToken cancellationToken)
+        public CodeFixStatus GetCodeFixState(
+            SyntaxNode syntaxNode,
+            SemanticModel semanticModel,
+            Diagnostic diagnostic,
+            CancellationToken cancellationToken)
         {
             return new CodeFixStatus.CanFix(CodeFixResources.RemoveDefaultCase, nameof(SwitchShouldNotHaveDefaultCaseCodeFixer));
         }
 
-        public Task<Document> Fix(Document document, SyntaxNode root, SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        public Task<Document> Fix(
+            Document document,
+            SyntaxNode root,
+            SyntaxNode node,
+            ImmutableDictionary<string, string?> diagnosticProperties,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken)
         {
             if (node is SwitchExpressionArmSyntax { Parent: SwitchExpressionSyntax switchExpressionSyntax } switchExpressionArmSyntax)
             {

@@ -12,11 +12,11 @@ Create discriminated unions by inheriting from an abstract base class marked wit
 
 ## Sample
 ### Defining a DU
-```
+```csharp
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record Result
 {
-    private Result()
+    private protected Result()
     { }
 
     public sealed record Success : Result;
@@ -26,9 +26,10 @@ public abstract record Result
     public sealed record Error(int Code) : Result;
 }
 ```
+Alternatively, a DU can be defined with unnested case classes (see below).
 
 ### Evaluation
-```
+```csharp
 var message = result switch
 {
     Result.Error { Code: > 70 } error => $"High Error code: {error.Code}",
@@ -39,13 +40,56 @@ var message = result switch
 };
 ```
 
+### Unnested cases and subunions
+To support subunions, unnested cases help because the cases are no longer defined inside a discriminated union. However, for this to work the unions are required to declare a factory method named exactly like the case type, that consists of a single return statement that creates the cases. The return type of a factory method should match the discriminated union in which it is declared. 
+```csharp
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record Expression
+{
+    private protected Expression()
+    { }
+
+    public static Expression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+    public static Expression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
+ 
+    public static Expression ValueExpression(int value) => new ValueExpression(value);
+}
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record ArithmeticExpression : Expression
+{
+    private protected ArithmeticExpression()
+    { }
+
+    public static ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+    public static ArithmeticExpression SubtractExpression(Expression lhs, Expression rhs)
+    {
+        return new SubtractExpression(lhs, rhs);
+    }
+}
+
+public sealed record AddExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
+
+public sealed record SubtractExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
+
+public sealed record ValueExpression(int Value) : Expression;
+```
+
 ## Features:
-- Analyzer and CodeFix for incomplete switch statements and expressions
-- Analyzer and CodeFix for unsealed cases classes
-- Analyzer and CodeFix for non-private default constructor
-- Analyzer for any other declared non-private constructor
-- F# equivalent Option&lt;T&gt;
-- Experimental generics support, but still have some issues with nullability.
+| Diagnostic Id | Description                                                       | Code Fix |
+| ------------- | ----------------------------------------------------------------- | :------: |
+| SDU0001       | Switch does not handled all cases                                 |   yes    |
+| SDU0002       | Switch should not handle default case                             |   yes    |
+| SDU0003       | Switch has unreachable null case                                  |   yes    |
+| SDU0004       | Discriminated unions can only have private protected constructors |   yes    |
+| SDU0005       | Discriminated unions must have private protected constructor      |   yes    |
+| SDU0006       | Class discriminated unions must be abstract                       |   yes    |
+| SDU0007       | Interface discriminated unions must be internal                   |   yes    |
+| SDU0008       | Cases should be sealed                                            |   yes    |
+| SDU0009       | Unnested cases should have factory method                         |   yes    |
+| SDU9999       | Switch should throw in default case                               |    no    |
 
 ## Issues/Todos
 * Switch appears with red squiggly lines in VS: https://github.com/dotnet/roslyn/issues/57041

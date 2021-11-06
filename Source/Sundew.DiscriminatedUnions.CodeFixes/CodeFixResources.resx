@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CreatePrivateDefaultConstructor" xml:space="preserve">
-    <value>Create private default constructor</value>
+  <data name="CreatePrivateProtectedDefaultConstructor" xml:space="preserve">
+    <value>Create private protected default constructor</value>
   </data>
   <data name="SealCase" xml:space="preserve">
     <value>Seal case '{0}'</value>
@@ -132,7 +132,16 @@
   <data name="HasUnreachableNullCase" xml:space="preserve">
     <value>Remove null case</value>
   </data>
-  <data name="DiscriminatedUnionCanOnlyHavePrivateConstructors" xml:space="preserve">
-    <value>Make constructor private</value>
+  <data name="CanOnlyHavePrivateProtectedConstructors" xml:space="preserve">
+    <value>Make constructor private protected</value>
+  </data>
+  <data name="MakeAbstract" xml:space="preserve">
+    <value>Make '{0}' abstract</value>
+  </data>
+  <data name="CreateFactoryMethod" xml:space="preserve">
+    <value>Create factory method for '{0}'</value>
+  </data>
+  <data name="MakeInternal" xml:space="preserve">
+    <value>Make '{0}' internal</value>
   </data>
 </root>

@@ -33,12 +33,15 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
         {
             this.codeFixers = new ICodeFixer[]
             {
-                new AllCasesNotHandledCodeFixer(),
+                new SwitchAllCasesNotHandledCodeFixer(),
                 new SwitchShouldNotHaveDefaultCaseCodeFixer(),
-                new CaseNotSealedCodeFixer(),
-                new MustHavePrivateConstructorCodeFixer(),
                 new SwitchHasUnreachableNullCaseCodeFixer(),
-                new DiscriminatedUnionCanOnlyHavePrivateConstructorsCodeFixer(),
+                new DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFixer(),
+                new DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer(),
+                new DiscriminatedUnionsMustBeAbstractCodeFixer(),
+                new InterfaceDiscriminatedUnionsMustBeInternalCodeFixer(),
+                new CasesShouldBeSealedCodeFixer(),
+                new UnnestedCasesShouldHaveFactoryMethodCodeFixer(),
             }.ToDictionary(x => x.DiagnosticId);
             this.FixableDiagnosticIds = ImmutableArray.CreateRange(this.codeFixers.Keys);
         }
@@ -85,14 +88,14 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                     return;
                 }
 
-                var codeFixState = codeFixer.GetCodeFixState(node, semanticModel, context.CancellationToken);
+                var codeFixState = codeFixer.GetCodeFixState(node, semanticModel, diagnostic, context.CancellationToken);
                 switch (codeFixState)
                 {
                     case CodeFixStatus.CanFix canFix:
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 canFix.Title,
-                                cancellationToken => codeFixer.Fix(document, root, node, semanticModel, cancellationToken),
+                                cancellationToken => codeFixer.Fix(document, root, node, diagnostic.Properties, semanticModel, cancellationToken),
                                 canFix.EquivalenceKey),
                             diagnostic);
                         return;
