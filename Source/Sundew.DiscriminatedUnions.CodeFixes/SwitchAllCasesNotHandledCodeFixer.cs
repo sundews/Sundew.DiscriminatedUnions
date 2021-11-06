@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AllCasesNotHandledCodeFixer.cs" company="Hukano">
+// <copyright file="SwitchAllCasesNotHandledCodeFixer.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,6 +9,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -19,18 +20,30 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Operations;
     using Sundew.DiscriminatedUnions.Analyzer;
+    using Sundew.DiscriminatedUnions.Analyzer.SwitchExpression;
+    using Sundew.DiscriminatedUnions.Analyzer.SwitchStatement;
     using Sundew.DiscriminatedUnions.CodeFixes.Collections;
 
-    internal class AllCasesNotHandledCodeFixer : ICodeFixer
+    internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
     {
-        public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledDiagnosticId;
+        public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledDiagnosticId;
 
-        public CodeFixStatus GetCodeFixState(SyntaxNode syntaxNode, SemanticModel semanticModel, CancellationToken cancellationToken)
+        public CodeFixStatus GetCodeFixState(
+            SyntaxNode syntaxNode,
+            SemanticModel semanticModel,
+            Diagnostic diagnostic,
+            CancellationToken cancellationToken)
         {
-            return new CodeFixStatus.CanFix(CodeFixResources.PopulateMissingCases, nameof(AllCasesNotHandledCodeFixer));
+            return new CodeFixStatus.CanFix(CodeFixResources.PopulateMissingCases, nameof(SwitchAllCasesNotHandledCodeFixer));
         }
 
-        public async Task<Document> Fix(Document document, SyntaxNode root, SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        public async Task<Document> Fix(
+            Document document,
+            SyntaxNode root,
+            SyntaxNode node,
+            ImmutableDictionary<string, string?> diagnosticProperties,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
@@ -61,8 +74,8 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                 return document;
             }
 
-            var cases = DiscriminatedUnionHelper.GetAllCaseTypes(switchType).Pair().ToList();
-            var handledCaseTypes = DiscriminatedUnionHelper.GetHandledCaseTypes(switchExpressionOperation).ToList();
+            var cases = DiscriminatedUnionHelper.GetAllCaseTypes(switchType, semanticModel.Compilation).Pair().ToList();
+            var handledCaseTypes = SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).ToList();
 
             if (switchExpressionOperation.Syntax is not SwitchExpressionSyntax switchExpressionSyntax)
             {
@@ -78,21 +91,21 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                     continue;
                 }
 
-                handledCaseTypes.Insert(caseInfo.Index, (missingCaseType, true));
+                handledCaseTypes.Insert(caseInfo.Index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
                 arms = arms.Insert(
                         caseInfo.Index,
                         SyntaxFactory.SwitchExpressionArm(
                                 SyntaxFactory.DeclarationPattern(
                                     (TypeSyntax)generator.TypeExpression(missingCaseType),
                                     SyntaxFactory.SingleVariableDesignation(
-                                        SyntaxFactory.ParseToken(Uncapitalize(missingCaseType.Name)))),
+                                        SyntaxFactory.ParseToken(missingCaseType.Name.Uncapitalize()))),
                                 ThrowNotImplementExceptionExpression(generator))
                             .WithAdditionalAnnotations(Formatter.Annotation));
             }
 
             var unionTypeInfo = semanticModel.GetTypeInfo(switchExpressionOperation.Value.Syntax);
             if (unionTypeInfo.ConvertedNullability.FlowState != NullableFlowState.NotNull &&
-                DiscriminatedUnionHelper.GetNullCase(switchExpressionOperation) == null)
+                SwitchExpressionHelper.GetNullCase(switchExpressionOperation) == null)
             {
                 arms = arms.Add(SyntaxFactory.SwitchExpressionArm(
                         SyntaxFactory.ConstantPattern(
@@ -125,8 +138,8 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                 return document;
             }
 
-            var cases = DiscriminatedUnionHelper.GetAllCaseTypes(switchType).Pair().ToList();
-            var handledCaseTypes = DiscriminatedUnionHelper.GetHandledCaseTypes(switchOperation).ToList();
+            var cases = DiscriminatedUnionHelper.GetAllCaseTypes(switchType, semanticModel.Compilation).Pair().ToList();
+            var handledCaseTypes = SwitchStatementHelper.GetHandledCaseTypes(switchOperation).ToList();
 
             if (switchOperation.Syntax is not SwitchStatementSyntax switchStatementSyntax)
             {
@@ -142,7 +155,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                     continue;
                 }
 
-                handledCaseTypes.Insert(caseInfo.Index, (missingCaseType, true));
+                handledCaseTypes.Insert(caseInfo.Index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
                 sections = sections.Insert(
                     caseInfo.Index,
                     SyntaxFactory.SwitchSection(
@@ -153,7 +166,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
                                     SyntaxFactory.DeclarationPattern(
                                         (TypeSyntax)generator.TypeExpression(missingCaseType),
                                         SyntaxFactory.SingleVariableDesignation(
-                                            SyntaxFactory.ParseToken(Uncapitalize(missingCaseType.Name)))),
+                                            SyntaxFactory.ParseToken(missingCaseType.Name.Uncapitalize()))),
                                     SyntaxFactory.Token(SyntaxKind.ColonToken)),
                             }),
                         SyntaxFactory.List(new[] { ThrowNotImplementExceptionStatement(generator), })));
@@ -161,7 +174,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
 
             var unionTypeInfo = semanticModel.GetTypeInfo(switchOperation.Value.Syntax);
             if (unionTypeInfo.ConvertedNullability.FlowState != NullableFlowState.NotNull &&
-                DiscriminatedUnionHelper.GetNullCase(switchOperation) == null)
+                SwitchStatementHelper.GetNullCase(switchOperation) == null)
             {
                 sections = sections.Insert(
                     HasDefaultCase(sections) ? sections.Count - 1 : sections.Count,
@@ -187,7 +200,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
         }
 
         private static (int Index, bool WasHandled) FindIndex(
-            List<(ITypeSymbol Type, bool HandlesCase)> handledCases,
+            List<CaseInfo> handledCases,
             ITypeSymbol caseType,
             ITypeSymbol? previousCaseType)
         {
@@ -233,17 +246,6 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
         private static SyntaxNode ThrowNotImplementExceptionStatement(SyntaxGenerator generator)
         {
             return generator.ThrowStatement(generator.ObjectCreationExpression(SyntaxFactory.ParseTypeName(typeof(NotImplementedException).FullName)));
-        }
-
-        private static string Uncapitalize(string text)
-        {
-            var span = new Span<char>(text.ToCharArray());
-            if (span.Length > 0)
-            {
-                span[0] = char.ToLowerInvariant(span[0]);
-            }
-
-            return span.ToString();
         }
     }
 }

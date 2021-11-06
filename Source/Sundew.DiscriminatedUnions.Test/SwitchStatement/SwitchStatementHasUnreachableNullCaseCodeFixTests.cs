@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
+namespace Sundew.DiscriminatedUnions.Test.SwitchStatement
 {
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -71,7 +71,7 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.HasUnreachableNullCaseRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
                     .WithSpan(25, 17, 26, 27),
             };

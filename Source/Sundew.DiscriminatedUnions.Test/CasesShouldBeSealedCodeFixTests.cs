@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiscriminatedUnionTypeCodeFixTests.cs" company="Hukano">
+// <copyright file="CasesShouldBeSealedCodeFixTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,7 +16,7 @@ namespace Sundew.DiscriminatedUnions.Test
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
-    public class DiscriminatedUnionTypeCodeFixTests
+    public class CasesShouldBeSealedCodeFixTests
     {
         [TestMethod]
         public async Task Given_DiscriminatedUnion_When_CaseIsNotDeclaredSealed_Then_CaseShouldBeDeclaredSealed()
@@ -57,7 +57,7 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedDiagnosticId)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedRule)
                     .WithArguments("ConsoleApplication1.Option<T>.Success")
                     .WithSpan(19, 9, 19, 52),
             };
@@ -65,7 +65,7 @@ namespace ConsoleApplication1
         }
 
         [TestMethod]
-        public async Task Given_DiscriminatedUnion_When_NoPrivateDefaultConstructorIsDeclared_Then_DefaultConstructorShouldBeDeclaredAfterLastConsecutiveField()
+        public async Task Given_DiscriminatedUnion_When_NoPrivateProtectedDefaultConstructorIsDeclared_Then_DefaultConstructorShouldBeDeclaredAfterLastConsecutiveField()
         {
             var test = $@"{TestData.Usings}
 
@@ -95,7 +95,7 @@ namespace ConsoleApplication1
 
         public int Field;
 
-        private Option()
+        private protected Option()
         {{
         }}
 
@@ -107,7 +107,7 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.MustHavePrivateConstructorRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsMustHavePrivateProtectedConstructorRule)
                     .WithArguments("ConsoleApplication1.Option<T>", "ConsoleApplication1.Option<T>.Option()")
                     .WithSpan(12, 5, 22, 6),
             };
@@ -115,7 +115,7 @@ namespace ConsoleApplication1
         }
 
         [TestMethod]
-        public async Task Given_DiscriminatedUnion_When_NonPrivateConstructorIsDeclared_Then_ConstructorShouldBePrivate()
+        public async Task Given_DiscriminatedUnion_When_NonPrivateConstructorIsDeclared_Then_ConstructorShouldBePrivateProtected()
         {
             var test = $@"{TestData.Usings}
 
@@ -149,7 +149,7 @@ namespace ConsoleApplication1
 
         public int Field;
 
-        private Option()
+        private protected Option()
         {{
         }}
 
@@ -161,7 +161,7 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionCanOnlyHavePrivateConstructorsRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsRule)
                     .WithArguments("ConsoleApplication1.Option<T>", "ConsoleApplication1.Option<T>.Option()")
                     .WithSpan(19, 9, 21, 10),
             };

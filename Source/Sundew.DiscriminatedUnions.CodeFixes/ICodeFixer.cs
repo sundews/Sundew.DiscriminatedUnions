@@ -7,6 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.CodeFixes
 {
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -15,8 +16,18 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
     {
         string DiagnosticId { get; }
 
-        CodeFixStatus GetCodeFixState(SyntaxNode syntaxNode, SemanticModel semanticModel, CancellationToken cancellationToken);
+        CodeFixStatus GetCodeFixState(
+            SyntaxNode syntaxNode,
+            SemanticModel semanticModel,
+            Diagnostic diagnostic,
+            CancellationToken cancellationToken);
 
-        Task<Document> Fix(Document document, SyntaxNode root, SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken);
+        Task<Document> Fix(
+            Document document,
+            SyntaxNode root,
+            SyntaxNode node,
+            ImmutableDictionary<string, string?> diagnosticProperties,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken);
     }
 }

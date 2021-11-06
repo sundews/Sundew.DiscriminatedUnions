@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
+namespace Sundew.DiscriminatedUnions.Test.SwitchStatement
 {
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -64,7 +64,7 @@ namespace ConsoleApplication1
 }}";
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(17, 13, 21, 14),
             };
@@ -118,7 +118,7 @@ namespace ConsoleApplication1
 }}";
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(16, 13, 20, 14),
             };
@@ -174,7 +174,7 @@ namespace ConsoleApplication1
 }}";
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Warning'", Resources.Case, TestData.ConsoleApplication1Result, Resources.Is)
                     .WithSpan(17, 13, 23, 14),
             };
@@ -230,7 +230,7 @@ namespace ConsoleApplication1
 }}";
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Warning', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(16, 13, 22, 14),
             };
@@ -286,7 +286,7 @@ namespace ConsoleApplication1
 }}";
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Success', 'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(16, 13, 20, 14),
             };
@@ -346,7 +346,7 @@ namespace ConsoleApplication1
 }}";
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Warning', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(16, 13, 24, 14),
             };

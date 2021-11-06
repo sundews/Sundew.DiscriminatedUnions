@@ -1,11 +1,11 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SwitchExpressionShouldNotHaveDefaultCaseCodeFixTests.cs" company="Hukano">
+// <copyright file="SwitchStatementShouldNotHaveDefaultCaseCodeFixTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
+namespace Sundew.DiscriminatedUnions.Test.SwitchStatement
 {
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,10 +16,10 @@ namespace Sundew.DiscriminatedUnions.Test
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
-    public class SwitchExpressionShouldNotHaveDefaultCaseCodeFixTests
+    public class SwitchStatementShouldNotHaveDefaultCaseCodeFixTests
     {
         [TestMethod]
-        public async Task Given_SwitchExpression_When_DefaultCaseIsHandled_Then_DefaultCaseShouldBeRemoved()
+        public async Task Given_SwitchStatement_When_DefaultCaseIsHandled_Then_DefaultCaseShouldBeRemoved()
         {
             var test = $@"#nullable enable
 {TestData.Usings}
@@ -28,15 +28,19 @@ namespace ConsoleApplication1
 {{
     public class DiscriminatedUnionSymbolAnalyzerTests
     {{   
-        public bool Switch(Result result)
+        public void Switch(Result result)
         {{
-            return result switch
+            switch (result)
             {{
-                Result.Success success => true,
-                Result.Warning warning => true,
-                Result.Error error => false,
-                _ => false,
-            }};
+                case Result.Success success:
+                    break;
+                case Result.Warning warning:
+                    throw new System.NotImplementedException();
+                case Result.Error error:
+                    break;
+                default:
+                    break;
+            }}
         }}
     }}
 {TestData.ValidResultDiscriminatedUnion}
@@ -49,14 +53,17 @@ namespace ConsoleApplication1
 {{
     public class DiscriminatedUnionSymbolAnalyzerTests
     {{   
-        public bool Switch(Result result)
+        public void Switch(Result result)
         {{
-            return result switch
+            switch (result)
             {{
-                Result.Success success => true,
-                Result.Warning warning => true,
-                Result.Error error => false,
-            }};
+                case Result.Success success:
+                    break;
+                case Result.Warning warning:
+                    throw new System.NotImplementedException();
+                case Result.Error error:
+                    break;
+            }}
         }}
     }}
 {TestData.ValidResultDiscriminatedUnion}
@@ -66,7 +73,7 @@ namespace ConsoleApplication1
             {
                 VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
                     .WithArguments(TestData.ConsoleApplication1Result)
-                    .WithSpan(22, 17, 22, 27),
+                    .WithSpan(25, 17, 26, 27),
             };
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }

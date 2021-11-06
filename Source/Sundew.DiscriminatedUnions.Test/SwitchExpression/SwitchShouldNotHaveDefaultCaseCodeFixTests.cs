@@ -1,11 +1,11 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SwitchExpressionHasUnreachableNullCaseCodeFixTests.cs" company="Hukano">
+// <copyright file="SwitchShouldNotHaveDefaultCaseCodeFixTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
+namespace Sundew.DiscriminatedUnions.Test.SwitchExpression
 {
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +16,7 @@ namespace Sundew.DiscriminatedUnions.Test
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
-    public class SwitchExpressionHasUnreachableNullCaseCodeFixTests
+    public class SwitchShouldNotHaveDefaultCaseCodeFixTests
     {
         [TestMethod]
         public async Task Given_SwitchExpression_When_DefaultCaseIsHandled_Then_DefaultCaseShouldBeRemoved()
@@ -35,7 +35,7 @@ namespace ConsoleApplication1
                 Result.Success success => true,
                 Result.Warning warning => true,
                 Result.Error error => false,
-                null => false,
+                _ => false,
             }};
         }}
     }}
@@ -64,9 +64,9 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                    VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.HasUnreachableNullCaseRule)
-                        .WithArguments(TestData.ConsoleApplication1Result)
-                        .WithSpan(22, 17, 22, 30),
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                    .WithArguments(TestData.ConsoleApplication1Result)
+                    .WithSpan(22, 17, 22, 27),
             };
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }

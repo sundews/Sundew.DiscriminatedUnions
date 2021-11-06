@@ -7,10 +7,13 @@
 
 namespace Sundew.DiscriminatedUnions.Analyzer
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Text;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Operations;
 
     /// <summary>
@@ -43,111 +46,109 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// Gets all case types.
         /// </summary>
         /// <param name="unionType">Type of the union.</param>
+        /// <param name="compilation">The Compilation.</param>
         /// <returns>All case types within the discriminated unions.</returns>
-        public static IEnumerable<INamedTypeSymbol> GetAllCaseTypes(ITypeSymbol unionType)
+        public static IEnumerable<INamedTypeSymbol> GetAllCaseTypes(ITypeSymbol unionType, Compilation compilation)
         {
-            return unionType.GetTypeMembers().Where(x => SymbolEqualityComparer.Default.Equals(x.BaseType, unionType));
-        }
-
-        /// <summary>
-        /// Gets the handled case types.
-        /// </summary>
-        /// <param name="switchExpressionOperation">The switch expression operation.</param>
-        /// <returns>The handled case types.</returns>
-        public static IEnumerable<(ITypeSymbol Type, bool HandlesCase)> GetHandledCaseTypes(ISwitchExpressionOperation switchExpressionOperation)
-        {
-            return switchExpressionOperation.Arms.Select((switchExpressionArmOperation) =>
-            {
-                if (switchExpressionArmOperation.Pattern is IDeclarationPatternOperation
-                    declarationPatternSyntax)
+            return unionType.GetMembers()
+                .Where(x => x.Kind == SymbolKind.Method && x.IsStatic)
+                .OfType<IMethodSymbol>()
+                .Where(x => SymbolEqualityComparer.Default.Equals(x.ReturnType, unionType))
+                .SelectMany(
+                    x => x!.DeclaringSyntaxReferences,
+                    (methodSymbol, syntaxReference) => (syntaxReferences: syntaxReference, name: methodSymbol.Name))
+                .Select(x => (
+                    methodBodyOperation: compilation.GetSemanticModel(x.syntaxReferences.SyntaxTree)
+                        .GetOperation(x.syntaxReferences.GetSyntax()) as IMethodBodyOperation, x.name))
+                .Where(x => x.methodBodyOperation != null)
+                .Select(x => (methodBodyOperation: x.methodBodyOperation!, x.name))
+                .Select(x =>
                 {
-                    return (Type: declarationPatternSyntax.MatchedType, HandlesCase: true);
-                }
-
-                if (switchExpressionArmOperation.Pattern is ITypePatternOperation typePatternOperation)
-                {
-                    return (Type: typePatternOperation.MatchedType, HandlesCase: true);
-                }
-
-                return (Type: switchExpressionArmOperation.Pattern.NarrowedType, HandlesCase: false);
-            }).Where(x => x.Type != null).Select(x => (x.Type!, x.HandlesCase));
-        }
-
-        /// <summary>
-        /// Determines whether [has null case] [the specified switch expression operation].
-        /// </summary>
-        /// <param name="switchExpressionOperation">The switch expression operation.</param>
-        /// <returns>
-        ///   <c>true</c> if [has null case] [the specified switch expression operation]; otherwise, <c>false</c>.
-        /// </returns>
-        public static ISwitchExpressionArmOperation? GetNullCase(ISwitchExpressionOperation switchExpressionOperation)
-        {
-            return switchExpressionOperation.Arms.FirstOrDefault(x => x.Pattern is IConstantPatternOperation constantPatternOperation &&
-                                                                      ((constantPatternOperation.Value is IConversionOperation conversionOperation &&
-                                                                        conversionOperation.Operand is ILiteralOperation conversionLiteralOperation &&
-                                                                        IsNullLiteral(conversionLiteralOperation)) ||
-                                                                       (constantPatternOperation.Value is ILiteralOperation literalOperation &&
-                                                                        IsNullLiteral(literalOperation))));
-        }
-
-        /// <summary>
-        /// Gets the handled case types.
-        /// </summary>
-        /// <param name="switchOperation">The switch operation.</param>
-        /// <returns>The handled case types.</returns>
-        public static IEnumerable<(ITypeSymbol Type, bool HandlesCase)> GetHandledCaseTypes(ISwitchOperation switchOperation)
-        {
-            return switchOperation.Cases.SelectMany(switchCaseOperation =>
-                switchCaseOperation.Clauses.Select(caseClauseOperation =>
-                {
-                    if (caseClauseOperation is IPatternCaseClauseOperation patternCaseClauseOperation)
+                    var blockBody = x.methodBodyOperation.BlockBody;
+                    if (blockBody != null)
                     {
-                        if (patternCaseClauseOperation.Pattern is IDeclarationPatternOperation
-                            declarationPatternOperation)
-                        {
-                            return (Type: declarationPatternOperation.MatchedType, HandlesCase: true);
-                        }
-
-                        if (patternCaseClauseOperation.Pattern is ITypePatternOperation typePatternOperation)
-                        {
-                            return (Type: typePatternOperation.MatchedType, HandlesCase: true);
-                        }
-
-                        return (Type: patternCaseClauseOperation.Pattern.NarrowedType, HandlesCase: false);
+                        return TryGetActualReturnType(blockBody, x.name);
                     }
 
-                    /*if (caseClauseOperation is IDefaultCaseClauseOperation defaultCaseClauseOperation)
+                    var expressionBody = x.methodBodyOperation.ExpressionBody;
+                    if (expressionBody != null)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(SwitchShouldNotHaveDefaultCaseRule, defaultCaseClauseOperation.Syntax.GetLocation(), unionType));
-                    }*/
+                        return TryGetActualReturnType(expressionBody, x.name);
+                    }
 
-                    return (Type: null, HandlesCase: false);
-                }).Where(x => x.Type != null).Select(x => (x.Type!, x.HandlesCase)));
+                    return null;
+                })
+                .Where(x => x != null).Select(x => x!)
+                .Concat(
+                    unionType.GetTypeMembers()
+                        .Where(x =>
+                        {
+                            var baseType = x.BaseType;
+                            while (baseType != null)
+                            {
+                                if (SymbolEqualityComparer.Default.Equals(baseType, unionType))
+                                {
+                                    return true;
+                                }
+
+                                baseType = baseType.BaseType;
+                            }
+
+                            return false;
+                        }));
         }
 
-        /// <summary>
-        /// Determines whether [has null case] [the specified switch operation].
-        /// </summary>
-        /// <param name="switchOperation">The switch operation.</param>
-        /// <returns>
-        ///   <c>true</c> if [has null case] [the specified switch operation]; otherwise, <c>false</c>.
-        /// </returns>
-        public static ISwitchCaseOperation? GetNullCase(ISwitchOperation switchOperation)
+        internal static SwitchNullability EvaluateSwitchNullability(
+            IOperation operation,
+            SemanticModel semanticModel,
+            bool hasNullCase)
         {
-            return switchOperation.Cases.FirstOrDefault(x => x.Clauses.Any(
-                x => x is IPatternCaseClauseOperation patternCaseClauseOperation &&
-                     patternCaseClauseOperation.Pattern is IConstantPatternOperation constantPatternOperation &&
-                     ((constantPatternOperation.Value is IConversionOperation conversionOperation &&
-                       conversionOperation.Operand is ILiteralOperation conversionLiteralOperation &&
-                       IsNullLiteral(conversionLiteralOperation)) ||
-                      (constantPatternOperation.Value is ILiteralOperation literalOperation &&
-                       IsNullLiteral(literalOperation)))));
+            var unionTypeInfo = semanticModel.GetTypeInfo(operation.Syntax);
+            var isNullableEnabled = IsNullableEnabled(semanticModel, operation);
+            var isNullable = unionTypeInfo.ConvertedNullability.Annotation != NullableAnnotation.NotAnnotated;
+            var maybeNull = unionTypeInfo.ConvertedNullability.FlowState != NullableFlowState.NotNull;
+            var nullableStates = (isNullableEnabled, isNullable, maybeNull, hasNullCase);
+            var switchNullability = nullableStates switch
+            {
+                (true, false, _, true) => SwitchNullability.HasUnreachableNullCase,
+                (_, _, true, false) => SwitchNullability.IsMissingNullCase,
+                (_, _, false, true) => SwitchNullability.HasUnreachableNullCase,
+                (_, _, true, true) => SwitchNullability.None,
+                (_, _, false, false) => SwitchNullability.None,
+            };
+            return switchNullability;
         }
 
-        private static bool IsNullLiteral(ILiteralOperation literalOperation)
+        private static INamedTypeSymbol? TryGetActualReturnType(
+            IBlockOperation? body,
+            string name)
         {
-            return literalOperation.ConstantValue.HasValue &&
-                   literalOperation.ConstantValue.Value == null;
+            var lastOperation = body?.Operations.LastOrDefault();
+            if (lastOperation is IReturnOperation
+            {
+                ReturnedValue: IConversionOperation
+                {
+                    Operand: IObjectCreationOperation
+                    {
+                        Type: INamedTypeSymbol namedTypeSymbol
+                    }
+                }
+            })
+            {
+                if (namedTypeSymbol.Name == name)
+                {
+                    return namedTypeSymbol;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool IsNullableEnabled(SemanticModel semanticModel, IOperation operation)
+        {
+            return (semanticModel.GetNullableContext(operation.Syntax.GetLocation()
+                       .SourceSpan.Start) & NullableContext.Enabled) == NullableContext.Enabled ||
+                   semanticModel.Compilation.Options.NullableContextOptions != NullableContextOptions.Disable;
         }
     }
 }

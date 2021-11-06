@@ -35,6 +35,15 @@ namespace Sundew
             {
                 return some.Value;
             }
+
+            /// <summary>
+            /// Deconstructs the value.
+            /// </summary>
+            /// <param name="value">The value.</param>
+            public void Deconstruct(out TValue value)
+            {
+                value = this.Value;
+            }
         }
 
         /// <summary>

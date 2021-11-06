@@ -1,11 +1,11 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SwitchExpressionAllCasesNotHandledCodeFixTests.cs" company="Hukano">
+// <copyright file="AllCasesNotHandledCodeFixTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
+namespace Sundew.DiscriminatedUnions.Test.SwitchExpression
 {
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +16,7 @@ namespace Sundew.DiscriminatedUnions.Test
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
     [TestClass]
-    public class SwitchExpressionAllCasesNotHandledCodeFixTests
+    public class AllCasesNotHandledCodeFixTests
     {
         [TestMethod]
         public async Task Given_SwitchExpression_When_NullableContextIsEnabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithoutNullShouldBeHandled()
@@ -61,7 +61,7 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(17, 20, 20, 14),
             };
@@ -112,7 +112,7 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Warning'", Resources.Case, TestData.ConsoleApplication1Result, Resources.Is)
                     .WithSpan(17, 20, 21, 14),
             };
@@ -164,7 +164,7 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Success', 'Warning'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(17, 20, 21, 14),
             };
@@ -213,7 +213,7 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Success', 'Warning', 'Error'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(17, 20, 19, 14),
             };
@@ -262,7 +262,7 @@ namespace ConsoleApplication1
 
             var expected = new[]
             {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.AllCasesNotHandledRule)
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                     .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
                     .WithSpan(16, 20, 19, 14),
             };

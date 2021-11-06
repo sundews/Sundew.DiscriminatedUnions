@@ -61,20 +61,29 @@ namespace Sundew.DiscriminatedUnions.CodeFixes {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create private default constructor.
+        ///   Looks up a localized string similar to Make constructor private protected.
         /// </summary>
-        internal static string CreatePrivateDefaultConstructor {
+        internal static string CanOnlyHavePrivateProtectedConstructors {
             get {
-                return ResourceManager.GetString("CreatePrivateDefaultConstructor", resourceCulture);
+                return ResourceManager.GetString("CanOnlyHavePrivateProtectedConstructors", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Make constructor private.
+        ///   Looks up a localized string similar to Create factory method for &apos;{0}&apos;.
         /// </summary>
-        internal static string DiscriminatedUnionCanOnlyHavePrivateConstructors {
+        internal static string CreateFactoryMethod {
             get {
-                return ResourceManager.GetString("DiscriminatedUnionCanOnlyHavePrivateConstructors", resourceCulture);
+                return ResourceManager.GetString("CreateFactoryMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create private protected default constructor.
+        /// </summary>
+        internal static string CreatePrivateProtectedDefaultConstructor {
+            get {
+                return ResourceManager.GetString("CreatePrivateProtectedDefaultConstructor", resourceCulture);
             }
         }
         
@@ -84,6 +93,24 @@ namespace Sundew.DiscriminatedUnions.CodeFixes {
         internal static string HasUnreachableNullCase {
             get {
                 return ResourceManager.GetString("HasUnreachableNullCase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make &apos;{0}&apos; abstract.
+        /// </summary>
+        internal static string MakeAbstract {
+            get {
+                return ResourceManager.GetString("MakeAbstract", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make &apos;{0}&apos; internal.
+        /// </summary>
+        internal static string MakeInternal {
+            get {
+                return ResourceManager.GetString("MakeInternal", resourceCulture);
             }
         }
         

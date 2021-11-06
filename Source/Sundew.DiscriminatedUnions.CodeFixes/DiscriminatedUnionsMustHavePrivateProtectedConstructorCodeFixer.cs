@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MustHavePrivateConstructorCodeFixer.cs" company="Hukano">
+// <copyright file="DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,6 +8,7 @@
 namespace Sundew.DiscriminatedUnions.CodeFixes
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -16,17 +17,27 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
     using Microsoft.CodeAnalysis.Formatting;
     using Sundew.DiscriminatedUnions.Analyzer;
 
-    internal class MustHavePrivateConstructorCodeFixer : ICodeFixer
+    internal class DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer : ICodeFixer
     {
-        public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.MustHavePrivateConstructorDiagnosticId;
+        public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsMustHavePrivateProtectedConstructorRule.Id;
 
-        public CodeFixStatus GetCodeFixState(SyntaxNode syntaxNode, SemanticModel semanticModel, CancellationToken cancellationToken)
+        public CodeFixStatus GetCodeFixState(
+            SyntaxNode syntaxNode,
+            SemanticModel semanticModel,
+            Diagnostic diagnostic,
+            CancellationToken cancellationToken)
         {
-            var name = CodeFixResources.CreatePrivateDefaultConstructor;
-            return new CodeFixStatus.CanFix(name, nameof(MustHavePrivateConstructorCodeFixer));
+            var name = CodeFixResources.CreatePrivateProtectedDefaultConstructor;
+            return new CodeFixStatus.CanFix(name, nameof(DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer));
         }
 
-        public async Task<Document> Fix(Document document, SyntaxNode root, SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        public async Task<Document> Fix(
+            Document document,
+            SyntaxNode root,
+            SyntaxNode node,
+            ImmutableDictionary<string, string?> diagnosticProperties,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken)
         {
             var documentEditor = await DocumentEditor.CreateAsync(document, cancellationToken);
             var generator = documentEditor.Generator;
@@ -38,7 +49,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes
             }
 
             var index = GetMemberInsertionIndex(generator.GetMembers(node));
-            var newNode = generator.InsertMembers(node, index, generator.ConstructorDeclaration(name, null, Accessibility.Private)).WithAdditionalAnnotations(Formatter.Annotation);
+            var newNode = generator.InsertMembers(node, index, generator.ConstructorDeclaration(name, null, Accessibility.ProtectedAndInternal)).WithAdditionalAnnotations(Formatter.Annotation);
             return document.WithSyntaxRoot(root.ReplaceNode(node, newNode));
         }
 

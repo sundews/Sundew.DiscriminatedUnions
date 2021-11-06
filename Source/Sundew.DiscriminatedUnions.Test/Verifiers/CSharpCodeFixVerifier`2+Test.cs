@@ -13,7 +13,6 @@ namespace Sundew.DiscriminatedUnions.Test
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing.Verifiers;
-    using Sundew.DiscriminatedUnions.Analyzer;
 
     public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppressor>
         where TAnalyzer : DiagnosticAnalyzer, new()

@@ -7,12 +7,9 @@
 
 namespace Sundew.DiscriminatedUnions.Test
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing.Verifiers;
-    using Sundew.DiscriminatedUnions.Analyzer;
 
     public static partial class CSharpAnalyzerVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
