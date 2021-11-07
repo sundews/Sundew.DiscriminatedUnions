@@ -85,14 +85,15 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// <summary>
         /// The switch should not have default case rule.
         /// </summary>
-        public static readonly DiagnosticDescriptor SwitchShouldNotHaveDefaultCaseRule = DiagnosticDescriptorHelper.Create(
-            SwitchShouldNotHaveDefaultCaseDiagnosticId,
-            nameof(Resources.SwitchShouldNotHaveDefaultCaseTitle),
-            nameof(Resources.SwitchShouldNotHaveDefaultCaseMessageFormat),
-            Category,
-            DiagnosticSeverity.Error,
-            true,
-            nameof(Resources.SwitchShouldNotHaveDefaultCaseDescription));
+        public static readonly DiagnosticDescriptor SwitchShouldNotHaveDefaultCaseRule =
+            DiagnosticDescriptorHelper.Create(
+                SwitchShouldNotHaveDefaultCaseDiagnosticId,
+                nameof(Resources.SwitchShouldNotHaveDefaultCaseTitle),
+                nameof(Resources.SwitchShouldNotHaveDefaultCaseMessageFormat),
+                Category,
+                DiagnosticSeverity.Error,
+                true,
+                nameof(Resources.SwitchShouldNotHaveDefaultCaseDescription));
 
         /// <summary>
         /// The switch should throw in default case rule.
@@ -136,26 +137,28 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// <summary>
         /// The discriminated union base must be abstract.
         /// </summary>
-        public static readonly DiagnosticDescriptor ClassDiscriminatedUnionsMustBeAbstractRule = DiagnosticDescriptorHelper.Create(
-            ClassDiscriminatedUnionsMustBeAbstractDiagnosticId,
-            nameof(Resources.ClassDiscriminatedUnionsMustBeAbstractTitle),
-            nameof(Resources.ClassDiscriminatedUnionsMustBeAbstractMessageFormat),
-            Category,
-            DiagnosticSeverity.Error,
-            true,
-            nameof(Resources.ClassDiscriminatedUnionsMustBeAbstractDescription));
+        public static readonly DiagnosticDescriptor ClassDiscriminatedUnionsMustBeAbstractRule =
+            DiagnosticDescriptorHelper.Create(
+                ClassDiscriminatedUnionsMustBeAbstractDiagnosticId,
+                nameof(Resources.ClassDiscriminatedUnionsMustBeAbstractTitle),
+                nameof(Resources.ClassDiscriminatedUnionsMustBeAbstractMessageFormat),
+                Category,
+                DiagnosticSeverity.Error,
+                true,
+                nameof(Resources.ClassDiscriminatedUnionsMustBeAbstractDescription));
 
         /// <summary>
         /// The discriminated union base interface must be internal.
         /// </summary>
-        public static readonly DiagnosticDescriptor InterfaceDiscriminatedUnionsMustBeInternalRule = DiagnosticDescriptorHelper.Create(
-            InterfaceDiscriminatedUnionsMustBeInternalDiagnosticId,
-            nameof(Resources.InterfaceDiscriminatedUnionsMustBeInternalTitle),
-            nameof(Resources.InterfaceDiscriminatedUnionsMustBeInternalMessageFormat),
-            Category,
-            DiagnosticSeverity.Error,
-            true,
-            nameof(Resources.InterfaceDiscriminatedUnionsMustBeInternalDescription));
+        public static readonly DiagnosticDescriptor InterfaceDiscriminatedUnionsMustBeInternalRule =
+            DiagnosticDescriptorHelper.Create(
+                InterfaceDiscriminatedUnionsMustBeInternalDiagnosticId,
+                nameof(Resources.InterfaceDiscriminatedUnionsMustBeInternalTitle),
+                nameof(Resources.InterfaceDiscriminatedUnionsMustBeInternalMessageFormat),
+                Category,
+                DiagnosticSeverity.Error,
+                true,
+                nameof(Resources.InterfaceDiscriminatedUnionsMustBeInternalDescription));
 
         /// <summary>
         /// The cases should be sealed rule.
@@ -218,30 +221,28 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// <param name="context">The context.</param>
         public override void Initialize(AnalysisContext context)
         {
+            System.Diagnostics.Debugger.Launch();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterCompilationStartAction(analysisContext =>
-            {
-                var discriminatedUnionBaseAnalyzer = new DiscriminatedUnionBaseAnalyzer();
-                var discriminatedUnionCaseAnalyzer = new DiscriminatedUnionCaseAnalyzer();
-                var discriminatedUnionSwitchExpressionAnalyzer = new DiscriminatedUnionSwitchExpressionAnalyzer();
-                var discriminatedUnionSwitchStatementAnalyzer = new DiscriminatedUnionSwitchStatementAnalyzer();
-                analysisContext.RegisterSymbolAction(
-                    symbolAnalysisContext =>
+            var discriminatedUnionBaseAnalyzer = new DiscriminatedUnionBaseAnalyzer();
+            var discriminatedUnionCaseAnalyzer = new DiscriminatedUnionCaseAnalyzer();
+            var discriminatedUnionSwitchExpressionAnalyzer = new DiscriminatedUnionSwitchExpressionAnalyzer();
+            var discriminatedUnionSwitchStatementAnalyzer = new DiscriminatedUnionSwitchStatementAnalyzer();
+            context.RegisterSymbolAction(
+                symbolAnalysisContext =>
+                {
+                    if (symbolAnalysisContext.Symbol is not INamedTypeSymbol namedTypeSymbol)
                     {
-                        if (symbolAnalysisContext.Symbol is not INamedTypeSymbol namedTypeSymbol)
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
-                        discriminatedUnionBaseAnalyzer.AnalyzeSymbol(namedTypeSymbol, symbolAnalysisContext.ReportDiagnostic);
-                        discriminatedUnionCaseAnalyzer.AnalyzeSymbol(namedTypeSymbol, symbolAnalysisContext.ReportDiagnostic);
-                    },
-                    SymbolKind.NamedType);
-                context.RegisterOperationAction(discriminatedUnionSwitchExpressionAnalyzer.Analyze, OperationKind.SwitchExpression);
-                context.RegisterOperationAction(discriminatedUnionSwitchStatementAnalyzer.Analyze, OperationKind.Switch);
-            });
+                    discriminatedUnionBaseAnalyzer.AnalyzeSymbol(namedTypeSymbol, symbolAnalysisContext.ReportDiagnostic);
+                    discriminatedUnionCaseAnalyzer.AnalyzeSymbol(namedTypeSymbol, symbolAnalysisContext.ReportDiagnostic);
+                },
+                SymbolKind.NamedType);
+            context.RegisterOperationAction(discriminatedUnionSwitchExpressionAnalyzer.Analyze, OperationKind.SwitchExpression);
+            context.RegisterOperationAction(discriminatedUnionSwitchStatementAnalyzer.Analyze, OperationKind.Switch);
         }
     }
 }
