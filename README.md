@@ -77,7 +77,7 @@ public sealed record SubtractExpression(Expression Lhs, Expression Rhs) : Arithm
 public sealed record ValueExpression(int Value) : Expression;
 ```
 
-## Features:
+## Supported diagnostics:
 | Diagnostic Id | Description                                                       | Code Fix |
 | ------------- | ----------------------------------------------------------------- | :------: |
 | SDU0001       | Switch does not handled all cases                                 |   yes    |
