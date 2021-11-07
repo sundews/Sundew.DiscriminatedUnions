@@ -221,7 +221,6 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         /// <param name="context">The context.</param>
         public override void Initialize(AnalysisContext context)
         {
-            System.Diagnostics.Debugger.Launch();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
