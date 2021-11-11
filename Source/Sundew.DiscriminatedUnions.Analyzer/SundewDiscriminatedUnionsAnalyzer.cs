@@ -61,7 +61,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
         public const string CasesShouldBeSealedDiagnosticId = "SDU0008";
 
         /// <summary>
-        /// Diagnostic id indicating that the case should be sealed.
+        /// Diagnostic id indicating that unnested cases should have a factory method in its discriminated unions.
         /// </summary>
         public const string UnnestedCasesShouldHaveFactoryMethodDiagnosticId = "SDU0009";
 

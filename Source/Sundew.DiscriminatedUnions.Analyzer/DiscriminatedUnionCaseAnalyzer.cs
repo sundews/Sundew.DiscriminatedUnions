@@ -8,6 +8,7 @@
 namespace Sundew.DiscriminatedUnions.Analyzer
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -19,24 +20,22 @@ namespace Sundew.DiscriminatedUnions.Analyzer
             var isCase = false;
             if (!namedTypeSymbol.IsAbstract && namedTypeSymbol.TypeKind != TypeKind.Interface)
             {
-                var discriminatedUnionType = namedTypeSymbol;
-                while (discriminatedUnionType.BaseType != null)
+                foreach (var baseType in EnumerateBaseTypes(namedTypeSymbol).Concat(namedTypeSymbol.AllInterfaces))
                 {
-                    discriminatedUnionType = discriminatedUnionType.BaseType;
-                    if (DiscriminatedUnionHelper.IsDiscriminatedUnion(discriminatedUnionType))
+                    if (DiscriminatedUnionHelper.IsDiscriminatedUnion(baseType))
                     {
                         isCase = true;
                         if (namedTypeSymbol.ContainingType == null)
                         {
-                            var factoryMethod = discriminatedUnionType.GetMembers()
+                            var factoryMethod = baseType.GetMembers()
                                 .OfType<IMethodSymbol>()
                                 .Where(x => x.IsStatic)
                                 .FirstOrDefault(x =>
                                     x.Name == namedTypeSymbol.Name &&
-                                    SymbolEqualityComparer.Default.Equals(x.ReturnType, discriminatedUnionType));
+                                    SymbolEqualityComparer.Default.Equals(x.ReturnType, baseType));
                             if (factoryMethod == null)
                             {
-                                foreach (var syntaxReference in discriminatedUnionType.DeclaringSyntaxReferences)
+                                foreach (var syntaxReference in baseType.DeclaringSyntaxReferences)
                                 {
                                     var propertyBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
                                     propertyBuilder.Add(DiagnosticPropertyNames.QualifiedCaseName, namedTypeSymbol.ToDisplayString());
@@ -46,7 +45,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                                         syntaxReference.GetSyntax().GetLocation(),
                                         propertyBuilder.ToImmutable(),
                                         namedTypeSymbol,
-                                        discriminatedUnionType));
+                                        baseType));
                                 }
                             }
                         }
@@ -63,6 +62,21 @@ namespace Sundew.DiscriminatedUnions.Analyzer
                         declaringSyntaxReference.GetSyntax().GetLocation(),
                         namedTypeSymbol));
                 }
+            }
+        }
+
+        private static IEnumerable<INamedTypeSymbol> EnumerateBaseTypes(INamedTypeSymbol? discriminatedUnionType)
+        {
+            if (discriminatedUnionType == null)
+            {
+                yield break;
+            }
+
+            discriminatedUnionType = discriminatedUnionType.BaseType;
+            while (discriminatedUnionType != null)
+            {
+                yield return discriminatedUnionType;
+                discriminatedUnionType = discriminatedUnionType.BaseType;
             }
         }
     }

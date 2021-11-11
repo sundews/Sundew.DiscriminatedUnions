@@ -51,5 +51,35 @@ namespace ConsoleApplication1
                     .WithArguments("ConsoleApplication1.ValueExpression", "ConsoleApplication1.Expression")
                     .WithSpan(12, 5, 19, 6));
         }
+
+        [TestMethod]
+        public async Task Given_DiscriminatedUnion_When_UnionIsInterfaceAndCasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
+        {
+            var test = $@"#nullable enable
+{TestData.Usings}
+namespace ConsoleApplication1
+{{
+    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
+    internal interface Expression
+    {{
+        public static Expression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+    }}
+
+    internal sealed record AddExpression(Expression Lhs, Expression Rhs) : Expression;
+
+    internal sealed record SubtractExpression(Expression Lhs, Expression Rhs) : Expression;
+
+    internal sealed record ValueExpression(int Value) : Expression;
+}}";
+
+            await VerifyCS.VerifyAnalyzerAsync(
+                test,
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+                    .WithArguments("ConsoleApplication1.SubtractExpression", "ConsoleApplication1.Expression")
+                    .WithSpan(12, 5, 16, 6),
+                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+                    .WithArguments("ConsoleApplication1.ValueExpression", "ConsoleApplication1.Expression")
+                    .WithSpan(12, 5, 16, 6));
+        }
     }
 }
