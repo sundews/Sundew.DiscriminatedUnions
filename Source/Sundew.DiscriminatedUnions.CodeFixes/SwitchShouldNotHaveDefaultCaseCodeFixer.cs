@@ -5,64 +5,63 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes
+namespace Sundew.DiscriminatedUnions.CodeFixes;
+
+using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Sundew.DiscriminatedUnions.Analyzer;
+
+internal class SwitchShouldNotHaveDefaultCaseCodeFixer : ICodeFixer
 {
-    using System.Collections.Immutable;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Sundew.DiscriminatedUnions.Analyzer;
+    public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule.Id;
 
-    internal class SwitchShouldNotHaveDefaultCaseCodeFixer : ICodeFixer
+    public CodeFixStatus GetCodeFixState(
+        SyntaxNode syntaxNode,
+        SemanticModel semanticModel,
+        Diagnostic diagnostic,
+        CancellationToken cancellationToken)
     {
-        public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule.Id;
+        return new CodeFixStatus.CanFix(CodeFixResources.RemoveDefaultCase, nameof(SwitchShouldNotHaveDefaultCaseCodeFixer));
+    }
 
-        public CodeFixStatus GetCodeFixState(
-            SyntaxNode syntaxNode,
-            SemanticModel semanticModel,
-            Diagnostic diagnostic,
-            CancellationToken cancellationToken)
+    public Task<Document> Fix(
+        Document document,
+        SyntaxNode root,
+        SyntaxNode node,
+        ImmutableDictionary<string, string?> diagnosticProperties,
+        SemanticModel semanticModel,
+        CancellationToken cancellationToken)
+    {
+        if (node is SwitchExpressionArmSyntax { Parent: SwitchExpressionSyntax switchExpressionSyntax } switchExpressionArmSyntax)
         {
-            return new CodeFixStatus.CanFix(CodeFixResources.RemoveDefaultCase, nameof(SwitchShouldNotHaveDefaultCaseCodeFixer));
+            var arms = SyntaxFactory.SeparatedList(switchExpressionSyntax.Arms.Remove(switchExpressionArmSyntax));
+            var armsWithSeparator = arms.GetWithSeparators();
+            if (armsWithSeparator.LastOrDefault().IsNode)
+            {
+                arms = SyntaxFactory.SeparatedList<SwitchExpressionArmSyntax>(
+                    armsWithSeparator.Add(SyntaxFactory.Token(SyntaxKind.CommaToken)));
+            }
+
+            return Task.FromResult(
+                document.WithSyntaxRoot(
+                    root.ReplaceNode(switchExpressionSyntax, switchExpressionSyntax.WithArms(arms))));
         }
 
-        public Task<Document> Fix(
-            Document document,
-            SyntaxNode root,
-            SyntaxNode node,
-            ImmutableDictionary<string, string?> diagnosticProperties,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken)
+        if (node is SwitchSectionSyntax { Parent: SwitchStatementSyntax switchStatementSyntax } switchSectionSyntax)
         {
-            if (node is SwitchExpressionArmSyntax { Parent: SwitchExpressionSyntax switchExpressionSyntax } switchExpressionArmSyntax)
+            var newSwitchStatementSyntax = switchStatementSyntax.RemoveNode(switchSectionSyntax, SyntaxRemoveOptions.KeepDirectives);
+            if (newSwitchStatementSyntax != null)
             {
-                var arms = SyntaxFactory.SeparatedList(switchExpressionSyntax.Arms.Remove(switchExpressionArmSyntax));
-                var armsWithSeparator = arms.GetWithSeparators();
-                if (armsWithSeparator.LastOrDefault().IsNode)
-                {
-                    arms = SyntaxFactory.SeparatedList<SwitchExpressionArmSyntax>(
-                        armsWithSeparator.Add(SyntaxFactory.Token(SyntaxKind.CommaToken)));
-                }
-
                 return Task.FromResult(
                     document.WithSyntaxRoot(
-                        root.ReplaceNode(switchExpressionSyntax, switchExpressionSyntax.WithArms(arms))));
+                        root.ReplaceNode(switchStatementSyntax, newSwitchStatementSyntax)));
             }
-
-            if (node is SwitchSectionSyntax { Parent: SwitchStatementSyntax switchStatementSyntax } switchSectionSyntax)
-            {
-                var newSwitchStatementSyntax = switchStatementSyntax.RemoveNode(switchSectionSyntax, SyntaxRemoveOptions.KeepDirectives);
-                if (newSwitchStatementSyntax != null)
-                {
-                    return Task.FromResult(
-                        document.WithSyntaxRoot(
-                            root.ReplaceNode(switchStatementSyntax, newSwitchStatementSyntax)));
-                }
-            }
-
-            return Task.FromResult(document);
         }
+
+        return Task.FromResult(document);
     }
 }

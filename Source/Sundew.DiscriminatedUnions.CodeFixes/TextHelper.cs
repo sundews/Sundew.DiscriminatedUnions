@@ -5,21 +5,20 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes
+namespace Sundew.DiscriminatedUnions.CodeFixes;
+
+using System;
+
+internal static class TextHelper
 {
-    using System;
-
-    internal static class TextHelper
+    public static string Uncapitalize(this string text)
     {
-        public static string Uncapitalize(this string text)
+        var span = new Span<char>(text.ToCharArray());
+        if (span.Length > 0)
         {
-            var span = new Span<char>(text.ToCharArray());
-            if (span.Length > 0)
-            {
-                span[0] = char.ToLowerInvariant(span[0]);
-            }
-
-            return span.ToString();
+            span[0] = char.ToLowerInvariant(span[0]);
         }
+
+        return span.ToString();
     }
 }

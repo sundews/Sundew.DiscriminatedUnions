@@ -5,23 +5,23 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test.SwitchStatement
-{
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Sundew.DiscriminatedUnions.Analyzer;
-    using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+namespace Sundew.DiscriminatedUnions.Test.SwitchStatement;
+
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sundew.DiscriminatedUnions.Analyzer;
+using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
-    [TestClass]
-    public class SwitchShouldThrowInDefaultCaseAnalyzerTests
+[TestClass]
+public class SwitchShouldThrowInDefaultCaseAnalyzerTests
+{
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_AllCasesHandledButDefaultCaseIsIncorrect_Then_SwitchShouldThrowInDefaultCaseIsReported()
     {
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_AllCasesHandledButDefaultCaseIsIncorrect_Then_SwitchShouldThrowInDefaultCaseIsReported()
-        {
-            var test = $@"#nullable enable
+        var test = $@"#nullable enable
 {TestData.Usings}
 
 namespace ConsoleApplication1
@@ -48,53 +48,53 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            await VerifyCS.VerifyAnalyzerAsync(
-                test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
-                    .WithArguments(TestData.ConsoleApplication1Result)
-                    .WithSpan(27, 17, 28, 34));
-        }
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
+                .WithArguments(TestData.ConsoleApplication1Result)
+                .WithSpan(27, 17, 28, 34));
+    }
 
-        /*
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_DefaultCaseIsHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
-        {
-            var test = $@"#nullable enable
+    /*
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_DefaultCaseIsHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
+    {
+        var test = $@"#nullable enable
 {TestData.Usings}
 
 namespace ConsoleApplication1
 {{
-    public class DiscriminatedUnionSymbolAnalyzerTests
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{
+    public void Switch(Result result)
     {{
-        public void Switch(Result result)
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success:
-                    break;
-                case Result.Warning warning:
-                    break;
-                case Result.Error error:
-                    break;
-                default:
-                    break;
-            }}
+            case Result.Success:
+                break;
+            case Result.Warning warning:
+                break;
+            case Result.Error error:
+                break;
+            default:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            await VerifyCS.VerifyAnalyzerAsync(
-                test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                    .WithArguments(TestData.ConsoleApplication1Result)
-                    .WithSpan(25, 17, 26, 27));
-        }*/
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                .WithArguments(TestData.ConsoleApplication1Result)
+                .WithSpan(25, 17, 26, 27));
+    }*/
 
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_AllCasesReturnAndDefaultCaseIsHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
-        {
-            var test = $@"#nullable enable
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_AllCasesReturnAndDefaultCaseIsHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
+    {
+        var test = $@"#nullable enable
 {TestData.Usings}
 
 namespace ConsoleApplication1
@@ -119,17 +119,17 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            await VerifyCS.VerifyAnalyzerAsync(
-                test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
-                    .WithArguments(TestData.ConsoleApplication1Result)
-                    .WithSpan(25, 17, 26, 27));
-        }
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
+                .WithArguments(TestData.ConsoleApplication1Result)
+                .WithSpan(25, 17, 26, 27));
+    }
 
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_ValueMayBeNullAndAllCasesAreHandledAndDefaultCaseDoesNotThrow_Then_SwitchShouldThrowInDefaultCaseIsReported()
-        {
-            var test = $@"#nullable enable
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_ValueMayBeNullAndAllCasesAreHandledAndDefaultCaseDoesNotThrow_Then_SwitchShouldThrowInDefaultCaseIsReported()
+    {
+        var test = $@"#nullable enable
 {TestData.Usings}
 
 namespace ConsoleApplication1
@@ -158,11 +158,10 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            await VerifyCS.VerifyAnalyzerAsync(
-                test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
-            .WithArguments(TestData.ConsoleApplication1Result)
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
+                .WithArguments(TestData.ConsoleApplication1Result)
                 .WithSpan(29, 17, 30, 34));
-        }
     }
 }

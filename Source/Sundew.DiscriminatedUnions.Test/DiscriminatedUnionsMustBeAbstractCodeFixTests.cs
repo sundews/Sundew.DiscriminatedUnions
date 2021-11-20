@@ -5,23 +5,23 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
-{
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Sundew.DiscriminatedUnions.Analyzer;
-    using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-        Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+namespace Sundew.DiscriminatedUnions.Test;
 
-    [TestClass]
-    public class DiscriminatedUnionsMustBeAbstractCodeFixTests
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sundew.DiscriminatedUnions.Analyzer;
+using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+
+[TestClass]
+public class DiscriminatedUnionsMustBeAbstractCodeFixTests
+{
+    [TestMethod]
+    public async Task Given_DiscriminatedUnion_When_ItIsNotDeclaredAbstract_Then_ItShouldBeDeclaredAbstract()
     {
-        [TestMethod]
-        public async Task Given_DiscriminatedUnion_When_ItIsNotDeclaredAbstract_Then_ItShouldBeDeclaredAbstract()
-        {
-            var test = $@"{TestData.Usings}
+        var test = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -39,7 +39,7 @@ namespace ConsoleApplication1
     }}
 }}";
 
-            var fixtest = $@"{TestData.Usings}
+        var fixtest = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -57,13 +57,12 @@ namespace ConsoleApplication1
     }}
 }}";
 
-            var expected = new[]
-            {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.ClassDiscriminatedUnionsMustBeAbstractRule)
-                    .WithArguments("ConsoleApplication1.Result")
-                    .WithSpan(12, 5, 23, 6),
-            };
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-        }
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.ClassDiscriminatedUnionsMustBeAbstractRule)
+                .WithArguments("ConsoleApplication1.Result")
+                .WithSpan(12, 5, 23, 6),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }
 }

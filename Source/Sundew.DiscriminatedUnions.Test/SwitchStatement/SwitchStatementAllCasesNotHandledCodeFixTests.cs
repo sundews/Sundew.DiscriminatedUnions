@@ -5,23 +5,23 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test.SwitchStatement
-{
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Sundew.DiscriminatedUnions.Analyzer;
-    using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+namespace Sundew.DiscriminatedUnions.Test.SwitchStatement;
+
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sundew.DiscriminatedUnions.Analyzer;
+using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
-    [TestClass]
-    public class SwitchStatementAllCasesNotHandledCodeFixTests
+[TestClass]
+public class SwitchStatementAllCasesNotHandledCodeFixTests
+{
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_NullableContextIsEnabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithoutNullShouldBeHandled()
     {
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_NullableContextIsEnabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithoutNullShouldBeHandled()
-        {
-            var test = $@"#nullable enable
+        var test = $@"#nullable enable
 {TestData.Usings}
 
 namespace ConsoleApplication1
@@ -40,7 +40,7 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            var fixtest = $@"#nullable enable
+        var fixtest = $@"#nullable enable
 {TestData.Usings}
 
 namespace ConsoleApplication1
@@ -62,20 +62,20 @@ namespace ConsoleApplication1
     }}
 {TestData.ValidResultDiscriminatedUnion}
 }}";
-            var expected = new[]
-            {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                    .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
-                    .WithSpan(17, 13, 21, 14),
-            };
-
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-        }
-
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithNullShouldBeHandled()
+        var expected = new[]
         {
-            var test = $@"{TestData.Usings}
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
+                .WithSpan(17, 13, 21, 14),
+        };
+
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+    }
+
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithNullShouldBeHandled()
+    {
+        var test = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -93,7 +93,7 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            var fixtest = $@"{TestData.Usings}
+        var fixtest = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -116,20 +116,20 @@ namespace ConsoleApplication1
     }}
 {TestData.ValidResultDiscriminatedUnion}
 }}";
-            var expected = new[]
-            {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                    .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
-                    .WithSpan(16, 13, 20, 14),
-            };
-
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-        }
-
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_NullableContextIsEnabledAndCasesInBetweenIsNotHandled_Then_RemainingCaseShouldBeHandledInBetween()
+        var expected = new[]
         {
-            var test = $@"#nullable enable
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
+                .WithSpan(16, 13, 20, 14),
+        };
+
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+    }
+
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_NullableContextIsEnabledAndCasesInBetweenIsNotHandled_Then_RemainingCaseShouldBeHandledInBetween()
+    {
+        var test = $@"#nullable enable
 {TestData.Usings}
 
 namespace ConsoleApplication1
@@ -150,7 +150,7 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            var fixtest = $@"#nullable enable
+        var fixtest = $@"#nullable enable
 {TestData.Usings}
 
 namespace ConsoleApplication1
@@ -172,20 +172,20 @@ namespace ConsoleApplication1
     }}
 {TestData.ValidResultDiscriminatedUnion}
 }}";
-            var expected = new[]
-            {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                    .WithArguments("'Warning'", Resources.Case, TestData.ConsoleApplication1Result, Resources.Is)
-                    .WithSpan(17, 13, 23, 14),
-            };
-
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-        }
-
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndCasesInBetweenIsNotHandled_Then_RemainingCaseShouldBeHandledInBetween()
+        var expected = new[]
         {
-            var test = $@"{TestData.Usings}
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Warning'", Resources.Case, TestData.ConsoleApplication1Result, Resources.Is)
+                .WithSpan(17, 13, 23, 14),
+        };
+
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+    }
+
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndCasesInBetweenIsNotHandled_Then_RemainingCaseShouldBeHandledInBetween()
+    {
+        var test = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -205,7 +205,7 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            var fixtest = $@"{TestData.Usings}
+        var fixtest = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -228,20 +228,20 @@ namespace ConsoleApplication1
     }}
 {TestData.ValidResultDiscriminatedUnion}
 }}";
-            var expected = new[]
-            {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                    .WithArguments("'Warning', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
-                    .WithSpan(16, 13, 22, 14),
-            };
-
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-        }
-
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndNoCasesAreHandled_Then_AllCasesAndNullCaseShouldBeHandled()
+        var expected = new[]
         {
-            var test = $@"{TestData.Usings}
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Warning', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
+                .WithSpan(16, 13, 22, 14),
+        };
+
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+    }
+
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndNoCasesAreHandled_Then_AllCasesAndNullCaseShouldBeHandled()
+    {
+        var test = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -259,7 +259,7 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            var fixtest = $@"{TestData.Usings}
+        var fixtest = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -284,20 +284,20 @@ namespace ConsoleApplication1
     }}
 {TestData.ValidResultDiscriminatedUnion}
 }}";
-            var expected = new[]
-            {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                    .WithArguments("'Success', 'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
-                    .WithSpan(16, 13, 20, 14),
-            };
-
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-        }
-
-        [TestMethod]
-        public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndCasesInBetweenHasPattern_Then_RemainingCaseShouldBeHandledInBetweenAfterPattern()
+        var expected = new[]
         {
-            var test = $@"{TestData.Usings}
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Success', 'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
+                .WithSpan(16, 13, 20, 14),
+        };
+
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+    }
+
+    [TestMethod]
+    public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndCasesInBetweenHasPattern_Then_RemainingCaseShouldBeHandledInBetweenAfterPattern()
+    {
+        var test = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -319,7 +319,7 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            var fixtest = $@"{TestData.Usings}
+        var fixtest = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -344,14 +344,13 @@ namespace ConsoleApplication1
     }}
 {TestData.ValidResultDiscriminatedUnion}
 }}";
-            var expected = new[]
-            {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                    .WithArguments("'Warning', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
-                    .WithSpan(16, 13, 24, 14),
-            };
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Warning', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
+                .WithSpan(16, 13, 24, 14),
+        };
 
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-        }
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }
 }

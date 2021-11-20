@@ -5,24 +5,24 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
-{
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Sundew.DiscriminatedUnions.Analyzer;
-    using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-        Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+namespace Sundew.DiscriminatedUnions.Test;
 
-    [TestClass]
-    public class DiscriminatedUnionsMustBeAbstractAnalyzerTests
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sundew.DiscriminatedUnions.Analyzer;
+using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+
+[TestClass]
+public class DiscriminatedUnionsMustBeAbstractAnalyzerTests
+{
+    [TestMethod]
+    public async Task
+        Given_DiscriminatedUnion_When_ItIsNotAbstract_Then_ClassDiscriminatedUnionsMustBeAbstractIsReported()
     {
-        [TestMethod]
-        public async Task
-            Given_DiscriminatedUnion_When_ItIsNotAbstract_Then_ClassDiscriminatedUnionsMustBeAbstractIsReported()
-        {
-            var test = $@"#nullable enable
+        var test = $@"#nullable enable
 {TestData.Usings}
 namespace ConsoleApplication1
 {{
@@ -38,11 +38,10 @@ namespace ConsoleApplication1
     }}
 }}";
 
-            await VerifyCS.VerifyAnalyzerAsync(
-                test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.ClassDiscriminatedUnionsMustBeAbstractRule)
-                    .WithArguments("ConsoleApplication1.Result")
-                    .WithSpan(12, 5, 21, 6));
-        }
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.ClassDiscriminatedUnionsMustBeAbstractRule)
+                .WithArguments("ConsoleApplication1.Result")
+                .WithSpan(12, 5, 21, 6));
     }
 }

@@ -5,29 +5,28 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes
+namespace Sundew.DiscriminatedUnions.CodeFixes;
+
+using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+
+internal interface ICodeFixer
 {
-    using System.Collections.Immutable;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
+    string DiagnosticId { get; }
 
-    internal interface ICodeFixer
-    {
-        string DiagnosticId { get; }
+    CodeFixStatus GetCodeFixState(
+        SyntaxNode syntaxNode,
+        SemanticModel semanticModel,
+        Diagnostic diagnostic,
+        CancellationToken cancellationToken);
 
-        CodeFixStatus GetCodeFixState(
-            SyntaxNode syntaxNode,
-            SemanticModel semanticModel,
-            Diagnostic diagnostic,
-            CancellationToken cancellationToken);
-
-        Task<Document> Fix(
-            Document document,
-            SyntaxNode root,
-            SyntaxNode node,
-            ImmutableDictionary<string, string?> diagnosticProperties,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken);
-    }
+    Task<Document> Fix(
+        Document document,
+        SyntaxNode root,
+        SyntaxNode node,
+        ImmutableDictionary<string, string?> diagnosticProperties,
+        SemanticModel semanticModel,
+        CancellationToken cancellationToken);
 }

@@ -5,30 +5,30 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test.SwitchExpression
-{
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+namespace Sundew.DiscriminatedUnions.Test.SwitchExpression;
+
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
-    [TestClass]
-    public class NoDiagnosticsAnalyzerTests
+[TestClass]
+public class NoDiagnosticsAnalyzerTests
+{
+    [TestMethod]
+    public async Task Given_NoDiscriminatedUnionSwitch_Then_NoDiagnosticsAreReported()
     {
-        [TestMethod]
-        public async Task Given_NoDiscriminatedUnionSwitch_Then_NoDiagnosticsAreReported()
-        {
-            var test = string.Empty;
+        var test = string.Empty;
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
-        }
+        await VerifyCS.VerifyAnalyzerAsync(test);
+    }
 
-        [TestMethod]
-        public async Task Given_SwitchExpression_When_ExactlyAllCasesAreHandled_Then_NoDiagnosticsAreReported()
-        {
-            var test = $@"#nullable enable
+    [TestMethod]
+    public async Task Given_SwitchExpression_When_ExactlyAllCasesAreHandled_Then_NoDiagnosticsAreReported()
+    {
+        var test = $@"#nullable enable
 {TestData.Usings}
 
 namespace ConsoleApplication1
@@ -49,13 +49,13 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
-        }
+        await VerifyCS.VerifyAnalyzerAsync(test);
+    }
 
-        [TestMethod]
-        public async Task Given_SwitchExpression_When_ValueMayBeNullAndExactlyAllCasesAreHandled_Then_NoDiagnosticsAreReported()
-        {
-            var test = $@"{TestData.Usings}
+    [TestMethod]
+    public async Task Given_SwitchExpression_When_ValueMayBeNullAndExactlyAllCasesAreHandled_Then_NoDiagnosticsAreReported()
+    {
+        var test = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -76,13 +76,13 @@ namespace ConsoleApplication1
 {TestData.ValidResultDiscriminatedUnion}
 }}";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
-        }
+        await VerifyCS.VerifyAnalyzerAsync(test);
+    }
 
-        [TestMethod]
-        public async Task Given_GenericSwitchExpressionInDisableNullableContext_When_ValueMayBeNullAndAllCasesAndNullCaseAreHandled_Then_NoDiagnosticsAreReported()
-        {
-            var test = $@"{TestData.Usings}
+    [TestMethod]
+    public async Task Given_GenericSwitchExpressionInDisableNullableContext_When_ValueMayBeNullAndAllCasesAndNullCaseAreHandled_Then_NoDiagnosticsAreReported()
+    {
+        var test = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -101,7 +101,6 @@ namespace ConsoleApplication1
 {TestData.ValidGenericOptionDiscriminatedUnion}
 }}";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
-        }
+        await VerifyCS.VerifyAnalyzerAsync(test);
     }
 }

@@ -5,23 +5,23 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test.SwitchExpression
-{
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Sundew.DiscriminatedUnions.Analyzer;
-    using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-        Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+namespace Sundew.DiscriminatedUnions.Test.SwitchExpression;
 
-    [TestClass]
-    public class WithSubUnionsAllCasesNotHandledAnalyzerTests
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sundew.DiscriminatedUnions.Analyzer;
+using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+
+[TestClass]
+public class WithSubUnionsAllCasesNotHandledAnalyzerTests
+{
+    [TestMethod]
+    public async Task Given_SwitchExpression_When_DiscriminatedUnionHasSubUnionAndAllCasesAreNotHandled_Then_AllCasesNotHandledIsReported()
     {
-        [TestMethod]
-        public async Task Given_SwitchExpression_When_DiscriminatedUnionHasSubUnionAndAllCasesAreNotHandled_Then_AllCasesNotHandledIsReported()
-        {
-            var test = $@"#nullable enable
+        var test = $@"#nullable enable
 {TestData.Usings}
 namespace ConsoleApplication1
 {{
@@ -39,17 +39,17 @@ namespace ConsoleApplication1
 
     {TestData.ValidDiscriminatedUnionWithSubUnions}
 }}";
-            await VerifyCS.VerifyAnalyzerAsync(
-                test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                    .WithArguments("'ValueExpression'", Resources.Case, "ConsoleApplication1.Expression", Resources.Is)
-                    .WithSpan(16, 20, 20, 18));
-        }
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'ValueExpression'", Resources.Case, "ConsoleApplication1.Expression", Resources.Is)
+                .WithSpan(16, 20, 20, 18));
+    }
 
-        [TestMethod]
-        public async Task Given_SwitchExpression_When_DiscriminatedUnionIsSubUnionAndAllCasesAreNotHandled_Then_AllCasesNotHandledIsReported()
-        {
-            var test = $@"#nullable enable
+    [TestMethod]
+    public async Task Given_SwitchExpression_When_DiscriminatedUnionIsSubUnionAndAllCasesAreNotHandled_Then_AllCasesNotHandledIsReported()
+    {
+        var test = $@"#nullable enable
 {TestData.Usings}
 namespace ConsoleApplication1
 {{
@@ -66,11 +66,10 @@ namespace ConsoleApplication1
 
     {TestData.ValidDiscriminatedUnionWithSubUnions}
 }}";
-            await VerifyCS.VerifyAnalyzerAsync(
-                test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                    .WithArguments("'SubtractExpression'", Resources.Case, "ConsoleApplication1.ArithmeticExpression", Resources.Is)
-                    .WithSpan(16, 20, 19, 18));
-        }
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'SubtractExpression'", Resources.Case, "ConsoleApplication1.ArithmeticExpression", Resources.Is)
+                .WithSpan(16, 20, 19, 18));
     }
 }

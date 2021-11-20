@@ -5,21 +5,20 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Analyzer
+namespace Sundew.DiscriminatedUnions.Analyzer;
+
+/// <summary>
+/// Property names to share data between analyzers and code fixes.
+/// </summary>
+public class DiagnosticPropertyNames
 {
     /// <summary>
-    /// Property names to share data between analyzers and code fixes.
+    /// Used to retrieve the case.
     /// </summary>
-    public class DiagnosticPropertyNames
-    {
-        /// <summary>
-        /// Used to retrieve the case.
-        /// </summary>
-        public const string QualifiedCaseName = nameof(QualifiedCaseName);
+    public const string QualifiedCaseName = nameof(QualifiedCaseName);
 
-        /// <summary>
-        /// Used to retrieve the name.
-        /// </summary>
-        public const string Name = nameof(Name);
-    }
+    /// <summary>
+    /// Used to retrieve the name.
+    /// </summary>
+    public const string Name = nameof(Name);
 }

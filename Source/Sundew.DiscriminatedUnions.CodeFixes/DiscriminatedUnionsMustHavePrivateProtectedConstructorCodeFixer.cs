@@ -5,67 +5,66 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes
+namespace Sundew.DiscriminatedUnions.CodeFixes;
+
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Formatting;
+using Sundew.DiscriminatedUnions.Analyzer;
+
+internal class DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer : ICodeFixer
 {
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.Editing;
-    using Microsoft.CodeAnalysis.Formatting;
-    using Sundew.DiscriminatedUnions.Analyzer;
+    public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsMustHavePrivateProtectedConstructorRule.Id;
 
-    internal class DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer : ICodeFixer
+    public CodeFixStatus GetCodeFixState(
+        SyntaxNode syntaxNode,
+        SemanticModel semanticModel,
+        Diagnostic diagnostic,
+        CancellationToken cancellationToken)
     {
-        public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsMustHavePrivateProtectedConstructorRule.Id;
+        var name = CodeFixResources.CreatePrivateProtectedDefaultConstructor;
+        return new CodeFixStatus.CanFix(name, nameof(DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer));
+    }
 
-        public CodeFixStatus GetCodeFixState(
-            SyntaxNode syntaxNode,
-            SemanticModel semanticModel,
-            Diagnostic diagnostic,
-            CancellationToken cancellationToken)
+    public async Task<Document> Fix(
+        Document document,
+        SyntaxNode root,
+        SyntaxNode node,
+        ImmutableDictionary<string, string?> diagnosticProperties,
+        SemanticModel semanticModel,
+        CancellationToken cancellationToken)
+    {
+        var documentEditor = await DocumentEditor.CreateAsync(document, cancellationToken);
+        var generator = documentEditor.Generator;
+        var declaredSymbol = semanticModel.GetDeclaredSymbol(node);
+        var name = declaredSymbol?.Name;
+        if (name == null)
         {
-            var name = CodeFixResources.CreatePrivateProtectedDefaultConstructor;
-            return new CodeFixStatus.CanFix(name, nameof(DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer));
+            return document;
         }
 
-        public async Task<Document> Fix(
-            Document document,
-            SyntaxNode root,
-            SyntaxNode node,
-            ImmutableDictionary<string, string?> diagnosticProperties,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken)
+        var index = GetMemberInsertionIndex(generator.GetMembers(node));
+        var newNode = generator.InsertMembers(node, index, generator.ConstructorDeclaration(name, null, Accessibility.ProtectedAndInternal)).WithAdditionalAnnotations(Formatter.Annotation);
+        return document.WithSyntaxRoot(root.ReplaceNode(node, newNode));
+    }
+
+    private static int GetMemberInsertionIndex(IReadOnlyList<SyntaxNode> members)
+    {
+        var i = 0;
+        for (; i < members.Count; i++)
         {
-            var documentEditor = await DocumentEditor.CreateAsync(document, cancellationToken);
-            var generator = documentEditor.Generator;
-            var declaredSymbol = semanticModel.GetDeclaredSymbol(node);
-            var name = declaredSymbol?.Name;
-            if (name == null)
+            var member = members[i];
+            if (!member.IsKind(SyntaxKind.FieldDeclaration))
             {
-                return document;
+                return i;
             }
-
-            var index = GetMemberInsertionIndex(generator.GetMembers(node));
-            var newNode = generator.InsertMembers(node, index, generator.ConstructorDeclaration(name, null, Accessibility.ProtectedAndInternal)).WithAdditionalAnnotations(Formatter.Annotation);
-            return document.WithSyntaxRoot(root.ReplaceNode(node, newNode));
         }
 
-        private static int GetMemberInsertionIndex(IReadOnlyList<SyntaxNode> members)
-        {
-            var i = 0;
-            for (; i < members.Count; i++)
-            {
-                var member = members[i];
-                if (!member.IsKind(SyntaxKind.FieldDeclaration))
-                {
-                    return i;
-                }
-            }
-
-            return i;
-        }
+        return i;
     }
 }

@@ -5,20 +5,19 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes.Collections
-{
-    using System.Collections.Generic;
+namespace Sundew.DiscriminatedUnions.CodeFixes.Collections;
 
-    internal static class EnumerableExtensions
+using System.Collections.Generic;
+
+internal static class EnumerableExtensions
+{
+    public static IEnumerable<(TItem? Previous, TItem Current)> Pair<TItem>(this IEnumerable<TItem> enumerable)
     {
-        public static IEnumerable<(TItem? Previous, TItem Current)> Pair<TItem>(this IEnumerable<TItem> enumerable)
+        var previous = default(TItem);
+        foreach (var item in enumerable)
         {
-            var previous = default(TItem);
-            foreach (var item in enumerable)
-            {
-                yield return (previous, item);
-                previous = item;
-            }
+            yield return (previous, item);
+            previous = item;
         }
     }
 }

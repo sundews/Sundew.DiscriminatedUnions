@@ -5,23 +5,23 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
-{
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Sundew.DiscriminatedUnions.Analyzer;
-    using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+namespace Sundew.DiscriminatedUnions.Test;
+
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sundew.DiscriminatedUnions.Analyzer;
+using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
 
-    [TestClass]
-    public class DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFixTests
+[TestClass]
+public class DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFixTests
+{
+    [TestMethod]
+    public async Task Given_DiscriminatedUnion_When_NonPrivateConstructorIsDeclared_Then_ConstructorShouldBePrivateProtected()
     {
-        [TestMethod]
-        public async Task Given_DiscriminatedUnion_When_NonPrivateConstructorIsDeclared_Then_ConstructorShouldBePrivateProtected()
-        {
-            var test = $@"{TestData.Usings}
+        var test = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -42,7 +42,7 @@ namespace ConsoleApplication1
     }}
 }}";
 
-            var fixtest = $@"{TestData.Usings}
+        var fixtest = $@"{TestData.Usings}
 
 namespace ConsoleApplication1
 {{
@@ -63,13 +63,12 @@ namespace ConsoleApplication1
     }}
 }}";
 
-            var expected = new[]
-            {
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsRule)
-                    .WithArguments("ConsoleApplication1.Option<T>", "ConsoleApplication1.Option<T>.Option()")
-                    .WithSpan(19, 9, 21, 10),
-            };
-            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
-        }
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsRule)
+                .WithArguments("ConsoleApplication1.Option<T>", "ConsoleApplication1.Option<T>.Option()")
+                .WithSpan(19, 9, 21, 10),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }
 }

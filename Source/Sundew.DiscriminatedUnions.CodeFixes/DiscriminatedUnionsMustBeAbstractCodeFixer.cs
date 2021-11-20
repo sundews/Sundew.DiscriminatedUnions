@@ -5,51 +5,50 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes
+namespace Sundew.DiscriminatedUnions.CodeFixes;
+
+using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Formatting;
+using Sundew.DiscriminatedUnions.Analyzer;
+
+internal class DiscriminatedUnionsMustBeAbstractCodeFixer : ICodeFixer
 {
-    using System.Collections.Immutable;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Editing;
-    using Microsoft.CodeAnalysis.Formatting;
-    using Sundew.DiscriminatedUnions.Analyzer;
+    public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.ClassDiscriminatedUnionsMustBeAbstractRule.Id;
 
-    internal class DiscriminatedUnionsMustBeAbstractCodeFixer : ICodeFixer
+    public CodeFixStatus GetCodeFixState(
+        SyntaxNode syntaxNode,
+        SemanticModel semanticModel,
+        Diagnostic diagnostic,
+        CancellationToken cancellationToken)
     {
-        public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.ClassDiscriminatedUnionsMustBeAbstractRule.Id;
-
-        public CodeFixStatus GetCodeFixState(
-            SyntaxNode syntaxNode,
-            SemanticModel semanticModel,
-            Diagnostic diagnostic,
-            CancellationToken cancellationToken)
+        var declaredSymbol = semanticModel.GetDeclaredSymbol(syntaxNode, cancellationToken);
+        if (declaredSymbol == null)
         {
-            var declaredSymbol = semanticModel.GetDeclaredSymbol(syntaxNode, cancellationToken);
-            if (declaredSymbol == null)
-            {
-                return new CodeFixStatus.CannotFix();
-            }
-
-            var name = string.Format(CodeFixResources.MakeAbstract, declaredSymbol.Name);
-            return new CodeFixStatus.CanFix(
-                name,
-                nameof(DiscriminatedUnionsMustBeAbstractCodeFixer));
+            return new CodeFixStatus.CannotFix();
         }
 
-        public async Task<Document> Fix(
-            Document document,
-            SyntaxNode root,
-            SyntaxNode node,
-            ImmutableDictionary<string, string?> diagnosticProperties,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken)
-        {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
-            var declaration = generator.WithModifiers(node, generator.GetModifiers(node).WithIsAbstract(true)).WithAdditionalAnnotations(Formatter.Annotation);
-            var newNode = root.ReplaceNode(node, declaration);
-            return document.WithSyntaxRoot(newNode);
-        }
+        var name = string.Format(CodeFixResources.MakeAbstract, declaredSymbol.Name);
+        return new CodeFixStatus.CanFix(
+            name,
+            nameof(DiscriminatedUnionsMustBeAbstractCodeFixer));
+    }
+
+    public async Task<Document> Fix(
+        Document document,
+        SyntaxNode root,
+        SyntaxNode node,
+        ImmutableDictionary<string, string?> diagnosticProperties,
+        SemanticModel semanticModel,
+        CancellationToken cancellationToken)
+    {
+        var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+        var generator = editor.Generator;
+        var declaration = generator.WithModifiers(node, generator.GetModifiers(node).WithIsAbstract(true)).WithAdditionalAnnotations(Formatter.Annotation);
+        var newNode = root.ReplaceNode(node, declaration);
+        return document.WithSyntaxRoot(newNode);
     }
 }

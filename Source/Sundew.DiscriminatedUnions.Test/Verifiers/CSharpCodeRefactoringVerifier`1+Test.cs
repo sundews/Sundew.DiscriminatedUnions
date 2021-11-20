@@ -5,32 +5,31 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
+namespace Sundew.DiscriminatedUnions.Test;
+
+using Microsoft.CodeAnalysis.CodeRefactorings;
+using Microsoft.CodeAnalysis.CSharp.Testing;
+using Microsoft.CodeAnalysis.Testing.Verifiers;
+
+public static partial class CSharpCodeRefactoringVerifier<TCodeRefactoring>
+    where TCodeRefactoring : CodeRefactoringProvider, new()
 {
-    using Microsoft.CodeAnalysis.CodeRefactorings;
-    using Microsoft.CodeAnalysis.CSharp.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
-
-    public static partial class CSharpCodeRefactoringVerifier<TCodeRefactoring>
-        where TCodeRefactoring : CodeRefactoringProvider, new()
+    public class Test : CSharpCodeRefactoringTest<TCodeRefactoring, MSTestVerifier>
     {
-        public class Test : CSharpCodeRefactoringTest<TCodeRefactoring, MSTestVerifier>
+        public Test()
         {
-            public Test()
+            this.SolutionTransforms.Add((solution, projectId) =>
             {
-                this.SolutionTransforms.Add((solution, projectId) =>
+                var compilationOptions = solution.GetProject(projectId)?.CompilationOptions;
+                compilationOptions = compilationOptions?.WithSpecificDiagnosticOptions(
+                    compilationOptions.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
+                if (compilationOptions is not null)
                 {
-                    var compilationOptions = solution.GetProject(projectId)?.CompilationOptions;
-                    compilationOptions = compilationOptions?.WithSpecificDiagnosticOptions(
-                        compilationOptions.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
-                    if (compilationOptions is not null)
-                    {
-                        solution = solution.WithProjectCompilationOptions(projectId, compilationOptions);
-                    }
+                    solution = solution.WithProjectCompilationOptions(projectId, compilationOptions);
+                }
 
-                    return solution;
-                });
-            }
+                return solution;
+            });
         }
     }
 }

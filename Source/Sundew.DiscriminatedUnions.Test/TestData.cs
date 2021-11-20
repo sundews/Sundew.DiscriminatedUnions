@@ -5,14 +5,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
-{
-    public static class TestData
-    {
-        public const string ConsoleApplication1Result = "ConsoleApplication1.Result";
-        public const string ConsoleApplication1OptionInt = "ConsoleApplication1.Option<int>";
+namespace Sundew.DiscriminatedUnions.Test;
 
-        public const string Usings = @"
+public static class TestData
+{
+    public const string ConsoleApplication1Result = "ConsoleApplication1.Result";
+    public const string ConsoleApplication1OptionInt = "ConsoleApplication1.Option<int>";
+
+    public const string Usings = @"
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Sundew.DiscriminatedUnions;";
 
-        public const string ValidResultDiscriminatedUnion = @"
+    public const string ValidResultDiscriminatedUnion = @"
     [Sundew.DiscriminatedUnions.DiscriminatedUnion]
     public abstract record Result
     { 
@@ -35,7 +35,7 @@ using Sundew.DiscriminatedUnions;";
         public sealed record Error(int Code) : Result;
     }";
 
-        public const string ValidGenericOptionDiscriminatedUnion = @"
+    public const string ValidGenericOptionDiscriminatedUnion = @"
     [Sundew.DiscriminatedUnions.DiscriminatedUnion]
     public abstract record Option<T>
         where T : notnull
@@ -48,7 +48,7 @@ using Sundew.DiscriminatedUnions;";
         public sealed record None : Option<T>;
     }";
 
-        public const string ValidDiscriminatedUnionWithSubUnions = @"
+    public const string ValidDiscriminatedUnionWithSubUnions = @"
     [Sundew.DiscriminatedUnions.DiscriminatedUnion]
     public abstract record Expression
     {
@@ -123,5 +123,4 @@ using Sundew.DiscriminatedUnions;";
     public sealed record SubtractExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
 
     public sealed record ValueExpression(int Value) : Expression;";*/
-    }
 }

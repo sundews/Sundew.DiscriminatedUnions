@@ -5,42 +5,41 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
+namespace Sundew.DiscriminatedUnions.Test;
+
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Testing;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing.Verifiers;
+
+public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppressor>
+    where TAnalyzer : DiagnosticAnalyzer, new()
+    where TCodeFix : CodeFixProvider, new()
+    where TSuppressor : DiagnosticSuppressor, new()
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp.Testing;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
-
-    public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppressor>
-        where TAnalyzer : DiagnosticAnalyzer, new()
-        where TCodeFix : CodeFixProvider, new()
-        where TSuppressor : DiagnosticSuppressor, new()
+    public class Test : CSharpCodeFixTest<TAnalyzer, TCodeFix, MSTestVerifier>
     {
-        public class Test : CSharpCodeFixTest<TAnalyzer, TCodeFix, MSTestVerifier>
+        public Test()
         {
-            public Test()
+            this.SolutionTransforms.Add((solution, projectId) =>
             {
-                this.SolutionTransforms.Add((solution, projectId) =>
+                var compilationOptions = solution.GetProject(projectId)?.CompilationOptions;
+                compilationOptions = compilationOptions?.WithSpecificDiagnosticOptions(
+                    compilationOptions.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
+                if (compilationOptions != null)
                 {
-                    var compilationOptions = solution.GetProject(projectId)?.CompilationOptions;
-                    compilationOptions = compilationOptions?.WithSpecificDiagnosticOptions(
-                        compilationOptions.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
-                    if (compilationOptions != null)
-                    {
-                        solution = solution.WithProjectCompilationOptions(projectId, compilationOptions);
-                    }
+                    solution = solution.WithProjectCompilationOptions(projectId, compilationOptions);
+                }
 
-                    return solution;
-                });
-            }
+                return solution;
+            });
+        }
 
-            protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
-            {
-                return base.GetDiagnosticAnalyzers().Concat(new DiagnosticAnalyzer[] { new TSuppressor() });
-            }
+        protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
+        {
+            return base.GetDiagnosticAnalyzers().Concat(new DiagnosticAnalyzer[] { new TSuppressor() });
         }
     }
 }

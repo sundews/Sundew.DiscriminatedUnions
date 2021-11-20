@@ -5,23 +5,22 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Analyzer
+namespace Sundew.DiscriminatedUnions.Analyzer;
+
+using Microsoft.CodeAnalysis;
+
+/// <summary>
+/// Contains information about a case in a switch statement or expression.
+/// </summary>
+public readonly struct CaseInfo
 {
-    using Microsoft.CodeAnalysis;
+    /// <summary>
+    /// Gets the type.
+    /// </summary>
+    public ITypeSymbol Type { get; init; }
 
     /// <summary>
-    /// Contains information about a case in a switch statement or expression.
+    /// Gets a value indicating whether the case is handled.
     /// </summary>
-    public readonly struct CaseInfo
-    {
-        /// <summary>
-        /// Gets the type.
-        /// </summary>
-        public ITypeSymbol Type { get; init; }
-
-        /// <summary>
-        /// Gets a value indicating whether the case is handled.
-        /// </summary>
-        public bool HandlesCase { get; init; }
-    }
+    public bool HandlesCase { get; init; }
 }

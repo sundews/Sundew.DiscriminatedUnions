@@ -5,23 +5,22 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions
-{
-    using System;
+namespace Sundew.DiscriminatedUnions;
 
+using System;
+
+/// <summary>
+/// Exception used to silence CS8509 by throwing it in the default case of switch expression.
+/// </summary>
+/// <seealso cref="System.Exception" />
+public class UnreachableCaseException : Exception
+{
     /// <summary>
-    /// Exception used to silence CS8509 by throwing it in the default case of switch expression.
+    /// Initializes a new instance of the <see cref="UnreachableCaseException"/> class.
     /// </summary>
-    /// <seealso cref="System.Exception" />
-    public class UnreachableCaseException : Exception
+    /// <param name="enumType">Type of the enum.</param>
+    public UnreachableCaseException(Type enumType)
+        : base($"{enumType.Name} is not a valid discriminated union.")
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UnreachableCaseException"/> class.
-        /// </summary>
-        /// <param name="enumType">Type of the enum.</param>
-        public UnreachableCaseException(Type enumType)
-            : base($"{enumType.Name} is not a valid discriminated union.")
-        {
-        }
     }
 }

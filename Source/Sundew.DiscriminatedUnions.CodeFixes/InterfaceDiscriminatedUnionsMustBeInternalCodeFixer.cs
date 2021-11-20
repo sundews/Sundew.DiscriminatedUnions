@@ -5,53 +5,52 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes
+namespace Sundew.DiscriminatedUnions.CodeFixes;
+
+using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Formatting;
+using Sundew.DiscriminatedUnions.Analyzer;
+
+internal class InterfaceDiscriminatedUnionsMustBeInternalCodeFixer : ICodeFixer
 {
-    using System.Collections.Immutable;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Editing;
-    using Microsoft.CodeAnalysis.Formatting;
-    using Sundew.DiscriminatedUnions.Analyzer;
+    public string DiagnosticId =>
+        SundewDiscriminatedUnionsAnalyzer.InterfaceDiscriminatedUnionsMustBeInternalRule.Id;
 
-    internal class InterfaceDiscriminatedUnionsMustBeInternalCodeFixer : ICodeFixer
+    public CodeFixStatus GetCodeFixState(
+        SyntaxNode syntaxNode,
+        SemanticModel semanticModel,
+        Diagnostic diagnostic,
+        CancellationToken cancellationToken)
     {
-        public string DiagnosticId =>
-            SundewDiscriminatedUnionsAnalyzer.InterfaceDiscriminatedUnionsMustBeInternalRule.Id;
-
-        public CodeFixStatus GetCodeFixState(
-            SyntaxNode syntaxNode,
-            SemanticModel semanticModel,
-            Diagnostic diagnostic,
-            CancellationToken cancellationToken)
+        var declaredSymbol = semanticModel.GetDeclaredSymbol(syntaxNode, cancellationToken);
+        if (declaredSymbol == null)
         {
-            var declaredSymbol = semanticModel.GetDeclaredSymbol(syntaxNode, cancellationToken);
-            if (declaredSymbol == null)
-            {
-                return new CodeFixStatus.CannotFix();
-            }
-
-            var name = string.Format(CodeFixResources.MakeInternal, declaredSymbol.Name);
-            return new CodeFixStatus.CanFix(
-                name,
-                nameof(InterfaceDiscriminatedUnionsMustBeInternalCodeFixer));
+            return new CodeFixStatus.CannotFix();
         }
 
-        public async Task<Document> Fix(
-            Document document,
-            SyntaxNode root,
-            SyntaxNode node,
-            ImmutableDictionary<string, string?> diagnosticProperties,
-            SemanticModel semanticModel,
-            CancellationToken cancellationToken)
-        {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
-            var declaration = generator.WithAccessibility(node, Accessibility.Internal)
-                .WithAdditionalAnnotations(Formatter.Annotation);
-            var newNode = root.ReplaceNode(node, declaration);
-            return document.WithSyntaxRoot(newNode);
-        }
+        var name = string.Format(CodeFixResources.MakeInternal, declaredSymbol.Name);
+        return new CodeFixStatus.CanFix(
+            name,
+            nameof(InterfaceDiscriminatedUnionsMustBeInternalCodeFixer));
+    }
+
+    public async Task<Document> Fix(
+        Document document,
+        SyntaxNode root,
+        SyntaxNode node,
+        ImmutableDictionary<string, string?> diagnosticProperties,
+        SemanticModel semanticModel,
+        CancellationToken cancellationToken)
+    {
+        var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+        var generator = editor.Generator;
+        var declaration = generator.WithAccessibility(node, Accessibility.Internal)
+            .WithAdditionalAnnotations(Formatter.Annotation);
+        var newNode = root.ReplaceNode(node, declaration);
+        return document.WithSyntaxRoot(newNode);
     }
 }

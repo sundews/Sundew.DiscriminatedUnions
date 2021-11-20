@@ -5,12 +5,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Analyzer
+namespace Sundew.DiscriminatedUnions.Analyzer;
+
+internal enum SwitchNullability
 {
-    internal enum SwitchNullability
-    {
-        None,
-        IsMissingNullCase,
-        HasUnreachableNullCase,
-    }
+    None,
+    IsMissingNullCase,
+    HasUnreachableNullCase,
 }

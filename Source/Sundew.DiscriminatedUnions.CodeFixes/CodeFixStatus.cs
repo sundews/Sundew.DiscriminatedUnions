@@ -5,17 +5,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes
+namespace Sundew.DiscriminatedUnions.CodeFixes;
+
+[DiscriminatedUnion]
+internal record CodeFixStatus
 {
-    [DiscriminatedUnion]
-    internal record CodeFixStatus
+    private CodeFixStatus()
     {
-        private CodeFixStatus()
-        {
-        }
-
-        internal record CanFix(string Title, string EquivalenceKey) : CodeFixStatus;
-
-        internal record CannotFix : CodeFixStatus;
     }
+
+    internal record CanFix(string Title, string EquivalenceKey) : CodeFixStatus;
+
+    internal record CannotFix : CodeFixStatus;
 }

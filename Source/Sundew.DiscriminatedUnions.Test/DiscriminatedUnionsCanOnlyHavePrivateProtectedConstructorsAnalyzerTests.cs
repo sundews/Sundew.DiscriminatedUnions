@@ -5,23 +5,23 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test
-{
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Sundew.DiscriminatedUnions.Analyzer;
-    using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-        Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-        Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+namespace Sundew.DiscriminatedUnions.Test;
 
-    [TestClass]
-    public class DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsAnalyzerTests
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sundew.DiscriminatedUnions.Analyzer;
+using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+
+[TestClass]
+public class DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsAnalyzerTests
+{
+    [TestMethod]
+    public async Task Given_DiscriminatedUnion_When_ConstructorIsNotPrivateProtected_Then_DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsIsReported()
     {
-        [TestMethod]
-        public async Task Given_DiscriminatedUnion_When_ConstructorIsNotPrivateProtected_Then_DiscriminatedUnionCanOnlyHavePrivateProtectedConstructorsIsReported()
-        {
-            var test = $@"#nullable enable
+        var test = $@"#nullable enable
 {TestData.Usings}
 namespace ConsoleApplication1
 {{
@@ -39,11 +39,10 @@ namespace ConsoleApplication1
     }}
 }}";
 
-            await VerifyCS.VerifyAnalyzerAsync(
-                test,
-                VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsRule)
-                    .WithArguments(TestData.ConsoleApplication1Result)
-                    .WithSpan(15, 9, 16, 12));
-        }
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsRule)
+                .WithArguments(TestData.ConsoleApplication1Result)
+                .WithSpan(15, 9, 16, 12));
     }
 }

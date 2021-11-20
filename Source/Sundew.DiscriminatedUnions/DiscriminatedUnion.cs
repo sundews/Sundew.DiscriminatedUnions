@@ -5,16 +5,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions
-{
-    using System;
+namespace Sundew.DiscriminatedUnions;
 
-    /// <summary>
-    /// Attribute for indicating a discriminated union.
-    /// </summary>
-    /// <seealso cref="System.Attribute" />
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-    public class DiscriminatedUnion : Attribute
-    {
-    }
+using System;
+
+/// <summary>
+/// Attribute for indicating a discriminated union.
+/// </summary>
+/// <seealso cref="System.Attribute" />
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
+public class DiscriminatedUnion : Attribute
+{
 }
