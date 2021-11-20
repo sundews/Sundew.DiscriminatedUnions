@@ -49,6 +49,18 @@ internal class DiscriminatedUnionCaseAnalyzer
                             }
                         }
                     }
+
+                    if (!SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ContainingAssembly, baseType.ContainingAssembly))
+                    {
+                        foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
+                        {
+                            reportDiagnostic(Diagnostic.Create(
+                                SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsMustHavePrivateProtectedConstructorRule,
+                                declaringSyntaxReference.GetSyntax().GetLocation(),
+                                namedTypeSymbol,
+                                "Cases must be in the same assembly"));
+                        }
+                    }
                 }
             }
         }

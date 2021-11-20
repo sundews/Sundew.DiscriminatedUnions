@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
+using Sundew.DiscriminatedUnions.TestData;
 
 public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppressor>
     where TAnalyzer : DiagnosticAnalyzer, new()
@@ -40,7 +41,10 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
             TestCode = source + CSharpVerifierHelper.IsExternalInit,
         };
 
-        test.SolutionTransforms.Add((solution, id) => solution.AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location)));
+        test.SolutionTransforms.Add((solution, id) =>
+            solution
+                .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location))
+                .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(IExpression).Assembly.Location)));
         test.ExpectedDiagnostics.AddRange(expected);
         await test.RunAsync(CancellationToken.None);
     }
@@ -62,7 +66,10 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
             FixedCode = fixedSource + CSharpVerifierHelper.IsExternalInit,
         };
 
-        test.SolutionTransforms.Add((solution, id) => solution.AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location)));
+        test.SolutionTransforms.Add((solution, id) =>
+            solution
+                .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location))
+                .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(IExpression).Assembly.Location)));
         test.ExpectedDiagnostics.AddRange(expected);
         await test.RunAsync(CancellationToken.None);
     }
