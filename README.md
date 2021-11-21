@@ -1,19 +1,24 @@
 # Dimensional Unions
 
-Inspired by F#, DimensionalUnions started out as a poor man's implementation of discriminated unions for C#. During development  until a future version of C# provides it out of the box. The goal here is to create a standin replacement, so that when DUs are available switch statements/expressions are near compatible (See issues below).
+DimensionalUnions are an attempt to implement F# discriminated unions for C#, until a future version of C# provides it out of the box.
+The goal here is to create a standin replacement, so that when unions are available switch statements/expressions are compatible.
+
+In addition, the project tries to imagine unions in an object oriented language an adds an aspect of dimensions to unions.
+A dimensional union is a union where cases can be reused in any number of unions, by supporting interface unions through the possibility of implementing multiple interface and default interface members.
 
 ## How it works
 A Roslyn analyzer asserts and report errors in case switch statements or switch expression do not handle all cases.
 C# 8 and 9 already comes with great pattern matching support for evaluation.
 
-In order that the inheritance hierarchy remain closed (All cases in the same assembly), an analyzer ensure unions are not derived from. Similarly all case classes should be sealed.
+In order that the inheritance hierarchy remain closed (All cases in the same assembly), an analyzer ensure that unions are not derived from in referencing assemblies.
+Similarly all case classes should be sealed.
 
-Create a union by inheriting from an abstract base class marked with the Union attribute to build various cases.
+Create a union by inheriting from an abstract base (record) class (or interface) marked with the Union attribute to build various cases.
 
 ## Sample
 ### Defining a union
 ```csharp
-[DimensionalUnions.Union]
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record Result
 {
     public sealed record Success : Result;
@@ -23,7 +28,7 @@ public abstract record Result
     public sealed record Error(int Code) : Result;
 }
 ```
-Alternatively, a union can be defined with unnested case classes, allowing the possibility of creating dimensional unions (see below).
+Alternatively, a union can be defined with unnested case classes and interfaces, allowing the possibility of creating dimensional unions (see below).
 
 ### Evaluation
 ```csharp
@@ -38,7 +43,7 @@ var message = result switch
 ```
 
 ### Dimensional unions
-To support dimensional unions, unnested cases help because the cases are no longer defined inside a union. However, for this to work the unions are required to declare a factory method named exactly like the case type, that consists of a single return statement that creates the cases. The return type of a factory method should match the union in which it is declared. 
+To support dimensional unions, unnested cases help because the cases are no longer defined inside a union. However, for this to work the unions are required to declare a factory method named exactly like the case type, that consists of a single return statement that creates the cases. The return type of a factory method should match the union in which it is declared. A code fix is available to generate the factory methods. 
 ```csharp
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public interface IExpression
@@ -57,21 +62,21 @@ public interface IExpression
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public interface IArithmeticExpression : IExpression
 {
-    public static IArithmeticExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
+    public new static IArithmeticExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
 
-    public static IArithmeticExpression SubtractionExpression(IExpression lhs, IExpression rhs) => new SubtractionExpression(lhs, rhs);
+    public new static IArithmeticExpression SubtractionExpression(IExpression lhs, IExpression rhs) => new SubtractionExpression(lhs, rhs);
 
-    public static IArithmeticExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
+    public new static IArithmeticExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
 
-    public static IArithmeticExpression DivisionExpression(IExpression lhs, IExpression rhs) => new DivisionExpression(lhs, rhs);
+    public new static IArithmeticExpression DivisionExpression(IExpression lhs, IExpression rhs) => new DivisionExpression(lhs, rhs);
 }
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public interface ICommutativeExpression : IArithmeticExpression
 {
-    public static ICommutativeExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
+    public new static ICommutativeExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
 
-    public static ICommutativeExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
+    public new static ICommutativeExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
 }
 
 public sealed record AdditionExpression(IExpression Lhs, IExpression Rhs) : ICommutativeExpression;
@@ -92,14 +97,15 @@ public sealed record ValueExpression(int Value) : IExpression;
 | SDU0002       | Switch should not handle default case                                  |   yes    |
 | SDU0003       | Switch has unreachable null case                                       |   yes    |
 | SDU0004       | Class unions must be abstract                                          |   yes    |
-| SDU0005       | Union extensions must be declared in the same assembly as their unions |   no     |
-| SDU0006       | Cases must be declared in the same assembly as their unions            |   no     |
-| SDU0007       | Cases should be sealed                                                 |   yes    |
-| SDU0008       | Unnested cases should have factory method                              |   yes    |
+| SDU0005       | Only unions can extended other unions                                  |   no     |
+| SDU0006       | Unions cannot be extended outside their assembly                       |   no     |
+| SDU0007       | Cases must be declared in the same assembly as their unions            |   no     |
+| SDU0008       | Cases should be sealed                                                 |   yes    |
+| SDU0009       | Unnested cases should have factory method                              |   yes    |
 | SDU9999       | Switch should throw in default case                                    |   no     |
 
 ## Issues/Todos
 * Switch appears with red squiggly lines in VS: https://github.com/dotnet/roslyn/issues/57041
 * Nullability is falsely evaluated when the switch hints null is possible: https://github.com/dotnet/roslyn/issues/57042
 * SDU0009 gets reported in VS, but no code fix is offered. VS issue here: https://github.com/dotnet/roslyn/issues/57621
-* SourceGenerator not yet implemented: https://github.com/dotnet/csharplang/blob/main/proposals/discriminated-unions.md
+* Verbose syntax for defining unions. (No SourceGenerators implemented yet)
