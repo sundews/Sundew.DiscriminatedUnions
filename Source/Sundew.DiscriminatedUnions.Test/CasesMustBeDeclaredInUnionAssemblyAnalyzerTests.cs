@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiscriminatedUnionWithSubUnionAnalyzerTests.cs" company="Hukano">
+// <copyright file="CasesMustBeDeclaredInUnionAssemblyAnalyzerTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,6 +8,7 @@
 namespace Sundew.DiscriminatedUnions.Test;
 
 using System.Threading.Tasks;
+using Sundew.DiscriminatedUnions.Analyzer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
@@ -15,17 +16,22 @@ using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class DiscriminatedUnionWithSubUnionAnalyzerTests
+public class CasesMustBeDeclaredInUnionAssemblyAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_DiscriminatedUnion_When_ItHasSubUnions_Then_NoDiagnosticsAreReported()
+    public async Task Given_Union_When_CaseIsDeclaredInDifferentAssembly_Then_CasesMustBeDeclaredInUnionAssemblyIsReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
 namespace Unions;
 
-{TestData.ValidDiscriminatedUnionWithSubUnions}
+public sealed record DoubleValueExpression(double Value) : IExpression;
 ";
-        await VerifyCS.VerifyAnalyzerAsync(test);
+
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyDiagnosticId)
+                .WithArguments("Unions.DoubleValueExpression", "Sundew.DiscriminatedUnions.TestData.IExpression")
+                .WithSpan(13, 1, 13, 72));
     }
 }

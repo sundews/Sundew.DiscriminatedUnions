@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFixer.cs" company="Hukano">
+// <copyright file="UnionsMustBeAbstractCodeFixer.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -15,10 +15,9 @@ using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 using Sundew.DiscriminatedUnions.Analyzer;
 
-internal class DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFixer : ICodeFixer
+internal class UnionsMustBeAbstractCodeFixer : ICodeFixer
 {
-    public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer
-        .DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsRule.Id;
+    public string DiagnosticId => DimensionalUnionsAnalyzer.ClassUnionsMustBeAbstractRule.Id;
 
     public CodeFixStatus GetCodeFixState(
         SyntaxNode syntaxNode,
@@ -26,9 +25,16 @@ internal class DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFix
         Diagnostic diagnostic,
         CancellationToken cancellationToken)
     {
+        var declaredSymbol = semanticModel.GetDeclaredSymbol(syntaxNode, cancellationToken);
+        if (declaredSymbol == null)
+        {
+            return new CodeFixStatus.CannotFix();
+        }
+
+        var name = string.Format(CodeFixResources.MakeAbstract, declaredSymbol.Name);
         return new CodeFixStatus.CanFix(
-            CodeFixResources.CanOnlyHavePrivateProtectedConstructors,
-            nameof(DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFixer));
+            name,
+            nameof(UnionsMustBeAbstractCodeFixer));
     }
 
     public async Task<Document> Fix(
@@ -41,8 +47,7 @@ internal class DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFix
     {
         var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
         var generator = editor.Generator;
-        var declaration = generator.WithAccessibility(node, Accessibility.ProtectedAndInternal)
-            .WithAdditionalAnnotations(Formatter.Annotation);
+        var declaration = generator.WithModifiers(node, generator.GetModifiers(node).WithIsAbstract(true)).WithAdditionalAnnotations(Formatter.Annotation);
         var newNode = root.ReplaceNode(node, declaration);
         return document.WithSyntaxRoot(newNode);
     }

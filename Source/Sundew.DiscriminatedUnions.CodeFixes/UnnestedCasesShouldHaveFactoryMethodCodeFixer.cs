@@ -21,7 +21,7 @@ using Sundew.DiscriminatedUnions.Analyzer;
 
 internal class UnnestedCasesShouldHaveFactoryMethodCodeFixer : ICodeFixer
 {
-    public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodDiagnosticId;
+    public string DiagnosticId => DimensionalUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodDiagnosticId;
 
     public CodeFixStatus GetCodeFixState(
         SyntaxNode syntaxNode,

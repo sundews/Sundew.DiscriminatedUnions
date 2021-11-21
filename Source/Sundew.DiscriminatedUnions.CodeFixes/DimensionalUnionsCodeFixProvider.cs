@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SundewDiscriminatedUnionsCodeFixProvider.cs" company="Hukano">
+// <copyright file="DimensionalUnionsCodeFixProvider.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -20,25 +20,23 @@ using Microsoft.CodeAnalysis.CodeFixes;
 /// Code fix for diagnostics related to discriminated unions.
 /// </summary>
 /// <seealso cref="Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider" />
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SundewDiscriminatedUnionsCodeFixProvider))]
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DimensionalUnionsCodeFixProvider))]
 [Shared]
-public class SundewDiscriminatedUnionsCodeFixProvider : CodeFixProvider
+public class DimensionalUnionsCodeFixProvider : CodeFixProvider
 {
     private readonly Dictionary<string, ICodeFixer> codeFixers;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SundewDiscriminatedUnionsCodeFixProvider"/> class.
+    /// Initializes a new instance of the <see cref="DimensionalUnionsCodeFixProvider"/> class.
     /// </summary>
-    public SundewDiscriminatedUnionsCodeFixProvider()
+    public DimensionalUnionsCodeFixProvider()
     {
         this.codeFixers = new ICodeFixer[]
         {
             new SwitchAllCasesNotHandledCodeFixer(),
             new SwitchShouldNotHaveDefaultCaseCodeFixer(),
             new SwitchHasUnreachableNullCaseCodeFixer(),
-            new DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFixer(),
-            new DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer(),
-            new DiscriminatedUnionsMustBeAbstractCodeFixer(),
+            new UnionsMustBeAbstractCodeFixer(),
             new InterfaceDiscriminatedUnionsMustBeInternalCodeFixer(),
             new CasesShouldBeSealedCodeFixer(),
             new UnnestedCasesShouldHaveFactoryMethodCodeFixer(),

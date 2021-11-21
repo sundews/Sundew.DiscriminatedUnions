@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiscriminatedUnionHelper.cs" company="Hukano">
+// <copyright file="UnionHelper.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,19 +7,16 @@
 
 namespace Sundew.DiscriminatedUnions.Analyzer;
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 
 /// <summary>
 /// Helpers for analyzing discriminated unions.
 /// </summary>
-public static class DiscriminatedUnionHelper
+public static class UnionHelper
 {
     /// <summary>
     /// Determines whether [is discriminated union] [the specified union type].

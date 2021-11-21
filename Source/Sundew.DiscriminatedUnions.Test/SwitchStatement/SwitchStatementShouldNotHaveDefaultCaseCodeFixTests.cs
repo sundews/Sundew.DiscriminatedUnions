@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class SwitchStatementShouldNotHaveDefaultCaseCodeFixTests
@@ -24,7 +24,7 @@ public class SwitchStatementShouldNotHaveDefaultCaseCodeFixTests
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
+namespace Unions;
 {{
     public class DiscriminatedUnionSymbolAnalyzerTests
     {{   
@@ -49,7 +49,7 @@ namespace ConsoleApplication1
         var fixtest = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
+namespace Unions;
 {{
     public class DiscriminatedUnionSymbolAnalyzerTests
     {{   
@@ -71,8 +71,8 @@ namespace ConsoleApplication1
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                .WithArguments(TestData.UnionsResult)
                 .WithSpan(25, 17, 26, 27),
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);

@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class SwitchShouldThrowInDefaultCaseAnalyzerTests
@@ -24,7 +24,7 @@ public class SwitchShouldThrowInDefaultCaseAnalyzerTests
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
+namespace Unions;
 {{
     public class DiscriminatedUnionSymbolAnalyzerTests
     {{   
@@ -50,9 +50,9 @@ namespace ConsoleApplication1
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
-                .WithSpan(27, 17, 28, 34));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
+                .WithArguments(TestData.UnionsResult)
+                .WithSpan(28, 17, 29, 34));
     }
 
     /*
@@ -62,7 +62,7 @@ namespace ConsoleApplication1
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
+namespace Unions;
 {{
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{
@@ -86,9 +86,9 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
-                .WithSpan(25, 17, 26, 27));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                .WithArguments(TestData.UnionsResult)
+                .WithSpan(26, 17, 27, 27));
     }*/
 
     [TestMethod]
@@ -97,7 +97,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
+namespace Unions;
 {{
     public class DiscriminatedUnionSymbolAnalyzerTests
     {{   
@@ -121,9 +121,9 @@ namespace ConsoleApplication1
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
-                .WithSpan(25, 17, 26, 27));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
+                .WithArguments(TestData.UnionsResult)
+                .WithSpan(26, 17, 27, 27));
     }
 
     [TestMethod]
@@ -132,7 +132,7 @@ namespace ConsoleApplication1
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
+namespace Unions;
 {{
     public class DiscriminatedUnionSymbolAnalyzerTests
     {{   
@@ -160,8 +160,8 @@ namespace ConsoleApplication1
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
-                .WithSpan(29, 17, 30, 34));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
+                .WithArguments(TestData.UnionsResult)
+                .WithSpan(30, 17, 31, 34));
     }
 }

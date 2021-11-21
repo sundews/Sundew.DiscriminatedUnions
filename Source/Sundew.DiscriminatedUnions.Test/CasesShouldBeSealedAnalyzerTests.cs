@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class CasesShouldBeSealedAnalyzerTests
@@ -23,26 +23,26 @@ public class CasesShouldBeSealedAnalyzerTests
     {
         var test = $@"#nullable enable
 {TestData.Usings}
-namespace ConsoleApplication1
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record Result
 {{
-    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-    public abstract record Result
-    {{
-        private protected Result()
-        {{ }}
+    private protected Result()
+    {{ }}
 
-        public record Success : Result;
+    public record Success : Result;
 
-        public sealed record Warning(string Message) : Result;
+    public sealed record Warning(string Message) : Result;
 
-        public sealed record Error(int Code) : Result;
-    }}
-}}";
+    public sealed record Error(int Code) : Result;
+}}
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedRule)
-                .WithArguments("ConsoleApplication1.Result.Success")
-                .WithSpan(18, 9, 18, 40));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.CasesShouldBeSealedRule)
+                .WithArguments("Unions.Result.Success")
+                .WithSpan(19, 5, 19, 36));
     }
 }

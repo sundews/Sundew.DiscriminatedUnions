@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SundewDiscriminatedUnionSwitchWarningSuppressor.cs" company="Hukano">
+// <copyright file="DimensionalUnionSwitchWarningSuppressor.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -13,13 +13,13 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
 /// <summary>
-/// Suppressor for CS8509 in switch expressions that are checked by <see cref="SundewDiscriminatedUnionsAnalyzer"/>.
+/// Suppressor for CS8509 in switch expressions that are checked by <see cref="DimensionalUnionsAnalyzer"/>.
 /// </summary>
 /// <seealso cref="Microsoft.CodeAnalysis.Diagnostics.DiagnosticSuppressor" />
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class SundewDiscriminatedUnionSwitchWarningSuppressor : DiagnosticSuppressor
+public class DimensionalUnionSwitchWarningSuppressor : DiagnosticSuppressor
 {
-    private static readonly SuppressionDescriptor SuppressSwitchExpressionNotExhaustiveForDiscriminatedUnion =
+    private static readonly SuppressionDescriptor SuppressSwitchExpressionNotExhaustiveForUnion =
         new(
             "SNE0001",
             "CS8509",
@@ -28,7 +28,7 @@ public class SundewDiscriminatedUnionSwitchWarningSuppressor : DiagnosticSuppres
     /// <summary>
     /// Gets a set of descriptors for the suppressions that this suppressor is capable of producing.
     /// </summary>
-    public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions { get; } = ImmutableArray.Create(SuppressSwitchExpressionNotExhaustiveForDiscriminatedUnion);
+    public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions { get; } = ImmutableArray.Create(SuppressSwitchExpressionNotExhaustiveForUnion);
 
     /// <summary>
     /// Suppress analyzer and/or compiler non-error diagnostics reported for the compilation.
@@ -59,11 +59,11 @@ public class SundewDiscriminatedUnionSwitchWarningSuppressor : DiagnosticSuppres
 
     private static void SuppressIfDiscriminatedUnion(SuppressionAnalysisContext context, ITypeSymbol? switchType, Diagnostic diagnostic)
     {
-        if (DiscriminatedUnionHelper.IsDiscriminatedUnion(switchType))
+        if (UnionHelper.IsDiscriminatedUnion(switchType))
         {
             context.ReportSuppression(
                 Suppression.Create(
-                    SuppressSwitchExpressionNotExhaustiveForDiscriminatedUnion,
+                    SuppressSwitchExpressionNotExhaustiveForUnion,
                     diagnostic));
         }
     }

@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class WithSubUnionsAllCasesNotHandledAnalyzerTests
@@ -23,27 +23,27 @@ public class WithSubUnionsAllCasesNotHandledAnalyzerTests
     {
         var test = $@"#nullable enable
 {TestData.Usings}
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public int Evaluate(Expression expression)
-        {{
-            return expression switch
-                {{
-                    AddExpression addExpression => Evaluate(addExpression.Lhs) + Evaluate(addExpression.Rhs),
-                    SubtractExpression subtractExpression => Evaluate(subtractExpression.Lhs) - Evaluate(subtractExpression.Rhs),
-                }};
-        }}
-    }}
+namespace Unions;
 
-    {TestData.ValidDiscriminatedUnionWithSubUnions}
-}}";
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public int Evaluate(Expression expression)
+    {{
+        return expression switch
+            {{
+                AdditionExpression additionExpression => Evaluate(additionExpression.Lhs) + Evaluate(additionExpression.Rhs),
+                SubtractionExpression subtractionExpression => Evaluate(subtractionExpression.Lhs) - Evaluate(subtractionExpression.Rhs),
+            }};
+    }}
+}}
+
+{TestData.ValidDiscriminatedUnionWithSubUnions}
+";
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'ValueExpression'", Resources.Case, "ConsoleApplication1.Expression", Resources.Is)
-                .WithSpan(16, 20, 20, 18));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'ValueExpression'", Resources.Case, "Unions.Expression", Resources.Is)
+                .WithSpan(17, 16, 21, 14));
     }
 
     [TestMethod]
@@ -51,25 +51,25 @@ namespace ConsoleApplication1
     {
         var test = $@"#nullable enable
 {TestData.Usings}
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public string GetOperator(ArithmeticExpression expression)
-        {{
-            return expression switch
-                {{
-                    AddExpression addExpression => ""+"",
-                }};
-        }}
-    }}
+namespace Unions;
 
-    {TestData.ValidDiscriminatedUnionWithSubUnions}
-}}";
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public string GetOperator(ArithmeticExpression expression)
+    {{
+        return expression switch
+            {{
+                AdditionExpression additionExpression => ""+"",
+            }};
+    }}
+}}
+
+{TestData.ValidDiscriminatedUnionWithSubUnions}
+";
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'SubtractExpression'", Resources.Case, "ConsoleApplication1.ArithmeticExpression", Resources.Is)
-                .WithSpan(16, 20, 19, 18));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'SubtractionExpression'", Resources.Case, "Unions.ArithmeticExpression", Resources.Is)
+                .WithSpan(17, 16, 20, 14));
     }
 }

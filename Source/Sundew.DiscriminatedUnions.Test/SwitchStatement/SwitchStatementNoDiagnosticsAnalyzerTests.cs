@@ -10,9 +10,9 @@ namespace Sundew.DiscriminatedUnions.Test.SwitchStatement;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class SwitchStatementNoDiagnosticsAnalyzerTests
@@ -30,28 +30,28 @@ public class SwitchStatementNoDiagnosticsAnalyzerTests
     {
         var test = $@"{TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch(int value)
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(int value)
+    {{
+        switch (value)
         {{
-            switch (value)
-            {{
-                case 0:
-                    return true;
-                case 1:
-                    return false;
-                case 2:
-                    return true;
-                case 3:
-                    return false;
-                default:
-                    return false;
-            }}
+            case 0:
+                return true;
+            case 1:
+                return false;
+            case 2:
+                return true;
+            case 3:
+                return false;
+            default:
+                return false;
         }}
     }}
-}}";
+}}
+";
 
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
@@ -62,25 +62,25 @@ namespace ConsoleApplication1
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success:
-                    break;
-                case Result.Warning warning:
-                    break;
-                case Result.Error error:
-                    break;
-            }}
+            case Result.Success:
+                break;
+            case Result.Warning warning:
+                break;
+            case Result.Error error:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
@@ -90,27 +90,27 @@ namespace ConsoleApplication1
     {
         var test = $@"{TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success:
-                    break;
-                case Result.Warning warning:
-                    break;
-                case Result.Error error:
-                    break;
-                case null:
-                    break;
-            }}
+            case Result.Success:
+                break;
+            case Result.Warning warning:
+                break;
+            case Result.Error error:
+                break;
+            case null:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(test);
     }

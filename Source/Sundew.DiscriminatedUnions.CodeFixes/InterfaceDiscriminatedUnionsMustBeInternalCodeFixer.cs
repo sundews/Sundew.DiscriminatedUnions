@@ -18,7 +18,7 @@ using Sundew.DiscriminatedUnions.Analyzer;
 internal class InterfaceDiscriminatedUnionsMustBeInternalCodeFixer : ICodeFixer
 {
     public string DiagnosticId =>
-        SundewDiscriminatedUnionsAnalyzer.InterfaceDiscriminatedUnionsMustBeInternalRule.Id;
+        DimensionalUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule.Id;
 
     public CodeFixStatus GetCodeFixState(
         SyntaxNode syntaxNode,

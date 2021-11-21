@@ -38,9 +38,10 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
     {
         var test = new Test
         {
-            TestCode = source + CSharpVerifierHelper.IsExternalInit,
+            TestCode = source,
         };
 
+        test.TestCode = CSharpVerifierHelper.IsExternalInit;
         test.SolutionTransforms.Add((solution, id) =>
             solution
                 .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location))
@@ -62,10 +63,12 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
     {
         var test = new Test
         {
-            TestCode = source + CSharpVerifierHelper.IsExternalInit,
-            FixedCode = fixedSource + CSharpVerifierHelper.IsExternalInit,
+            TestCode = source,
+            FixedCode = fixedSource,
         };
 
+        test.TestCode = CSharpVerifierHelper.IsExternalInit;
+        test.FixedCode = CSharpVerifierHelper.IsExternalInit;
         test.SolutionTransforms.Add((solution, id) =>
             solution
                 .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location))

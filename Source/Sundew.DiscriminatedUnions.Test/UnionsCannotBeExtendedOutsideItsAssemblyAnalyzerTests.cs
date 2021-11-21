@@ -1,31 +1,38 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiscriminatedUnionWithSubUnionAnalyzerTests.cs" company="Hukano">
+// <copyright file="UnionsCannotBeExtendedOutsideItsAssemblyAnalyzerTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sundew.DiscriminatedUnions.Test;
-
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
-[TestClass]
-public class DiscriminatedUnionWithSubUnionAnalyzerTests
+public class UnionsCannotBeExtendedOutsideItsAssemblyAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_DiscriminatedUnion_When_ItHasSubUnions_Then_NoDiagnosticsAreReported()
+    public async Task Given_Union_When_UnionIsExtendedInDifferentAssembly_Then_UnionsCannotBeExtendedOutsideItsAssemblyRuleIsReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
 namespace Unions;
 
-{TestData.ValidDiscriminatedUnionWithSubUnions}
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public interface IExtraExpression : IExpression
+{{
+}}
 ";
-        await VerifyCS.VerifyAnalyzerAsync(test);
+
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.UnionsCannotBeExtendedOutsideItsAssemblyRule)
+                .WithArguments("Unions.IExtraExpression", "Sundew.DiscriminatedUnions.TestData.IExpression")
+                .WithSpan(13, 1, 16, 2));
     }
 }

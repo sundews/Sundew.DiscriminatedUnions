@@ -35,7 +35,7 @@ public static partial class CSharpAnalyzerVerifier<TAnalyzer>
     {
         var test = new Test
         {
-            TestCode = source + CSharpVerifierHelper.IsExternalInit,
+            TestCode = source,
         };
 
         test.ExpectedDiagnostics.AddRange(expected);

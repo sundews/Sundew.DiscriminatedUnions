@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiscriminatedUnionCaseAnalyzer.cs" company="Hukano">
+// <copyright file="UnionCaseAnalyzer.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -13,7 +13,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-internal class DiscriminatedUnionCaseAnalyzer
+internal class UnionCaseAnalyzer
 {
     public void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> reportDiagnostic)
     {
@@ -22,7 +22,7 @@ internal class DiscriminatedUnionCaseAnalyzer
         {
             foreach (var baseType in EnumerateBaseTypes(namedTypeSymbol).Concat(namedTypeSymbol.AllInterfaces))
             {
-                if (DiscriminatedUnionHelper.IsDiscriminatedUnion(baseType))
+                if (UnionHelper.IsDiscriminatedUnion(baseType))
                 {
                     isCase = true;
                     if (namedTypeSymbol.ContainingType == null)
@@ -41,7 +41,7 @@ internal class DiscriminatedUnionCaseAnalyzer
                                 propertyBuilder.Add(DiagnosticPropertyNames.QualifiedCaseName, namedTypeSymbol.ToDisplayString());
                                 propertyBuilder.Add(DiagnosticPropertyNames.Name, namedTypeSymbol.Name);
                                 reportDiagnostic(Diagnostic.Create(
-                                    SundewDiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule,
+                                    DimensionalUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule,
                                     syntaxReference.GetSyntax().GetLocation(),
                                     propertyBuilder.ToImmutable(),
                                     namedTypeSymbol,
@@ -55,10 +55,10 @@ internal class DiscriminatedUnionCaseAnalyzer
                         foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
                         {
                             reportDiagnostic(Diagnostic.Create(
-                                SundewDiscriminatedUnionsAnalyzer.DiscriminatedUnionsMustHavePrivateProtectedConstructorRule,
+                                DimensionalUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule,
                                 declaringSyntaxReference.GetSyntax().GetLocation(),
                                 namedTypeSymbol,
-                                "Cases must be in the same assembly"));
+                                baseType));
                         }
                     }
                 }
@@ -70,7 +70,7 @@ internal class DiscriminatedUnionCaseAnalyzer
             foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
             {
                 reportDiagnostic(Diagnostic.Create(
-                    SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedRule,
+                    DimensionalUnionsAnalyzer.CasesShouldBeSealedRule,
                     declaringSyntaxReference.GetSyntax().GetLocation(),
                     namedTypeSymbol));
             }

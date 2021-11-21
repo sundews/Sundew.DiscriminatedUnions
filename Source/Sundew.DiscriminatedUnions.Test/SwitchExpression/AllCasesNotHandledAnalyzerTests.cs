@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class AllCasesNotHandledAnalyzerTests
@@ -24,30 +24,30 @@ public class AllCasesNotHandledAnalyzerTests
     {
         var test = $@"{TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch(Result result)
-        {{
-            return result switch
-                {{
-                    Result.Success => true,
-                    _ => false,
-                }};
-        }}
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Result result)
+    {{
+        return result switch
+            {{
+                Result.Success => true,
+                _ => false,
+            }};
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
-                .WithSpan(16, 20, 20, 18),
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
-                .WithSpan(19, 21, 19, 31));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
+                .WithSpan(17, 16, 21, 14),
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                .WithArguments(TestData.UnionsResult)
+                .WithSpan(20, 17, 20, 27));
     }
 
     [TestMethod]
@@ -56,26 +56,26 @@ namespace ConsoleApplication1
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch(Result result)
-        {{
-            return result switch
-                {{
-                    Result.Success => true,
-                }};
-        }}
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Result result)
+    {{
+        return result switch
+            {{
+                Result.Success => true,
+            }};
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
-                .WithSpan(17, 20, 20, 18));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.UnionsResult, Resources.Are)
+                .WithSpan(18, 16, 21, 14));
     }
 
     [TestMethod]
@@ -84,29 +84,29 @@ namespace ConsoleApplication1
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch(Result? result)
-        {{
-            return result switch
-                {{
-                    Result.Success success => true,
-                    Result.Warning {{ Message: ""Tough warning"" }} warning => false,
-                    Result.Warning warning => true,
-                    Result.Error error => false,
-                }};
-        }}
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Result? result)
+    {{
+        return result switch
+            {{
+                Result.Success success => true,
+                Result.Warning {{ Message: ""Tough warning"" }} warning => false,
+                Result.Warning warning => true,
+                Result.Error error => false,
+            }};
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'null'", Resources.Case, TestData.ConsoleApplication1Result, Resources.Is)
-                .WithSpan(17, 20, 23, 18));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'null'", Resources.Case, TestData.UnionsResult, Resources.Is)
+                .WithSpan(18, 16, 24, 14));
     }
 
     [TestMethod]
@@ -115,27 +115,27 @@ namespace ConsoleApplication1
         var test = $@"#nullable enable
 {TestData.Usings}
 
-    namespace ConsoleApplication1
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Option<int>? option)
     {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public bool Switch(Option<int>? option)
+        return option switch
             {{
-                return option switch
-                    {{
-                        Option<int>.Some => true,
-                        Option<int>.None => false,
-                    }};
-            }}
-        }}
+                Option<int>.Some => true,
+                Option<int>.None => false,
+            }};
+    }}
+}}
 {TestData.ValidGenericOptionDiscriminatedUnion}
-    }}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'null'", Resources.Case, TestData.ConsoleApplication1OptionInt, Resources.Is)
-                .WithSpan(17, 24, 21, 22));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'null'", Resources.Case, TestData.UnionsOptionInt, Resources.Is)
+                .WithSpan(18, 16, 22, 14));
     }
 
     [TestMethod]
@@ -143,28 +143,28 @@ namespace ConsoleApplication1
     {
         var test = $@"{TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch<T>(Option<T> option)
-            where T : notnull
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch<T>(Option<T> option)
+        where T : notnull
+    {{
+        return option switch
         {{
-            return option switch
-            {{
-                Option<T>.Some some => true,
-                Option<T>.None => false,
-            }};
-        }}
+            Option<T>.Some some => true,
+            Option<T>.None => false,
+        }};
     }}
+}}
 {TestData.ValidGenericOptionDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'null'", Resources.Case, "ConsoleApplication1.Option<T>", Resources.Is)
-                .WithSpan(17, 20, 21, 14));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'null'", Resources.Case, "Unions.Option<T>", Resources.Is)
+                .WithSpan(18, 16, 22, 10));
     }
 
     [TestMethod]
@@ -173,25 +173,25 @@ namespace ConsoleApplication1
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public int Evaluate(Expression expression)
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public int Evaluate(Expression expression)
+    {{
+        return expression switch
         {{
-            return expression switch
-            {{
-                AddExpression addExpression => Evaluate(addExpression.Lhs) + Evaluate(addExpression.Rhs),
-            }};
-        }}
+            AdditionExpression additionExpression => Evaluate(additionExpression.Lhs) + Evaluate(additionExpression.Rhs),
+        }};
     }}
+}}
 {TestData.ValidDiscriminatedUnionWithSubUnions}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'SubtractExpression', 'ValueExpression'", Resources.Cases, "ConsoleApplication1.Expression", Resources.Are)
-                .WithSpan(17, 20, 20, 14));
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'SubtractionExpression', 'ValueExpression'", Resources.Cases, "Unions.Expression", Resources.Are)
+                .WithSpan(18, 16, 21, 10));
     }
 }

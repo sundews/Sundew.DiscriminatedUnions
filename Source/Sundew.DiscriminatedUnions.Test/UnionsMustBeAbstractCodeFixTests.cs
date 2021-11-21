@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CasesShouldBeSealedCodeFixTests.cs" company="Hukano">
+// <copyright file="UnionsMustBeAbstractCodeFixTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,25 +16,26 @@ using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class CasesShouldBeSealedCodeFixTests
+public class UnionsMustBeAbstractCodeFixTests
 {
     [TestMethod]
-    public async Task Given_DiscriminatedUnion_When_CaseIsNotDeclaredSealed_Then_CaseShouldBeDeclaredSealed()
+    public async Task Given_Union_When_ItIsNotDeclaredAbstract_Then_ItShouldBeDeclaredAbstract()
     {
         var test = $@"{TestData.Usings}
 
 namespace Unions;
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public abstract record Option<T>
+public record Result
 {{
-    private Option()
-    {{
-    }}
+    private Result()
+    {{ }}
 
-    public record Success(T Value) : Option<T>;
+    public sealed record Success : Result;
 
-    public sealed record None : Option<T>;
+    public sealed record Warning(string Message) : Result;
+
+    public sealed record Error(int Code) : Result;
 }}
 ";
 
@@ -43,23 +44,24 @@ public abstract record Option<T>
 namespace Unions;
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public abstract record Option<T>
+public abstract record Result
 {{
-    private Option()
-    {{
-    }}
+    private Result()
+    {{ }}
 
-    public sealed record Success(T Value) : Option<T>;
+    public sealed record Success : Result;
 
-    public sealed record None : Option<T>;
+    public sealed record Warning(string Message) : Result;
+
+    public sealed record Error(int Code) : Result;
 }}
 ";
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.CasesShouldBeSealedRule)
-                .WithArguments("Unions.Option<T>.Success")
-                .WithSpan(20, 5, 20, 48),
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.ClassUnionsMustBeAbstractRule)
+                .WithArguments("Unions.Result")
+                .WithSpan(13, 1, 24, 2),
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }

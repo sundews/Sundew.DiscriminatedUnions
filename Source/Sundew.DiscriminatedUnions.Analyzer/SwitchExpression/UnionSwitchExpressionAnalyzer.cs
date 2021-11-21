@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiscriminatedUnionSwitchExpressionAnalyzer.cs" company="Hukano">
+// <copyright file="UnionSwitchExpressionAnalyzer.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-internal class DiscriminatedUnionSwitchExpressionAnalyzer
+internal class UnionSwitchExpressionAnalyzer
 {
     public void Analyze(OperationAnalysisContext operationAnalysisContext)
     {
@@ -24,14 +24,14 @@ internal class DiscriminatedUnionSwitchExpressionAnalyzer
 
         var unionTypeSymbol = switchExpressionOperation.Value.Type;
         var unionType = unionTypeSymbol as INamedTypeSymbol;
-        if (!DiscriminatedUnionHelper.IsDiscriminatedUnion(unionType))
+        if (!UnionHelper.IsDiscriminatedUnion(unionType))
         {
             return;
         }
 
         var unionTypeWithoutNull = unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
         var nullCase = SwitchExpressionHelper.GetNullCase(switchExpressionOperation);
-        var switchNullability = DiscriminatedUnionHelper.EvaluateSwitchNullability(
+        var switchNullability = UnionHelper.EvaluateSwitchNullability(
             switchExpressionOperation.Value,
             switchExpressionOperation.SemanticModel,
             nullCase != null);
@@ -40,12 +40,12 @@ internal class DiscriminatedUnionSwitchExpressionAnalyzer
                 .SingleOrDefault(x => x.Pattern is IDiscardPatternOperation) is { } switchExpressionArmOperation)
         {
             operationAnalysisContext.ReportDiagnostic(Diagnostic.Create(
-                SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
+                DimensionalUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
                 switchExpressionArmOperation.Syntax.GetLocation(),
                 unionType));
         }
 
-        var caseTypes = DiscriminatedUnionHelper.GetAllCaseTypes(unionTypeWithoutNull, operationAnalysisContext.Compilation);
+        var caseTypes = UnionHelper.GetAllCaseTypes(unionTypeWithoutNull, operationAnalysisContext.Compilation);
         DiagnosticReporterHelper.ReportDiagnostics(
             caseTypes.ToList(),
             SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).Where(x => x.HandlesCase).Select(x => x.Type),

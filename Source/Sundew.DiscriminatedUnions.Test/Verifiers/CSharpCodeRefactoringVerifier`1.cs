@@ -32,8 +32,8 @@ public static partial class CSharpCodeRefactoringVerifier<TCodeRefactoring>
     {
         var test = new Test
         {
-            TestCode = source + CSharpVerifierHelper.IsExternalInit,
-            FixedCode = fixedSource + CSharpVerifierHelper.IsExternalInit,
+            TestCode = source,
+            FixedCode = fixedSource,
         };
 
         test.ExpectedDiagnostics.AddRange(expected);
