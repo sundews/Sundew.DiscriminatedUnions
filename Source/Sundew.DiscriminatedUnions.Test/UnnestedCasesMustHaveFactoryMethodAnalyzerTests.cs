@@ -20,7 +20,7 @@ public class UnnestedCasesMustHaveFactoryMethodAnalyzerTests
 {
     [TestMethod]
     public async Task
-        Given_DiscriminatedUnion_When_CasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
+        Given_Union_When_CasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
@@ -50,7 +50,7 @@ public sealed record ValueExpression(int Value) : Expression;
     }
 
     [TestMethod]
-    public async Task Given_DiscriminatedUnion_When_UnionIsInterfaceAndCasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
+    public async Task Given_Union_When_UnionIsInterfaceAndCasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}

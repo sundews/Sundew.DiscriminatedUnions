@@ -8,8 +8,10 @@
 namespace Sundew.DiscriminatedUnions.Analyzer;
 
 using System.Collections.Immutable;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Sundew.DiscriminatedUnions.Analyzer.Analyzers;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchExpression;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchStatement;
 
@@ -43,22 +45,27 @@ public class DimensionalUnionsAnalyzer : DiagnosticAnalyzer
     /// <summary>
     /// Diagnostic id indicating that a union cannot be extended outside its assembly.
     /// </summary>
-    public const string UnionsCannotBeExtendedOutsideItsAssemblyDiagnosticId = "SDU0005";
+    public const string OnlyUnionsCanExtendOtherUnionsDiagnosticId = "SDU0005";
+
+    /// <summary>
+    /// Diagnostic id indicating that a union cannot be extended outside their assembly.
+    /// </summary>
+    public const string UnionsCannotBeExtendedOutsideTheirAssemblyDiagnosticId = "SDU0006";
 
     /// <summary>
     /// Diagnostic id indicating that cases must be declared in the same assembly as its union.
     /// </summary>
-    public const string CasesMustBeDeclaredInUnionAssemblyDiagnosticId = "SDU0006";
+    public const string CasesMustBeDeclaredInUnionAssemblyDiagnosticId = "SDU0007";
 
     /// <summary>
     /// Diagnostic id indicating that cases should be sealed.
     /// </summary>
-    public const string CasesShouldBeSealedDiagnosticId = "SDU0007";
+    public const string CasesShouldBeSealedDiagnosticId = "SDU0008";
 
     /// <summary>
     /// Diagnostic id indicating that unnested cases should have a factory method in its unions.
     /// </summary>
-    public const string UnnestedCasesShouldHaveFactoryMethodDiagnosticId = "SDU0008";
+    public const string UnnestedCasesShouldHaveFactoryMethodDiagnosticId = "SDU0009";
 
     /// <summary>
     /// Diagnostic id indicating that the switch should throw in default case.
@@ -104,7 +111,7 @@ public class DimensionalUnionsAnalyzer : DiagnosticAnalyzer
             nameof(Resources.SwitchHasUnreachableNullCaseDescription));
 
     /// <summary>
-    /// The discriminated union base must be abstract.
+    /// The discriminated union base must be abstract rule.
     /// </summary>
     public static readonly DiagnosticDescriptor ClassUnionsMustBeAbstractRule =
         DiagnosticDescriptorHelper.Create(
@@ -117,20 +124,33 @@ public class DimensionalUnionsAnalyzer : DiagnosticAnalyzer
             nameof(Resources.ClassDiscriminatedUnionsMustBeAbstractDescription));
 
     /// <summary>
-    /// The union must have private protected constructor rule.
+    /// The only unions can extend other unions rule.
     /// </summary>
-    public static readonly DiagnosticDescriptor UnionsCannotBeExtendedOutsideItsAssemblyRule =
+    public static readonly DiagnosticDescriptor OnlyUnionsCanExtendOtherUnionsRule =
         DiagnosticDescriptorHelper.Create(
-            UnionsCannotBeExtendedOutsideItsAssemblyDiagnosticId,
-            nameof(Resources.UnionsCannotBeExtendedOutsideItsAssemblyTitle),
-            nameof(Resources.UnionsCannotBeExtendedOutsideItsAssemblyMessageFormat),
+            OnlyUnionsCanExtendOtherUnionsDiagnosticId,
+            nameof(Resources.OnlyUnionsCanExtendOtherUnionsTitle),
+            nameof(Resources.OnlyUnionsCanExtendOtherUnionsMessageFormat),
             Category,
             DiagnosticSeverity.Error,
             true,
-            nameof(Resources.UnionsCannotBeExtendedOutsideItsAssemblyDescription));
+            nameof(Resources.OnlyUnionsCanExtendOtherUnionsDescription));
 
     /// <summary>
-    /// The union base interface must be internal.
+    /// The union cannot be extended outside its assembly rule.
+    /// </summary>
+    public static readonly DiagnosticDescriptor UnionsCannotBeExtendedOutsideTheirAssemblyRule =
+        DiagnosticDescriptorHelper.Create(
+            UnionsCannotBeExtendedOutsideTheirAssemblyDiagnosticId,
+            nameof(Resources.UnionsCannotBeExtendedOutsideTheirAssemblyTitle),
+            nameof(Resources.UnionsCannotBeExtendedOutsideTheirAssemblyMessageFormat),
+            Category,
+            DiagnosticSeverity.Error,
+            true,
+            nameof(Resources.UnionsCannotBeExtendedOutsideTheirAssemblyDescription));
+
+    /// <summary>
+    /// The case must be declared in its union assembly rule.
     /// </summary>
     public static readonly DiagnosticDescriptor CasesMustBeDeclaredInUnionAssemblyRule =
         DiagnosticDescriptorHelper.Create(
@@ -190,7 +210,8 @@ public class DimensionalUnionsAnalyzer : DiagnosticAnalyzer
         SwitchShouldNotHaveDefaultCaseRule,
         SwitchHasUnreachableNullCaseRule,
         ClassUnionsMustBeAbstractRule,
-        UnionsCannotBeExtendedOutsideItsAssemblyRule,
+        OnlyUnionsCanExtendOtherUnionsRule,
+        UnionsCannotBeExtendedOutsideTheirAssemblyRule,
         CasesMustBeDeclaredInUnionAssemblyRule,
         CasesShouldBeSealedRule,
         UnnestedCasesShouldHaveFactoryMethodRule,
@@ -205,22 +226,31 @@ public class DimensionalUnionsAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        var unionBaseAnalyzer = new UnionBaseAnalyzer();
-        var unionCaseAnalyzer = new UnionCaseAnalyzer();
+        var unionSymbolAnalyzers = new List<IUnionSymbolAnalyzer>
+        {
+            new ClassUnionsMustBeAbstractAnalyzer(),
+            new OnlyUnionsCanExtendOtherUnionsAnalyzer(),
+            new UnionsCannotBeExtendedOutsideTheirAssemblyAnalyzer(),
+            new UnionCaseAnalyzer(),
+        };
+
+        foreach (var unionSymbolAnalyzer in unionSymbolAnalyzers)
+        {
+            context.RegisterSymbolAction(
+                symbolAnalysisContext =>
+                {
+                    if (symbolAnalysisContext.Symbol is not INamedTypeSymbol namedTypeSymbol)
+                    {
+                        return;
+                    }
+
+                    unionSymbolAnalyzer.AnalyzeSymbol(namedTypeSymbol, symbolAnalysisContext.ReportDiagnostic);
+                },
+                SymbolKind.NamedType);
+        }
+
         var unionSwitchExpressionAnalyzer = new UnionSwitchExpressionAnalyzer();
         var unionSwitchStatementAnalyzer = new UnionSwitchStatementAnalyzer();
-        context.RegisterSymbolAction(
-            symbolAnalysisContext =>
-            {
-                if (symbolAnalysisContext.Symbol is not INamedTypeSymbol namedTypeSymbol)
-                {
-                    return;
-                }
-
-                unionBaseAnalyzer.AnalyzeSymbol(namedTypeSymbol, symbolAnalysisContext.ReportDiagnostic);
-                unionCaseAnalyzer.AnalyzeSymbol(namedTypeSymbol, symbolAnalysisContext.ReportDiagnostic);
-            },
-            SymbolKind.NamedType);
         context.RegisterOperationAction(unionSwitchExpressionAnalyzer.Analyze, OperationKind.SwitchExpression);
         context.RegisterOperationAction(unionSwitchStatementAnalyzer.Analyze, OperationKind.Switch);
     }

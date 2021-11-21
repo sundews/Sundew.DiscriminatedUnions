@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiscriminatedUnionsMustBeAbstractAnalyzerTests.cs" company="Hukano">
+// <copyright file="UnionsMustBeAbstractAnalyzerTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,11 +16,11 @@ using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class DiscriminatedUnionsMustBeAbstractAnalyzerTests
+public class UnionsMustBeAbstractAnalyzerTests
 {
     [TestMethod]
     public async Task
-        Given_DiscriminatedUnion_When_ItIsNotAbstract_Then_ClassDiscriminatedUnionsMustBeAbstractIsReported()
+        Given_Union_When_ItIsNotAbstract_Then_ClassDiscriminatedUnionsMustBeAbstractIsReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}

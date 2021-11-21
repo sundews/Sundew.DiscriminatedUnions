@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Analyzer;
+namespace Sundew.DiscriminatedUnions.Analyzer.Analyzers;
 
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-internal class UnionCaseAnalyzer
+internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
 {
     public void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> reportDiagnostic)
     {
@@ -58,7 +58,7 @@ internal class UnionCaseAnalyzer
                                 DimensionalUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule,
                                 declaringSyntaxReference.GetSyntax().GetLocation(),
                                 namedTypeSymbol,
-                                baseType));
+                                baseType.ContainingAssembly.Name));
                         }
                     }
                 }

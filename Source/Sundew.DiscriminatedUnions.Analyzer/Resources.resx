@@ -138,14 +138,14 @@
   <data name="SwitchAllCasesNotHandledMessageFormat" xml:space="preserve">
     <value>{0} {1} in '{2}' {3} not handled.</value>
   </data>
-  <data name="UnionsCannotBeExtendedOutsideItsAssemblyTitle" xml:space="preserve">
-    <value>Unions extensions must be declared in the same assembly as their unions</value>
+  <data name="UnionsCannotBeExtendedOutsideTheirAssemblyTitle" xml:space="preserve">
+    <value>Unions extensions must be declared in the same assembly as their union.</value>
   </data>
-  <data name="UnionsCannotBeExtendedOutsideItsAssemblyDescription" xml:space="preserve">
-    <value>A union and its extension must be declared in the same assembly, so that all cases and known at compile time.</value>
+  <data name="UnionsCannotBeExtendedOutsideTheirAssemblyDescription" xml:space="preserve">
+    <value>A union and its extensions must be declared in the same assembly, so that all cases are known at compile time.</value>
   </data>
-  <data name="UnionsCannotBeExtendedOutsideItsAssemblyMessageFormat" xml:space="preserve">
-    <value>{0} must be declared in assembly {1}.</value>
+  <data name="UnionsCannotBeExtendedOutsideTheirAssemblyMessageFormat" xml:space="preserve">
+    <value>'{0}' must be declared in assembly '{1}'.</value>
   </data>
   <data name="CasesShouldBeSealedTitle" xml:space="preserve">
     <value>All cases should be sealed.</value>
@@ -183,8 +183,17 @@
   <data name="ClassUnionsMustBeAbstractMessageFormat" xml:space="preserve">
     <value>'{0}' union is not abstract.</value>
   </data>
+  <data name="OnlyUnionsCanExtendOtherUnionsDescription" xml:space="preserve">
+    <value>Only unions can extend other unions, so that all cases are known at compile time..</value>
+  </data>
+  <data name="OnlyUnionsCanExtendOtherUnionsTitle" xml:space="preserve">
+    <value>Only unions can extend other unions.</value>
+  </data>
+  <data name="OnlyUnionsCanExtendOtherUnionsMessageFormat" xml:space="preserve">
+    <value>'{0}' is not marked with union attribute.</value>
+  </data>
   <data name="CasesMustBeDeclaredInUnionAssemblyDescription" xml:space="preserve">
-    <value>A union and its cases must be declared in the same assembly, so that all cases and known at compile time.</value>
+    <value>A union and its cases must be declared in the same assembly, so that all cases are known at compile time.</value>
   </data>
   <data name="CasesMustBeDeclaredInUnionAssemblyTitle" xml:space="preserve">
     <value>Cases must be declared in the same assembly as their unions</value>

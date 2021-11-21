@@ -22,7 +22,7 @@ using System.Diagnostics;
 using Sundew.DiscriminatedUnions;
 using Sundew.DiscriminatedUnions.TestData;";
 
-    public const string ValidResultDiscriminatedUnion = @"
+    public const string ValidResultUnion = @"
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record Result
 { 
@@ -36,7 +36,7 @@ public abstract record Result
     public sealed record Error(int Code) : Result;
 }";
 
-    public const string ValidGenericOptionDiscriminatedUnion = @"
+    public const string ValidGenericOptionUnion = @"
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record Option<T>
     where T : notnull
@@ -49,7 +49,7 @@ public abstract record Option<T>
     public sealed record None : Option<T>;
 }";
 
-    public const string ValidDiscriminatedUnionWithSubUnions = @"
+    public const string ValidDimensionalUnion = @"
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record Expression
 {

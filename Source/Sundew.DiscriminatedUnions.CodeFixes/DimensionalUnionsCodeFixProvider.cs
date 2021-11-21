@@ -37,7 +37,6 @@ public class DimensionalUnionsCodeFixProvider : CodeFixProvider
             new SwitchShouldNotHaveDefaultCaseCodeFixer(),
             new SwitchHasUnreachableNullCaseCodeFixer(),
             new UnionsMustBeAbstractCodeFixer(),
-            new InterfaceDiscriminatedUnionsMustBeInternalCodeFixer(),
             new CasesShouldBeSealedCodeFixer(),
             new UnnestedCasesShouldHaveFactoryMethodCodeFixer(),
         }.ToDictionary(x => x.DiagnosticId);

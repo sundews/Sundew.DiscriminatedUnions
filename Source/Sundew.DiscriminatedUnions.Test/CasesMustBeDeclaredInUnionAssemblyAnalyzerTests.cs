@@ -30,8 +30,8 @@ public sealed record DoubleValueExpression(double Value) : IExpression;
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyDiagnosticId)
-                .WithArguments("Unions.DoubleValueExpression", "Sundew.DiscriminatedUnions.TestData.IExpression")
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule)
+                .WithArguments("Unions.DoubleValueExpression", "Sundew.DiscriminatedUnions.TestData")
                 .WithSpan(13, 1, 13, 72));
     }
 }

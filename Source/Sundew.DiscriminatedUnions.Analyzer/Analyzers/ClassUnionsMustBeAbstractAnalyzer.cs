@@ -1,17 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UnionBaseAnalyzer.cs" company="Hukano">
+// <copyright file="ClassUnionsMustBeAbstractAnalyzer.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Analyzer;
+namespace Sundew.DiscriminatedUnions.Analyzer.Analyzers;
 
 using System;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 
-internal class UnionBaseAnalyzer
+internal class ClassUnionsMustBeAbstractAnalyzer : IUnionSymbolAnalyzer
 {
     public void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> reportDiagnostic)
     {
@@ -29,21 +28,6 @@ internal class UnionBaseAnalyzer
                         DimensionalUnionsAnalyzer.ClassUnionsMustBeAbstractRule,
                         declaringSyntaxReference.GetSyntax().GetLocation(),
                         namedTypeSymbol));
-            }
-        }
-
-        foreach (var @interface in namedTypeSymbol.AllInterfaces)
-        {
-            if (UnionHelper.IsDiscriminatedUnion(@interface) && !SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ContainingAssembly, @interface.ContainingAssembly))
-            {
-                foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
-                {
-                    reportDiagnostic(Diagnostic.Create(
-                        DimensionalUnionsAnalyzer.UnionsCannotBeExtendedOutsideItsAssemblyRule,
-                        declaringSyntaxReference.GetSyntax().GetLocation(),
-                        namedTypeSymbol,
-                        @interface));
-                }
             }
         }
     }

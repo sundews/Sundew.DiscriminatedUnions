@@ -14,10 +14,11 @@ using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
 
-public class UnionsCannotBeExtendedOutsideItsAssemblyAnalyzerTests
+[TestClass]
+public class UnionsCannotBeExtendedOutsideTheirAssemblyAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_Union_When_UnionIsExtendedInDifferentAssembly_Then_UnionsCannotBeExtendedOutsideItsAssemblyRuleIsReported()
+    public async Task Given_Union_When_UnionIsExtendedInDifferentAssembly_Then_UnionsCannotBeExtendedOutsideTheirAssemblyRuleIsReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
@@ -31,8 +32,8 @@ public interface IExtraExpression : IExpression
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.UnionsCannotBeExtendedOutsideItsAssemblyRule)
-                .WithArguments("Unions.IExtraExpression", "Sundew.DiscriminatedUnions.TestData.IExpression")
+            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.UnionsCannotBeExtendedOutsideTheirAssemblyRule)
+                .WithArguments("Unions.IExtraExpression", "Sundew.DiscriminatedUnions.TestData")
                 .WithSpan(13, 1, 16, 2));
     }
 }

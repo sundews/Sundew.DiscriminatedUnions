@@ -39,7 +39,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         }};
     }}
 }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
+{TestData.ValidGenericOptionUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
@@ -68,7 +68,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             }};
     }}
 }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
+{TestData.ValidGenericOptionUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
@@ -109,7 +109,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         return new Option<int>.None();
     }}
 }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
+{TestData.ValidGenericOptionUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(

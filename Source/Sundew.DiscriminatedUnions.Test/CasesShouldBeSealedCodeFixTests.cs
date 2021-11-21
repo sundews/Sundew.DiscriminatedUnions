@@ -19,7 +19,7 @@ using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
 public class CasesShouldBeSealedCodeFixTests
 {
     [TestMethod]
-    public async Task Given_DiscriminatedUnion_When_CaseIsNotDeclaredSealed_Then_CaseShouldBeDeclaredSealed()
+    public async Task Given_Union_When_CaseIsNotDeclaredSealed_Then_CaseShouldBeDeclaredSealed()
     {
         var test = $@"{TestData.Usings}
 

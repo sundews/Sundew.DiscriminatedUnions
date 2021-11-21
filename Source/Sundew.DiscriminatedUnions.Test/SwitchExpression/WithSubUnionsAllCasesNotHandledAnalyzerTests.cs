@@ -37,7 +37,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
     }}
 }}
 
-{TestData.ValidDiscriminatedUnionWithSubUnions}
+{TestData.ValidDimensionalUnion}
 ";
         await VerifyCS.VerifyAnalyzerAsync(
             test,
@@ -64,7 +64,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
     }}
 }}
 
-{TestData.ValidDiscriminatedUnionWithSubUnions}
+{TestData.ValidDimensionalUnion}
 ";
         await VerifyCS.VerifyAnalyzerAsync(
             test,

@@ -88,7 +88,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A union and its cases must be declared in the same assembly, so that all cases and known at compile time..
+        ///   Looks up a localized string similar to A union and its cases must be declared in the same assembly, so that all cases are known at compile time..
         /// </summary>
         public static string CasesMustBeDeclaredInUnionAssemblyDescription {
             get {
@@ -174,6 +174,33 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         public static string Is {
             get {
                 return ResourceManager.GetString("Is", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only unions can extend other unions, so that all cases are known at compile time...
+        /// </summary>
+        public static string OnlyUnionsCanExtendOtherUnionsDescription {
+            get {
+                return ResourceManager.GetString("OnlyUnionsCanExtendOtherUnionsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not marked with union attribute..
+        /// </summary>
+        public static string OnlyUnionsCanExtendOtherUnionsMessageFormat {
+            get {
+                return ResourceManager.GetString("OnlyUnionsCanExtendOtherUnionsMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only unions can extend other unions..
+        /// </summary>
+        public static string OnlyUnionsCanExtendOtherUnionsTitle {
+            get {
+                return ResourceManager.GetString("OnlyUnionsCanExtendOtherUnionsTitle", resourceCulture);
             }
         }
         
@@ -295,29 +322,29 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A union and its extension must be declared in the same assembly, so that all cases and known at compile time..
+        ///   Looks up a localized string similar to A union and its extensions must be declared in the same assembly, so that all cases are known at compile time..
         /// </summary>
-        public static string UnionsCannotBeExtendedOutsideItsAssemblyDescription {
+        public static string UnionsCannotBeExtendedOutsideTheirAssemblyDescription {
             get {
-                return ResourceManager.GetString("UnionsCannotBeExtendedOutsideItsAssemblyDescription", resourceCulture);
+                return ResourceManager.GetString("UnionsCannotBeExtendedOutsideTheirAssemblyDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} must be declared in assembly {1}..
+        ///   Looks up a localized string similar to &apos;{0}&apos; must be declared in assembly &apos;{1}&apos;..
         /// </summary>
-        public static string UnionsCannotBeExtendedOutsideItsAssemblyMessageFormat {
+        public static string UnionsCannotBeExtendedOutsideTheirAssemblyMessageFormat {
             get {
-                return ResourceManager.GetString("UnionsCannotBeExtendedOutsideItsAssemblyMessageFormat", resourceCulture);
+                return ResourceManager.GetString("UnionsCannotBeExtendedOutsideTheirAssemblyMessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unions extensions must be declared in the same assembly as their unions.
+        ///   Looks up a localized string similar to Unions extensions must be declared in the same assembly as their union..
         /// </summary>
-        public static string UnionsCannotBeExtendedOutsideItsAssemblyTitle {
+        public static string UnionsCannotBeExtendedOutsideTheirAssemblyTitle {
             get {
-                return ResourceManager.GetString("UnionsCannotBeExtendedOutsideItsAssemblyTitle", resourceCulture);
+                return ResourceManager.GetString("UnionsCannotBeExtendedOutsideTheirAssemblyTitle", resourceCulture);
             }
         }
         

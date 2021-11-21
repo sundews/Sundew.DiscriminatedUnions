@@ -43,7 +43,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         }}
     }}
 }}
-{TestData.ValidResultDiscriminatedUnion}
+{TestData.ValidResultUnion}
 ";
 
         var fixtest = $@"#nullable enable
@@ -66,7 +66,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         }}
     }}
 }}
-{TestData.ValidResultDiscriminatedUnion}
+{TestData.ValidResultUnion}
 ";
 
         var expected = new[]

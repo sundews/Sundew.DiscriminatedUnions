@@ -37,7 +37,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             }};
     }}
 }}
-{TestData.ValidResultDiscriminatedUnion}
+{TestData.ValidResultUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
@@ -68,7 +68,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             }};
     }}
 }}
-{TestData.ValidResultDiscriminatedUnion}
+{TestData.ValidResultUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
@@ -99,7 +99,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             }};
     }}
 }}
-{TestData.ValidResultDiscriminatedUnion}
+{TestData.ValidResultUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
@@ -128,7 +128,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             }};
     }}
 }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
+{TestData.ValidGenericOptionUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
@@ -157,7 +157,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         }};
     }}
 }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
+{TestData.ValidGenericOptionUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
@@ -185,7 +185,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         }};
     }}
 }}
-{TestData.ValidDiscriminatedUnionWithSubUnions}
+{TestData.ValidDimensionalUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
