@@ -25,55 +25,55 @@ public class SwitchStatementHasUnreachableNullCaseCodeFixTests
 {TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Warning warning:
-                    throw new System.NotImplementedException();
-                case Result.Error error:
-                    break;
-                case null:
-                    break;
-            }}
+            case Result.Success success:
+                break;
+            case Result.Warning warning:
+                throw new System.NotImplementedException();
+            case Result.Error error:
+                break;
+            case null:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         var fixtest = $@"#nullable enable
 {TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Warning warning:
-                    throw new System.NotImplementedException();
-                case Result.Error error:
-                    break;
-            }}
+            case Result.Success success:
+                break;
+            case Result.Warning warning:
+                throw new System.NotImplementedException();
+            case Result.Error error:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         var expected = new[]
         {
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
                 .WithArguments(TestData.UnionsResult)
-                .WithSpan(25, 17, 26, 27),
+                .WithSpan(26, 13, 27, 23),
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }

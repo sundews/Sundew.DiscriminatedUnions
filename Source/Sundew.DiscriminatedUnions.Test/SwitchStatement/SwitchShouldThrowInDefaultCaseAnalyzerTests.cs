@@ -25,34 +25,34 @@ public class SwitchShouldThrowInDefaultCaseAnalyzerTests
 {TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Result result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success:
-                    return true;
-                case Result.Warning {{ Message: ""Tough warning"" }} warning:
-                    return false;
-                case Result.Warning warning:
-                    return true;
-                case Result.Error error:
-                    return false;
-                default:
-                    return false;
-            }}
+            case Result.Success:
+                return true;
+            case Result.Warning {{ Message: ""Tough warning"" }} warning:
+                return false;
+            case Result.Warning warning:
+                return true;
+            case Result.Error error:
+                return false;
+            default:
+                return false;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
                 .WithArguments(TestData.UnionsResult)
-                .WithSpan(28, 17, 29, 34));
+                .WithSpan(28, 13, 29, 30));
     }
 
     /*
@@ -63,7 +63,7 @@ namespace Unions;
 {TestData.Usings}
 
 namespace Unions;
-{{
+
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{
     public void Switch(Result result)
@@ -82,7 +82,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
     }}
 }}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
@@ -98,32 +98,32 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 {TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success:
-                    return;
-                case Result.Warning warning:
-                    return;
-                case Result.Error error:
-                    return;
-                default:
-                    break;
-            }}
+            case Result.Success:
+                return;
+            case Result.Warning warning:
+                return;
+            case Result.Error error:
+                return;
+            default:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
                 .WithArguments(TestData.UnionsResult)
-                .WithSpan(26, 17, 27, 27));
+                .WithSpan(26, 13, 27, 23));
     }
 
     [TestMethod]
@@ -133,35 +133,35 @@ namespace Unions;
 {TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch(Result? result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Result? result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success:
-                    return true;
-                case Result.Warning {{ Message: ""Tough warning"" }} warning:
-                    return false;
-                case Result.Warning warning:
-                    return true;
-                case Result.Error error:
-                    return false;
-                case null:
-                    return false;
-                default:
-                    return false;
-            }}
+            case Result.Success:
+                return true;
+            case Result.Warning {{ Message: ""Tough warning"" }} warning:
+                return false;
+            case Result.Warning warning:
+                return true;
+            case Result.Error error:
+                return false;
+            case null:
+                return false;
+            default:
+                return false;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule)
                 .WithArguments(TestData.UnionsResult)
-                .WithSpan(30, 17, 31, 34));
+                .WithSpan(30, 13, 31, 30));
     }
 }

@@ -25,48 +25,48 @@ public class SwitchStatementAllCasesNotHandledCodeFixTests
 {TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success success:
-                    break;
-            }}
+            case Result.Success success:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         var fixtest = $@"#nullable enable
 {TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Warning warning:
-                    throw new System.NotImplementedException();
-                case Result.Error error:
-                    throw new System.NotImplementedException();
-            }}
+            case Result.Success success:
+                break;
+            case Result.Warning warning:
+                throw new System.NotImplementedException();
+            case Result.Error error:
+                throw new System.NotImplementedException();
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
         var expected = new[]
         {
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.UnionsResult, Resources.Are)
-                .WithSpan(17, 13, 21, 14),
+                .WithSpan(18, 9, 22, 10),
         };
 
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
@@ -78,49 +78,49 @@ namespace Unions;
         var test = $@"{TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success success:
-                    break;
-            }}
+            case Result.Success success:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         var fixtest = $@"{TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Warning warning:
-                    throw new System.NotImplementedException();
-                case Result.Error error:
-                    throw new System.NotImplementedException();
-                case null:
-                    throw new System.NotImplementedException();
-            }}
+            case Result.Success success:
+                break;
+            case Result.Warning warning:
+                throw new System.NotImplementedException();
+            case Result.Error error:
+                throw new System.NotImplementedException();
+            case null:
+                throw new System.NotImplementedException();
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
         var expected = new[]
         {
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
-                .WithSpan(16, 13, 20, 14),
+                .WithSpan(17, 9, 21, 10),
         };
 
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
@@ -133,50 +133,50 @@ namespace Unions;
 {TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Error:
-                    break;
-            }}
+            case Result.Success success:
+                break;
+            case Result.Error:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         var fixtest = $@"#nullable enable
 {TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Warning warning:
-                    throw new System.NotImplementedException();
-                case Result.Error:
-                    break;
-            }}
+            case Result.Success success:
+                break;
+            case Result.Warning warning:
+                throw new System.NotImplementedException();
+            case Result.Error:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
         var expected = new[]
         {
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning'", Resources.Case, TestData.UnionsResult, Resources.Is)
-                .WithSpan(17, 13, 23, 14),
+                .WithSpan(18, 9, 24, 10),
         };
 
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
@@ -188,51 +188,51 @@ namespace Unions;
         var test = $@"{TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Error error:
-                    break;
-            }}
+            case Result.Success success:
+                break;
+            case Result.Error error:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         var fixtest = $@"{TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Warning warning:
-                    throw new System.NotImplementedException();
-                case Result.Error error:
-                    break;
-                case null:
-                    throw new System.NotImplementedException();
-            }}
+            case Result.Success success:
+                break;
+            case Result.Warning warning:
+                throw new System.NotImplementedException();
+            case Result.Error error:
+                break;
+            case null:
+                throw new System.NotImplementedException();
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
         var expected = new[]
         {
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
-                .WithSpan(16, 13, 22, 14),
+                .WithSpan(17, 9, 23, 10),
         };
 
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
@@ -244,51 +244,51 @@ namespace Unions;
         var test = $@"{TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                default:
-                    throw new Sundew.DiscriminatedUnions.UnreachableCaseException(typeof(Result));
-            }}
+            default:
+                throw new Sundew.DiscriminatedUnions.UnreachableCaseException(typeof(Result));
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         var fixtest = $@"{TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success success:
-                    throw new System.NotImplementedException();
-                case Result.Warning warning:
-                    throw new System.NotImplementedException();
-                case Result.Error error:
-                    throw new System.NotImplementedException();
-                case null:
-                    throw new System.NotImplementedException();
-                default:
-                    throw new Sundew.DiscriminatedUnions.UnreachableCaseException(typeof(Result));
-            }}
+            case Result.Success success:
+                throw new System.NotImplementedException();
+            case Result.Warning warning:
+                throw new System.NotImplementedException();
+            case Result.Error error:
+                throw new System.NotImplementedException();
+            case null:
+                throw new System.NotImplementedException();
+            default:
+                throw new Sundew.DiscriminatedUnions.UnreachableCaseException(typeof(Result));
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
         var expected = new[]
         {
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Success', 'Warning', 'Error', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
-                .WithSpan(16, 13, 20, 14),
+                .WithSpan(17, 9, 21, 10),
         };
 
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
@@ -300,55 +300,55 @@ namespace Unions;
         var test = $@"{TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Warning {{ Message: ""Tough Warning"" }}:
-                    break;
-                case Result.Error:
-                    break;
-            }}
+            case Result.Success success:
+                break;
+            case Result.Warning {{ Message: ""Tough Warning"" }}:
+                break;
+            case Result.Error:
+                break;
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
 
         var fixtest = $@"{TestData.Usings}
 
 namespace Unions;
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch (result)
         {{
-            switch (result)
-            {{
-                case Result.Success success:
-                    break;
-                case Result.Warning {{ Message: ""Tough Warning"" }}:
-                    break;
-                case Result.Warning warning:
-                    throw new System.NotImplementedException();
-                case Result.Error:
-                    break;
-                case null:
-                    throw new System.NotImplementedException();
-            }}
+            case Result.Success success:
+                break;
+            case Result.Warning {{ Message: ""Tough Warning"" }}:
+                break;
+            case Result.Warning warning:
+                throw new System.NotImplementedException();
+            case Result.Error:
+                break;
+            case null:
+                throw new System.NotImplementedException();
         }}
     }}
+}}
 {TestData.ValidResultDiscriminatedUnion}
-}}";
+";
         var expected = new[]
         {
             VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
-                .WithSpan(17, 13, 25, 14),
+                .WithSpan(17, 9, 25, 10),
         };
 
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
