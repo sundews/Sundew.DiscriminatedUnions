@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DimensionalUnionAnalyzerTests.cs" company="Hukano">
+// <copyright file="MultiUnionAnalyzerTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,20 +11,20 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class DimensionalUnionAnalyzerTests
+public class MultiUnionAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_DimensionalUnion_When_ItHasSubUnions_Then_NoDiagnosticsAreReported()
+    public async Task Given_MultiUnion_When_ItHasSubUnions_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
 namespace Unions;
 
-{TestData.ValidDimensionalUnion}
+{TestData.ValidMultiUnion}
 ";
         await VerifyCS.VerifyAnalyzerAsync(test);
     }

@@ -13,7 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.PopulateUnionFactoryMethodsMarkerAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
@@ -64,7 +64,7 @@ public sealed record ValueExpression(int Value) : Expression;
         var expected = new[]
         {
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Info)
+                .WithSeverity(DiagnosticSeverity.Hidden)
                 .WithArguments("Unions.Expression")
                 .WithSpan(14, 24, 14, 34),
         };
@@ -116,7 +116,7 @@ public sealed record ValueExpression(int Value) : Expression;
         var expected = new[]
         {
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Info)
+                .WithSeverity(DiagnosticSeverity.Hidden)
                 .WithArguments("Unions.Expression")
                 .WithSpan(14, 24, 14, 34),
         };
@@ -142,18 +142,15 @@ public interface IAssociativeExpression
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record ArithmeticExpression : Expression
 {{
-    private protected ArithmeticExpression()
-    {{ }}
-
-    public static new ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
-
-    public static new ArithmeticExpression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
-    
-    public static new ArithmeticExpression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
-
     public abstract Expression Lhs {{ get; init; }}
 
     public abstract Expression Rhs {{ get; init; }}
+
+    public new static ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+    public new static ArithmeticExpression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
+
+    public new static ArithmeticExpression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
 }}
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
@@ -162,10 +159,6 @@ public abstract record Expression
     public static Expression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
 
     public static Expression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
-
-    public static Expression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
-
-    public static Expression ValueExpression(int value) => new ValueExpression(value);
 }}
 
 public sealed record AddExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression, IAssociativeExpression;
@@ -192,18 +185,15 @@ public interface IAssociativeExpression
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record ArithmeticExpression : Expression
 {{
-    private protected ArithmeticExpression()
-    {{ }}
-
-    public static new ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
-
-    public static new ArithmeticExpression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
-    
-    public static new ArithmeticExpression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
-
     public abstract Expression Lhs {{ get; init; }}
 
     public abstract Expression Rhs {{ get; init; }}
+
+    public new static ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+    public new static ArithmeticExpression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
+
+    public new static ArithmeticExpression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
 }}
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
@@ -230,17 +220,128 @@ public sealed record ValueExpression(int Value) : Expression;
         var expected = new[]
         {
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Info)
+                .WithSeverity(DiagnosticSeverity.Hidden)
                 .WithArguments("Unions.IAssociativeExpression")
                 .WithSpan(14, 18, 14, 40),
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Info)
+                .WithSeverity(DiagnosticSeverity.Hidden)
                 .WithArguments("Unions.Expression")
-                .WithSpan(39, 24, 39, 34),
+                .WithSpan(36, 24, 36, 34),
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Info)
+                .WithSeverity(DiagnosticSeverity.Hidden)
                 .WithArguments("Unions.ArithmeticExpression")
                 .WithSpan(22, 24, 22, 44),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true, 1);
+    }
+
+    [TestMethod]
+    public async Task Given_MultiDiscriminatedUnionWithUnnestedCases_When_MultipleCasesInDerivedTypeHaveNoFactoryMethod_Then_FactoryMethodsAreImplemented()
+    {
+        var test = $@"{TestData.Usings}
+
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public interface IAssociativeExpression
+{{
+    public static IAssociativeExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+    public static IAssociativeExpression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
+}}
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record Expression
+{{
+    public static Expression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+    public static Expression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
+
+    public static Expression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
+
+    public static Expression ValueExpression(int value) => new ValueExpression(value);
+}}
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record ArithmeticExpression : Expression
+{{
+    public abstract Expression Lhs {{ get; init; }}
+
+    public abstract Expression Rhs {{ get; init; }}
+
+    public new static ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+}}
+
+public sealed record AddExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression, IAssociativeExpression;
+
+public sealed record SubtractExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
+
+public sealed record MultiplicationExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression, IAssociativeExpression;
+
+public sealed record ValueExpression(int Value) : Expression;
+";
+
+        var fixtest = $@"{TestData.Usings}
+
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public interface IAssociativeExpression
+{{
+    public static IAssociativeExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+    public static IAssociativeExpression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
+}}
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record Expression
+{{
+    public static Expression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+    public static Expression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
+
+    public static Expression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
+
+    public static Expression ValueExpression(int value) => new ValueExpression(value);
+}}
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record ArithmeticExpression : Expression
+{{
+    public abstract Expression Lhs {{ get; init; }}
+
+    public abstract Expression Rhs {{ get; init; }}
+
+    public new static ArithmeticExpression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
+
+    public new static ArithmeticExpression SubtractExpression(Expression lhs, Expression rhs) => new SubtractExpression(lhs, rhs);
+
+    public new static ArithmeticExpression MultiplicationExpression(Expression lhs, Expression rhs) => new MultiplicationExpression(lhs, rhs);
+}}
+
+public sealed record AddExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression, IAssociativeExpression;
+
+public sealed record SubtractExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
+
+public sealed record MultiplicationExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression, IAssociativeExpression;
+
+public sealed record ValueExpression(int Value) : Expression;
+";
+
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithArguments("Unions.IAssociativeExpression")
+                .WithSpan(14, 18, 14, 40),
+            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithArguments("Unions.Expression")
+                .WithSpan(22, 24, 22, 34),
+            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithArguments("Unions.ArithmeticExpression")
+                .WithSpan(34, 24, 34, 44),
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true, 1);
     }

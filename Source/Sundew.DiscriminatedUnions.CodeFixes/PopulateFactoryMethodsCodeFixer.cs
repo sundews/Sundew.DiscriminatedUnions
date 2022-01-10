@@ -78,11 +78,17 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
                             caseType.Name,
                             constructor,
                             caseType,
+                            constructor.Parameters.Select(x => x.Type).ToArray(),
                             parameters,
                             generator,
                             index != 0)
                         .WithAdditionalAnnotations(Formatter.Annotation);
-                }).Where(x => x != null);
+                }).Where(x => x != null).ToArray();
+
+        if (!factoryMethods.Any())
+        {
+            return document;
+        }
 
         var newNode = generator.InsertMembers(
             node,
@@ -106,17 +112,24 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         string name,
         IMethodSymbol constructor,
         INamedTypeSymbol caseType,
+        IReadOnlyCollection<ITypeSymbol> parameterTypes,
         List<(SyntaxNode Parameter, string Name)> parameters,
         SyntaxGenerator generator,
         bool addAdditionalNewLine)
     {
         if (semanticModel.Language == LanguageNames.CSharp)
         {
+            var tokenList = SyntaxFactory.TokenList(
+                SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+            if (HasInheritedSameFactoryMethodSignature(unionType, caseType, parameterTypes))
+            {
+                tokenList = tokenList.Add(SyntaxFactory.Token(SyntaxKind.NewKeyword));
+            }
+
+            tokenList = tokenList.Add(SyntaxFactory.Token(SyntaxKind.StaticKeyword));
             var syntaxNode = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.List<AttributeListSyntax>(),
-                SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                tokenList,
                 SyntaxFactory.ParseTypeName(unionType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)),
                 null,
                 SyntaxFactory.Identifier(name),
@@ -164,8 +177,17 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
                 generator.ReturnStatement(
                     generator.ObjectCreationExpression(
                         caseType,
-                        parameters.Select(x => generator.IdentifierName(x.Name)))),
+                        parameterTypes.Select(x => generator.IdentifierName(x.Name)))),
             });
+    }
+
+    private static bool HasInheritedSameFactoryMethodSignature(INamedTypeSymbol unionType, INamedTypeSymbol caseType, IReadOnlyCollection<ITypeSymbol> parameterTypes)
+    {
+        return unionType.EnumerateBaseTypes().Concat(unionType.AllInterfaces)
+            .SelectMany(x => x.GetMembers(caseType.Name)
+                .Where(x => x.IsStatic && x.Kind == SymbolKind.Method)
+                .OfType<IMethodSymbol>()
+                .Where(x => x.Parameters.Select(x => x.Type).SequenceEqual(parameterTypes, SymbolEqualityComparer.Default))).Any();
     }
 
     private static IEnumerable<INamedTypeSymbol> GetDerivedTypes(Compilation compilation, ITypeSymbol baseClassTypeSymbol) =>

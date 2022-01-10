@@ -20,7 +20,7 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
         var isCase = false;
         if (!namedTypeSymbol.IsAbstract && namedTypeSymbol.TypeKind != TypeKind.Interface)
         {
-            foreach (var baseType in EnumerateBaseTypes(namedTypeSymbol).Concat(namedTypeSymbol.AllInterfaces))
+            foreach (var baseType in namedTypeSymbol.EnumerateBaseTypes().Concat(namedTypeSymbol.AllInterfaces))
             {
                 if (UnionHelper.IsDiscriminatedUnion(baseType))
                 {
@@ -76,21 +76,6 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
                     declaringSyntaxReference.GetSyntax().GetLocation(),
                     namedTypeSymbol));
             }
-        }
-    }
-
-    private static IEnumerable<INamedTypeSymbol> EnumerateBaseTypes(INamedTypeSymbol? discriminatedUnionType)
-    {
-        if (discriminatedUnionType == null)
-        {
-            yield break;
-        }
-
-        discriminatedUnionType = discriminatedUnionType.BaseType;
-        while (discriminatedUnionType != null)
-        {
-            yield return discriminatedUnionType;
-            discriminatedUnionType = discriminatedUnionType.BaseType;
         }
     }
 }

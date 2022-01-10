@@ -1,7 +1,7 @@
 # Discriminated Unions
 
-Sundew.DiscriminatedUnions are an attempt to implement F# discriminated unions for C#, until a future version of C# provides it out of the box.
-The goal here is to create a standin replacement, so that when unions are available switch statements/expressions are compatible.
+Sundew.DiscriminatedUnions implement discriminated unions for C#, until a future version of C# provides it out of the box.
+The idea is that this package can be deleted once unions are supported in C#, without requiring changes to switch expressions and statements.
 
 In addition, the project tries to imagine unions in an object oriented language an adds an aspect of dimensions to unions.
 A dimensional union is a union where cases can be reused in any number of unions, by supporting interface unions through the possibility of implementing multiple interface and default interface members.

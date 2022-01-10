@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DimensionalUnionsCodeFixProvider.cs" company="Hukano">
+// <copyright file="DiscriminatedUnionsCodeFixProvider.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -20,16 +20,16 @@ using Microsoft.CodeAnalysis.CodeFixes;
 /// Code fix for diagnostics related to discriminated unions.
 /// </summary>
 /// <seealso cref="Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider" />
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DimensionalUnionsCodeFixProvider))]
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DiscriminatedUnionsCodeFixProvider))]
 [Shared]
-public class DimensionalUnionsCodeFixProvider : CodeFixProvider
+public class DiscriminatedUnionsCodeFixProvider : CodeFixProvider
 {
     private readonly Dictionary<string, ICodeFixer> codeFixers;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DimensionalUnionsCodeFixProvider"/> class.
+    /// Initializes a new instance of the <see cref="DiscriminatedUnionsCodeFixProvider"/> class.
     /// </summary>
-    public DimensionalUnionsCodeFixProvider()
+    public DiscriminatedUnionsCodeFixProvider()
     {
         this.codeFixers = new ICodeFixer[]
         {

@@ -49,7 +49,7 @@ public abstract record Option<T>
     public sealed record None : Option<T>;
 }";
 
-    public const string ValidDimensionalUnion = @"
+    public const string ValidMultiUnion = @"
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record Expression
 {

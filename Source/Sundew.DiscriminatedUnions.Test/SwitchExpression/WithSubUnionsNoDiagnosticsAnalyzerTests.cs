@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
@@ -37,7 +37,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
     }}
 }}
 
-{TestData.ValidDimensionalUnion}
+{TestData.ValidMultiUnion}
 ";
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
@@ -61,7 +61,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
     }}
 }}
 
-{TestData.ValidDimensionalUnion}
+{TestData.ValidMultiUnion}
 ";
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
