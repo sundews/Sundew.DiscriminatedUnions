@@ -102,7 +102,7 @@ public sealed record ValueExpression(int Value) : IExpression;
 | SDU0007       | Cases must be declared in the same assembly as their unions            |   no      |
 | SDU0008       | Cases should be sealed                                                 |   yes     |
 | SDU0009       | Unnested cases should have factory method                              |   PDU0001 |
-| PDU0001       | Populate union factory method                                          |   yes     |
+| PDU0001       | Populate union factory methods                                         |   yes     |
 | SDU9999       | Switch should throw in default case                                    |   no      |
 
 ## Issues/Todos
