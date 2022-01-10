@@ -205,6 +205,33 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Populates factory methods for all cases in the union..
+        /// </summary>
+        public static string PopulateFactoryMethodsDescription {
+            get {
+                return ResourceManager.GetString("PopulateFactoryMethodsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; should have factory methods for all cases..
+        /// </summary>
+        public static string PopulateFactoryMethodsMessageFormat {
+            get {
+                return ResourceManager.GetString("PopulateFactoryMethodsMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Populate factory methods..
+        /// </summary>
+        public static string PopulateFactoryMethodsTitle {
+            get {
+                return ResourceManager.GetString("PopulateFactoryMethodsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Switch over a union, which is checked for exhaustiveness by another analyzer..
         /// </summary>
         public static string SuppressCS8509Justification {

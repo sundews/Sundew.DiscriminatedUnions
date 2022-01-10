@@ -1,6 +1,6 @@
-# Dimensional Unions
+# Discriminated Unions
 
-DimensionalUnions are an attempt to implement F# discriminated unions for C#, until a future version of C# provides it out of the box.
+Sundew.DiscriminatedUnions are an attempt to implement F# discriminated unions for C#, until a future version of C# provides it out of the box.
 The goal here is to create a standin replacement, so that when unions are available switch statements/expressions are compatible.
 
 In addition, the project tries to imagine unions in an object oriented language an adds an aspect of dimensions to unions.
@@ -91,21 +91,23 @@ public sealed record ValueExpression(int Value) : IExpression;
 ```
 
 ## Supported diagnostics:
-| Diagnostic Id | Description                                                            | Code Fix |
-| ------------- | ---------------------------------------------------------------------- | :------: |
-| SDU0001       | Switch does not handled all cases                                      |   yes    |
-| SDU0002       | Switch should not handle default case                                  |   yes    |
-| SDU0003       | Switch has unreachable null case                                       |   yes    |
-| SDU0004       | Class unions must be abstract                                          |   yes    |
-| SDU0005       | Only unions can extended other unions                                  |   no     |
-| SDU0006       | Unions cannot be extended outside their assembly                       |   no     |
-| SDU0007       | Cases must be declared in the same assembly as their unions            |   no     |
-| SDU0008       | Cases should be sealed                                                 |   yes    |
-| SDU0009       | Unnested cases should have factory method                              |   yes    |
-| SDU9999       | Switch should throw in default case                                    |   no     |
+| Diagnostic Id | Description                                                            | Code Fix  |
+| ------------- | ---------------------------------------------------------------------- | :-------: |
+| SDU0001       | Switch does not handled all cases                                      |   yes     |
+| SDU0002       | Switch should not handle default case                                  |   yes     |
+| SDU0003       | Switch has unreachable null case                                       |   yes     |
+| SDU0004       | Class unions must be abstract                                          |   yes     |
+| SDU0005       | Only unions can extended other unions                                  |   no      |
+| SDU0006       | Unions cannot be extended outside their assembly                       |   no      |
+| SDU0007       | Cases must be declared in the same assembly as their unions            |   no      |
+| SDU0008       | Cases should be sealed                                                 |   yes     |
+| SDU0009       | Unnested cases should have factory method                              |   PDU0001 |
+| PDU0001       | Populate union factory method                                          |   yes     |
+| SDU9999       | Switch should throw in default case                                    |   no      |
 
 ## Issues/Todos
 * Switch appears with red squiggly lines in VS: https://github.com/dotnet/roslyn/issues/57041
 * Nullability is falsely evaluated when the switch hints null is possible: https://github.com/dotnet/roslyn/issues/57042
 * SDU0009 gets reported in VS, but no code fix is offered. VS issue here: https://github.com/dotnet/roslyn/issues/57621
+  * Workaround: A PDU0001 is always reported on unions offering to generate factory methods, as it is not technically possible to implement a code fix for SDU0009 (See issue).
 * Verbose syntax for defining unions. (No SourceGenerators implemented yet)

@@ -25,7 +25,7 @@ internal class ClassUnionsMustBeAbstractAnalyzer : IUnionSymbolAnalyzer
             {
                 reportDiagnostic(
                     Diagnostic.Create(
-                        DimensionalUnionsAnalyzer.ClassUnionsMustBeAbstractRule,
+                        DiscriminatedUnionsAnalyzer.ClassUnionsMustBeAbstractRule,
                         declaringSyntaxReference.GetSyntax().GetLocation(),
                         namedTypeSymbol));
             }

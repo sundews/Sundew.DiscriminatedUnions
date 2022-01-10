@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class UnnestedCasesMustHaveFactoryMethodAnalyzerTests
@@ -41,12 +41,14 @@ public sealed record ValueExpression(int Value) : Expression;
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.SubtractionExpression", "Unions.Expression")
-                .WithSpan(13, 1, 17, 2),
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+                .WithSpan(13, 1, 17, 2)
+                .WithSpan(21, 1, 21, 89),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.ValueExpression", "Unions.Expression")
-                .WithSpan(13, 1, 17, 2));
+                .WithSpan(13, 1, 17, 2)
+                .WithSpan(23, 1, 23, 62));
     }
 
     [TestMethod]
@@ -71,11 +73,13 @@ internal sealed record ValueExpression(int Value) : Expression;
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.SubtractionExpression", "Unions.Expression")
-                .WithSpan(13, 1, 17, 2),
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+                .WithSpan(13, 1, 17, 2)
+                .WithSpan(21, 1, 21, 91),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.ValueExpression", "Unions.Expression")
-                .WithSpan(13, 1, 17, 2));
+                .WithSpan(13, 1, 17, 2)
+                .WithSpan(23, 1, 23, 64));
     }
 }

@@ -40,7 +40,7 @@ internal class UnionSwitchStatementAnalyzer
             if (CanSwitchReachEnd(switchOperation))
             {
                 operationAnalysisContext.ReportDiagnostic(Diagnostic.Create(
-                    DimensionalUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
+                    DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
                     defaultSwitchCaseOperation.Syntax.GetLocation(),
                     unionType));
             }
@@ -58,7 +58,7 @@ internal class UnionSwitchStatementAnalyzer
                                 SymbolEqualityComparer.Default.Equals(typeOfOperation.TypeOperand, unionTypeWithoutNull)) != null) != null))
                 {
                     operationAnalysisContext.ReportDiagnostic(Diagnostic.Create(
-                        DimensionalUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule,
+                        DiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule,
                         defaultSwitchCaseOperation.Syntax.GetLocation(),
                         unionTypeWithoutNull));
                 }
@@ -66,7 +66,7 @@ internal class UnionSwitchStatementAnalyzer
         }
 
         var caseTypes =
-            UnionHelper.GetAllCaseTypes(unionTypeWithoutNull, operationAnalysisContext.Compilation);
+            UnionHelper.GetKnownCaseTypes(unionTypeWithoutNull, operationAnalysisContext.Compilation);
         DiagnosticReporterHelper.ReportDiagnostics(
             caseTypes.ToList(),
             SwitchStatementHelper.GetHandledCaseTypes(switchOperation)

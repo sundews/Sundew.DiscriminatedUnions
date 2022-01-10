@@ -35,14 +35,16 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
                                 SymbolEqualityComparer.Default.Equals(x.ReturnType, baseType));
                         if (factoryMethod == null)
                         {
+                            var propertyBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
+                            propertyBuilder.Add(DiagnosticPropertyNames.QualifiedCaseName, namedTypeSymbol.ToDisplayString());
+                            propertyBuilder.Add(DiagnosticPropertyNames.Name, namedTypeSymbol.Name);
                             foreach (var syntaxReference in baseType.DeclaringSyntaxReferences)
                             {
-                                var propertyBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
-                                propertyBuilder.Add(DiagnosticPropertyNames.QualifiedCaseName, namedTypeSymbol.ToDisplayString());
-                                propertyBuilder.Add(DiagnosticPropertyNames.Name, namedTypeSymbol.Name);
                                 reportDiagnostic(Diagnostic.Create(
-                                    DimensionalUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule,
+                                    DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule,
                                     syntaxReference.GetSyntax().GetLocation(),
+                                    DiagnosticSeverity.Error,
+                                    namedTypeSymbol.DeclaringSyntaxReferences.Select(x => x.GetSyntax().GetLocation()),
                                     propertyBuilder.ToImmutable(),
                                     namedTypeSymbol,
                                     baseType));
@@ -55,7 +57,7 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
                         foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
                         {
                             reportDiagnostic(Diagnostic.Create(
-                                DimensionalUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule,
+                                DiscriminatedUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule,
                                 declaringSyntaxReference.GetSyntax().GetLocation(),
                                 namedTypeSymbol,
                                 baseType.ContainingAssembly.Name));
@@ -70,7 +72,7 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
             foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
             {
                 reportDiagnostic(Diagnostic.Create(
-                    DimensionalUnionsAnalyzer.CasesShouldBeSealedRule,
+                    DiscriminatedUnionsAnalyzer.CasesShouldBeSealedRule,
                     declaringSyntaxReference.GetSyntax().GetLocation(),
                     namedTypeSymbol));
             }

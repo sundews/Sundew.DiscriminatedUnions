@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DimensionalUnionSwitchWarningSuppressor.cs" company="Hukano">
+// <copyright file="DiscriminatedUnionSwitchWarningSuppressor.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -13,11 +13,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
 /// <summary>
-/// Suppressor for CS8509 in switch expressions that are checked by <see cref="DimensionalUnionsAnalyzer"/>.
+/// Suppressor for CS8509 in switch expressions that are checked by <see cref="DiscriminatedUnionsAnalyzer"/>.
 /// </summary>
 /// <seealso cref="Microsoft.CodeAnalysis.Diagnostics.DiagnosticSuppressor" />
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class DimensionalUnionSwitchWarningSuppressor : DiagnosticSuppressor
+public class DiscriminatedUnionSwitchWarningSuppressor : DiagnosticSuppressor
 {
     private static readonly SuppressionDescriptor SuppressSwitchExpressionNotExhaustiveForUnion =
         new(

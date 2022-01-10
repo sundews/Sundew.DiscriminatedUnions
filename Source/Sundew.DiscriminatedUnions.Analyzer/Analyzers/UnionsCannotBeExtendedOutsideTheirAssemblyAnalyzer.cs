@@ -29,7 +29,7 @@ internal class UnionsCannotBeExtendedOutsideTheirAssemblyAnalyzer : IUnionSymbol
             foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
             {
                 reportDiagnostic(Diagnostic.Create(
-                    DimensionalUnionsAnalyzer.UnionsCannotBeExtendedOutsideTheirAssemblyRule,
+                    DiscriminatedUnionsAnalyzer.UnionsCannotBeExtendedOutsideTheirAssemblyRule,
                     declaringSyntaxReference.GetSyntax().GetLocation(),
                     namedTypeSymbol,
                     baseType.ContainingAssembly.Name));
@@ -43,7 +43,7 @@ internal class UnionsCannotBeExtendedOutsideTheirAssemblyAnalyzer : IUnionSymbol
                 foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
                 {
                     reportDiagnostic(Diagnostic.Create(
-                        DimensionalUnionsAnalyzer.UnionsCannotBeExtendedOutsideTheirAssemblyRule,
+                        DiscriminatedUnionsAnalyzer.UnionsCannotBeExtendedOutsideTheirAssemblyRule,
                         declaringSyntaxReference.GetSyntax().GetLocation(),
                         namedTypeSymbol,
                         @interface.ContainingAssembly.Name));

@@ -59,7 +59,7 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
         => await VerifyCodeFixAsync(source, new[] { expected }, fixedSource);
 
     /// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult[], string)"/>
-    public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource)
+    public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, bool diagnosticWillRemain = false, int? numberIterations = null)
     {
         var test = new Test
         {
@@ -74,6 +74,14 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
                 .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location))
                 .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(IExpression).Assembly.Location)));
         test.ExpectedDiagnostics.AddRange(expected);
+        if (diagnosticWillRemain)
+        {
+            test.FixedState.ExpectedDiagnostics.AddRange(expected);
+        }
+
+        test.NumberOfIncrementalIterations = numberIterations;
+        test.NumberOfFixAllIterations = numberIterations;
+
         await test.RunAsync(CancellationToken.None);
     }
 }

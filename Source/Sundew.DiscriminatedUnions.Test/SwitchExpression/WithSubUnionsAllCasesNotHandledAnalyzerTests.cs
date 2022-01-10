@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class WithSubUnionsAllCasesNotHandledAnalyzerTests
@@ -41,7 +41,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 ";
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'ValueExpression'", Resources.Case, "Unions.Expression", Resources.Is)
                 .WithSpan(17, 16, 21, 14));
     }
@@ -68,7 +68,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 ";
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'SubtractionExpression'", Resources.Case, "Unions.ArithmeticExpression", Resources.Is)
                 .WithSpan(17, 16, 20, 14));
     }

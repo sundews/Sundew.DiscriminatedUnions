@@ -10,9 +10,9 @@ namespace Sundew.DiscriminatedUnions.Test.SwitchExpression;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class WithSubUnionsNoDiagnosticsAnalyzerTests

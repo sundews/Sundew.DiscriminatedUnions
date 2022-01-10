@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class UnionsMustBeAbstractAnalyzerTests
@@ -37,7 +37,7 @@ public record Result
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.ClassUnionsMustBeAbstractRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.ClassUnionsMustBeAbstractRule)
                 .WithArguments("Unions.Result")
                 .WithSpan(13, 1, 19, 2));
     }

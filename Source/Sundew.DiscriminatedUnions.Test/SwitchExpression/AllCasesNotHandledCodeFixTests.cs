@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class AllCasesNotHandledCodeFixTests
@@ -61,7 +61,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(18, 16, 21, 10),
         };
@@ -112,7 +112,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning'", Resources.Case, TestData.UnionsResult, Resources.Is)
                 .WithSpan(18, 16, 22, 10),
         };
@@ -164,7 +164,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Success', 'Warning'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(18, 16, 22, 10),
         };
@@ -213,7 +213,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Success', 'Warning', 'Error'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(18, 16, 20, 10),
         };
@@ -262,7 +262,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(17, 16, 20, 10),
         };

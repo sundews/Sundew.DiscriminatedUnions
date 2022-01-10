@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class AllCasesNotHandledAnalyzerTests
@@ -42,10 +42,10 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(17, 16, 21, 14),
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
                 .WithArguments(TestData.UnionsResult)
                 .WithSpan(20, 17, 20, 27));
     }
@@ -73,7 +73,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(18, 16, 21, 14));
     }
@@ -104,7 +104,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'null'", Resources.Case, TestData.UnionsResult, Resources.Is)
                 .WithSpan(18, 16, 24, 14));
     }
@@ -133,7 +133,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'null'", Resources.Case, TestData.UnionsOptionInt, Resources.Is)
                 .WithSpan(18, 16, 22, 14));
     }
@@ -162,7 +162,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'null'", Resources.Case, "Unions.Option<T>", Resources.Is)
                 .WithSpan(18, 16, 22, 10));
     }
@@ -190,7 +190,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'SubtractionExpression', 'ValueExpression'", Resources.Cases, "Unions.Expression", Resources.Are)
                 .WithSpan(18, 16, 21, 10));
     }

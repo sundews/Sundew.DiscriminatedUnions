@@ -26,7 +26,7 @@ using Sundew.DiscriminatedUnions.CodeFixes.Collections;
 
 internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
 {
-    public string DiagnosticId => DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledDiagnosticId;
+    public string DiagnosticId => DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledDiagnosticId;
 
     public CodeFixStatus GetCodeFixState(
         SyntaxNode syntaxNode,
@@ -74,7 +74,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
             return document;
         }
 
-        var cases = UnionHelper.GetAllCaseTypes(switchType, semanticModel.Compilation).Pair().ToList();
+        var cases = UnionHelper.GetKnownCaseTypes(switchType, semanticModel.Compilation).Pair().ToList();
         var handledCaseTypes = SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).ToList();
 
         if (switchExpressionOperation.Syntax is not SwitchExpressionSyntax switchExpressionSyntax)
@@ -138,7 +138,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
             return document;
         }
 
-        var cases = UnionHelper.GetAllCaseTypes(switchType, semanticModel.Compilation).Pair().ToList();
+        var cases = UnionHelper.GetKnownCaseTypes(switchType, semanticModel.Compilation).Pair().ToList();
         var handledCaseTypes = SwitchStatementHelper.GetHandledCaseTypes(switchOperation).ToList();
 
         if (switchOperation.Syntax is not SwitchStatementSyntax switchStatementSyntax)

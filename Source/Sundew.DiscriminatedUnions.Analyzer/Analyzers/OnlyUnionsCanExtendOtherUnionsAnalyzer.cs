@@ -28,7 +28,7 @@ internal class OnlyUnionsCanExtendOtherUnionsAnalyzer : IUnionSymbolAnalyzer
             foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
             {
                 reportDiagnostic(Diagnostic.Create(
-                    DimensionalUnionsAnalyzer.OnlyUnionsCanExtendOtherUnionsRule,
+                    DiscriminatedUnionsAnalyzer.OnlyUnionsCanExtendOtherUnionsRule,
                     declaringSyntaxReference.GetSyntax().GetLocation(),
                     namedTypeSymbol,
                     baseType));
@@ -44,7 +44,7 @@ internal class OnlyUnionsCanExtendOtherUnionsAnalyzer : IUnionSymbolAnalyzer
                     foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
                     {
                         reportDiagnostic(Diagnostic.Create(
-                            DimensionalUnionsAnalyzer.OnlyUnionsCanExtendOtherUnionsRule,
+                            DiscriminatedUnionsAnalyzer.OnlyUnionsCanExtendOtherUnionsRule,
                             declaringSyntaxReference.GetSyntax().GetLocation(),
                             namedTypeSymbol,
                             @interface));

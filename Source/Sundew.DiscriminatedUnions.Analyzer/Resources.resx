@@ -210,6 +210,15 @@
   <data name="UnnestedCasesShouldHaveFactoryMethodMessageFormat" xml:space="preserve">
     <value>Case '{0}' should have factory method in '{1}'.</value>
   </data>
+  <data name="PopulateFactoryMethodsDescription" xml:space="preserve">
+    <value>Populates factory methods for all cases in the union.</value>
+  </data>
+  <data name="PopulateFactoryMethodsTitle" xml:space="preserve">
+    <value>Populate factory methods.</value>
+  </data>
+  <data name="PopulateFactoryMethodsMessageFormat" xml:space="preserve">
+    <value>'{0}' should have factory methods for all cases.</value>
+  </data>
   <data name="SwitchShouldThrowInDefaultCaseTitle" xml:space="preserve">
     <value>Default case should throw UnreachableCaseException.</value>
   </data>

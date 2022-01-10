@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class CasesShouldBeSealedCodeFixTests
@@ -57,7 +57,7 @@ public abstract record Option<T>
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.CasesShouldBeSealedRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CasesShouldBeSealedRule)
                 .WithArguments("Unions.Option<T>.Success")
                 .WithSpan(20, 5, 20, 48),
         };

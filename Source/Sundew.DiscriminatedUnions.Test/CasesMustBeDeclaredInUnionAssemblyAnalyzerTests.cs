@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Sundew.DiscriminatedUnions.Analyzer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DimensionalUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.DimensionalUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class CasesMustBeDeclaredInUnionAssemblyAnalyzerTests
@@ -30,7 +30,7 @@ public sealed record DoubleValueExpression(double Value) : IExpression;
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DimensionalUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule)
                 .WithArguments("Unions.DoubleValueExpression", "Sundew.DiscriminatedUnions.TestData")
                 .WithSpan(13, 1, 13, 72));
     }

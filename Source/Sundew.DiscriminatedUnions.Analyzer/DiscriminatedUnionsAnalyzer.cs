@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DimensionalUnionsAnalyzer.cs" company="Hukano">
+// <copyright file="DiscriminatedUnionsAnalyzer.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -20,7 +20,7 @@ using Sundew.DiscriminatedUnions.Analyzer.SwitchStatement;
 /// </summary>
 /// <seealso cref="Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer" />
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class DimensionalUnionsAnalyzer : DiagnosticAnalyzer
+public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
 {
     /// <summary>
     /// Diagnostic id indicating that all cases are not handled diagnostic.

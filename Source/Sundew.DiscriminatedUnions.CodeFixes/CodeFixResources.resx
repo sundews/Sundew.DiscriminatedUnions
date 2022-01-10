@@ -138,8 +138,8 @@
   <data name="MakeAbstract" xml:space="preserve">
     <value>Make '{0}' abstract</value>
   </data>
-  <data name="CreateFactoryMethod" xml:space="preserve">
-    <value>Create factory method for '{0}'</value>
+  <data name="CreateFactoryMethods" xml:space="preserve">
+    <value>Create factory methods for '{0}'</value>
   </data>
   <data name="MakeInternal" xml:space="preserve">
     <value>Make '{0}' internal</value>

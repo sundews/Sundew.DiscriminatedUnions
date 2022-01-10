@@ -45,7 +45,7 @@ public static class UnionHelper
     /// <param name="unionType">Type of the union.</param>
     /// <param name="compilation">The Compilation.</param>
     /// <returns>All case types within the discriminated unions.</returns>
-    public static IEnumerable<INamedTypeSymbol> GetAllCaseTypes(ITypeSymbol unionType, Compilation compilation)
+    public static IEnumerable<INamedTypeSymbol> GetKnownCaseTypes(ITypeSymbol unionType, Compilation compilation)
     {
         return unionType.GetMembers()
             .Where(x => x.Kind == SymbolKind.Method && x.IsStatic)

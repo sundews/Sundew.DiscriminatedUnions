@@ -31,7 +31,7 @@ internal static class DiagnosticReporterHelper
         if (nullCase != null && switchNullability == SwitchNullability.HasUnreachableNullCase)
         {
             reportDiagnostic(Diagnostic.Create(
-                DimensionalUnionsAnalyzer.SwitchHasUnreachableNullCaseRule,
+                DiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule,
                 nullCase.Syntax.GetLocation(),
                 DiagnosticSeverity.Error));
         }
@@ -44,7 +44,7 @@ internal static class DiagnosticReporterHelper
         {
             reportDiagnostic(
                 Diagnostic.Create(
-                    DimensionalUnionsAnalyzer.SwitchAllCasesNotHandledRule,
+                    DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule,
                     operation.Syntax.GetLocation(),
                     missingNames.Aggregate(
                         new StringBuilder(),

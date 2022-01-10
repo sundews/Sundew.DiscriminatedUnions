@@ -40,12 +40,12 @@ internal class UnionSwitchExpressionAnalyzer
                 .SingleOrDefault(x => x.Pattern is IDiscardPatternOperation) is { } switchExpressionArmOperation)
         {
             operationAnalysisContext.ReportDiagnostic(Diagnostic.Create(
-                DimensionalUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
+                DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
                 switchExpressionArmOperation.Syntax.GetLocation(),
                 unionType));
         }
 
-        var caseTypes = UnionHelper.GetAllCaseTypes(unionTypeWithoutNull, operationAnalysisContext.Compilation);
+        var caseTypes = UnionHelper.GetKnownCaseTypes(unionTypeWithoutNull, operationAnalysisContext.Compilation);
         DiagnosticReporterHelper.ReportDiagnostics(
             caseTypes.ToList(),
             SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).Where(x => x.HandlesCase).Select(x => x.Type),
