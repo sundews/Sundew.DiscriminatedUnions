@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CasesShouldBeSealedAnalyzerTests.cs" company="Hukano">
+// <copyright file="UnionsMustBeAbstractCodeFixTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,22 +16,22 @@ using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class CasesShouldBeSealedAnalyzerTests
+public class UnionsMustBeAbstractCodeFixTests
 {
     [TestMethod]
-    public async Task Given_Union_When_CaseIsNotSealed_Then_CasesShouldBeSealedIsReported()
+    public async Task Given_Union_When_ItIsNotDeclaredAbstract_Then_ItShouldBeDeclaredAbstract()
     {
-        var test = $@"#nullable enable
-{TestData.Usings}
+        var test = $@"{TestData.Usings}
+
 namespace Unions;
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public abstract record Result
+public record Result
 {{
-    private protected Result()
+    private Result()
     {{ }}
 
-    public record Success : Result;
+    public sealed record Success : Result;
 
     public sealed record Warning(string Message) : Result;
 
@@ -39,10 +39,30 @@ public abstract record Result
 }}
 ";
 
-        await VerifyCS.VerifyAnalyzerAsync(
-            test,
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CasesShouldBeSealedRule)
-                .WithArguments("Unions.Result.Success")
-                .WithSpan(19, 5, 19, 36));
+        var fixtest = $@"{TestData.Usings}
+
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record Result
+{{
+    private Result()
+    {{ }}
+
+    public sealed record Success : Result;
+
+    public sealed record Warning(string Message) : Result;
+
+    public sealed record Error(int Code) : Result;
+}}
+";
+
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.ClassUnionsMustBeAbstractRule)
+                .WithArguments("Unions.Result")
+                .WithSpan(13, 1, 24, 2),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }
 }

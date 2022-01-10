@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
+using Sundew.DiscriminatedUnions.TestData;
 
 public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppressor>
     where TAnalyzer : DiagnosticAnalyzer, new()
@@ -37,10 +38,14 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
     {
         var test = new Test
         {
-            TestCode = source + CSharpVerifierHelper.IsExternalInit,
+            TestCode = source,
         };
 
-        test.SolutionTransforms.Add((solution, id) => solution.AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location)));
+        test.TestCode = CSharpVerifierHelper.IsExternalInit;
+        test.SolutionTransforms.Add((solution, id) =>
+            solution
+                .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location))
+                .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(IExpression).Assembly.Location)));
         test.ExpectedDiagnostics.AddRange(expected);
         await test.RunAsync(CancellationToken.None);
     }
@@ -54,16 +59,29 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
         => await VerifyCodeFixAsync(source, new[] { expected }, fixedSource);
 
     /// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult[], string)"/>
-    public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource)
+    public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, bool diagnosticWillRemain = false, int? numberIterations = null)
     {
         var test = new Test
         {
-            TestCode = source + CSharpVerifierHelper.IsExternalInit,
-            FixedCode = fixedSource + CSharpVerifierHelper.IsExternalInit,
+            TestCode = source,
+            FixedCode = fixedSource,
         };
 
-        test.SolutionTransforms.Add((solution, id) => solution.AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location)));
+        test.TestCode = CSharpVerifierHelper.IsExternalInit;
+        test.FixedCode = CSharpVerifierHelper.IsExternalInit;
+        test.SolutionTransforms.Add((solution, id) =>
+            solution
+                .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location))
+                .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(IExpression).Assembly.Location)));
         test.ExpectedDiagnostics.AddRange(expected);
+        if (diagnosticWillRemain)
+        {
+            test.FixedState.ExpectedDiagnostics.AddRange(expected);
+        }
+
+        test.NumberOfIncrementalIterations = numberIterations;
+        test.NumberOfFixAllIterations = numberIterations;
+
         await test.RunAsync(CancellationToken.None);
     }
 }

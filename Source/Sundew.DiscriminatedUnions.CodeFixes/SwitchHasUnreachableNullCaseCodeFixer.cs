@@ -17,7 +17,7 @@ using Sundew.DiscriminatedUnions.Analyzer;
 
 internal class SwitchHasUnreachableNullCaseCodeFixer : ICodeFixer
 {
-    public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule.Id;
+    public string DiagnosticId => DiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule.Id;
 
     public CodeFixStatus GetCodeFixState(
         SyntaxNode syntaxNode,

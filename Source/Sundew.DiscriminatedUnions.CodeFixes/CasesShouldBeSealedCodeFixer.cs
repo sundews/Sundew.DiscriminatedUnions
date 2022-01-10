@@ -17,7 +17,7 @@ using Sundew.DiscriminatedUnions.Analyzer;
 
 internal class CasesShouldBeSealedCodeFixer : ICodeFixer
 {
-    public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.CasesShouldBeSealedRule.Id;
+    public string DiagnosticId => DiscriminatedUnionsAnalyzer.CasesShouldBeSealedRule.Id;
 
     public CodeFixStatus GetCodeFixState(
         SyntaxNode syntaxNode,

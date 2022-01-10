@@ -11,74 +11,75 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class UnnestedCasesMustHaveFactoryMethodAnalyzerTests
 {
     [TestMethod]
     public async Task
-        Given_DiscriminatedUnion_When_CasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
+        Given_Union_When_CasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
-namespace ConsoleApplication1
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record Expression
 {{
-    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-    public abstract record Expression
-    {{
-        private protected Expression()
-        {{ }}
+    public static Expression AdditionExpression(Expression lhs, Expression rhs) => new AdditionExpression(lhs, rhs);
+}}
 
-        public static Expression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
-    }}
+public sealed record AdditionExpression(Expression Lhs, Expression Rhs) : Expression;
 
-    public sealed record AddExpression(Expression Lhs, Expression Rhs) : Expression;
+public sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : Expression;
 
-    public sealed record SubtractExpression(Expression Lhs, Expression Rhs) : Expression;
-
-    public sealed record ValueExpression(int Value) : Expression;
-}}";
+public sealed record ValueExpression(int Value) : Expression;
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
-                .WithArguments("ConsoleApplication1.SubtractExpression", "ConsoleApplication1.Expression")
-                .WithSpan(12, 5, 19, 6),
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
-                .WithArguments("ConsoleApplication1.ValueExpression", "ConsoleApplication1.Expression")
-                .WithSpan(12, 5, 19, 6));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+                .WithArguments("Unions.SubtractionExpression", "Unions.Expression")
+                .WithSpan(13, 1, 17, 2)
+                .WithSpan(21, 1, 21, 89),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+                .WithArguments("Unions.ValueExpression", "Unions.Expression")
+                .WithSpan(13, 1, 17, 2)
+                .WithSpan(23, 1, 23, 62));
     }
 
     [TestMethod]
-    public async Task Given_DiscriminatedUnion_When_UnionIsInterfaceAndCasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
+    public async Task Given_Union_When_UnionIsInterfaceAndCasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
-namespace ConsoleApplication1
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+internal interface Expression
 {{
-    [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-    internal interface Expression
-    {{
-        public static Expression AddExpression(Expression lhs, Expression rhs) => new AddExpression(lhs, rhs);
-    }}
+    public static Expression AdditionExpression(Expression lhs, Expression rhs) => new AdditionExpression(lhs, rhs);
+}}
 
-    internal sealed record AddExpression(Expression Lhs, Expression Rhs) : Expression;
+internal sealed record AdditionExpression(Expression Lhs, Expression Rhs) : Expression;
 
-    internal sealed record SubtractExpression(Expression Lhs, Expression Rhs) : Expression;
+internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : Expression;
 
-    internal sealed record ValueExpression(int Value) : Expression;
-}}";
+internal sealed record ValueExpression(int Value) : Expression;
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
-                .WithArguments("ConsoleApplication1.SubtractExpression", "ConsoleApplication1.Expression")
-                .WithSpan(12, 5, 16, 6),
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
-                .WithArguments("ConsoleApplication1.ValueExpression", "ConsoleApplication1.Expression")
-                .WithSpan(12, 5, 16, 6));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+                .WithArguments("Unions.SubtractionExpression", "Unions.Expression")
+                .WithSpan(13, 1, 17, 2)
+                .WithSpan(21, 1, 21, 91),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+                .WithArguments("Unions.ValueExpression", "Unions.Expression")
+                .WithSpan(13, 1, 17, 2)
+                .WithSpan(23, 1, 23, 64));
     }
 }

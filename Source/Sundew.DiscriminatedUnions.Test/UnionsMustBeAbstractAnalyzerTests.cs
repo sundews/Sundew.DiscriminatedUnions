@@ -1,11 +1,11 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SwitchShouldNotHaveDefaultCaseAnalyzerTests.cs" company="Hukano">
+// <copyright file="UnionsMustBeAbstractAnalyzerTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test.SwitchExpression;
+namespace Sundew.DiscriminatedUnions.Test;
 
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,36 +16,29 @@ using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class SwitchShouldNotHaveDefaultCaseAnalyzerTests
+public class UnionsMustBeAbstractAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_SwitchExpression_When_DefaultCaseIsHandled_Then_SwitchShouldNotHaveDefaultCaseIsReported()
+    public async Task
+        Given_Union_When_ItIsNotAbstract_Then_ClassDiscriminatedUnionsMustBeAbstractIsReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
-
 namespace Unions;
 
-public class DiscriminatedUnionSymbolAnalyzerTests
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public record Result
 {{
-    public bool Switch(Result result)
-    {{
-        return result switch
-            {{
-                Result.Success => true,
-                Result.Warning warning => true,
-                Result.Error error => false,
-                _ => false,
-            }};
-    }}
+    public sealed record Success : Result;
+
+    public sealed record Warning(string Message) : Result;
 }}
-{TestData.ValidResultUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsResult)
-                .WithSpan(23, 17, 23, 27));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.ClassUnionsMustBeAbstractRule)
+                .WithArguments("Unions.Result")
+                .WithSpan(13, 1, 19, 2));
     }
 }

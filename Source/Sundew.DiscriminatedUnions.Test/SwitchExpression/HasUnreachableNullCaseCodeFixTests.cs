@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class HasUnreachableNullCaseCodeFixTests
@@ -24,49 +24,49 @@ public class HasUnreachableNullCaseCodeFixTests
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch(Result result)
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Result result)
+    {{
+        return result switch
         {{
-            return result switch
-            {{
-                Result.Success success => true,
-                Result.Warning warning => true,
-                Result.Error error => false,
-                null => false,
-            }};
-        }}
+            Result.Success success => true,
+            Result.Warning warning => true,
+            Result.Error error => false,
+            null => false,
+        }};
     }}
-{TestData.ValidResultDiscriminatedUnion}
-}}";
+}}
+{TestData.ValidResultUnion}
+";
 
         var fixtest = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch(Result result)
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Result result)
+    {{
+        return result switch
         {{
-            return result switch
-            {{
-                Result.Success success => true,
-                Result.Warning warning => true,
-                Result.Error error => false,
-            }};
-        }}
+            Result.Success success => true,
+            Result.Warning warning => true,
+            Result.Error error => false,
+        }};
     }}
-{TestData.ValidResultDiscriminatedUnion}
-}}";
+}}
+{TestData.ValidResultUnion}
+";
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
-                .WithSpan(22, 17, 22, 30),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
+                .WithArguments(TestData.UnionsResult)
+                .WithSpan(23, 13, 23, 26),
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }

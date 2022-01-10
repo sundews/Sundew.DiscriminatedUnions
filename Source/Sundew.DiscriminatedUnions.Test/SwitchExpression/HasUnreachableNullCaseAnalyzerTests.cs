@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class HasUnreachableNullCaseAnalyzerTests
@@ -24,28 +24,28 @@ public class HasUnreachableNullCaseAnalyzerTests
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public bool Switch<T>(Option<T> option)
-            where T : notnull
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch<T>(Option<T> option)
+        where T : notnull
+    {{
+        return option switch
         {{
-            return option switch
-            {{
-                Option<T>.Some some => true,
-                Option<T>.None => false,
-                null => false,
-            }};
-        }}
+            Option<T>.Some some => true,
+            Option<T>.None => false,
+            null => false,
+        }};
     }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
-}}";
+}}
+{TestData.ValidGenericOptionUnion}
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
-                .WithSpan(22, 17, 22, 30));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
+                .WithSpan(23, 13, 23, 26));
     }
 
     [TestMethod]
@@ -54,27 +54,27 @@ namespace ConsoleApplication1
         var test = $@"#nullable enable
 {TestData.Usings}
 
-    namespace ConsoleApplication1
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public int Switch(Option<int> option)
     {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
-        {{   
-            public int Switch(Option<int> option)
+        return option switch
             {{
-                return option switch
-                    {{
-                        Option<int>.Some some => some.Value,
-                        Option<int>.None => 0,
-                        null => -1,
-                    }};
-            }}
-        }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
-    }}";
+                Option<int>.Some some => some.Value,
+                Option<int>.None => 0,
+                null => -1,
+            }};
+    }}
+}}
+{TestData.ValidGenericOptionUnion}
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
-                .WithSpan(21, 25, 21, 35));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
+                .WithSpan(22, 17, 22, 27));
     }
 
     [TestMethod]
@@ -84,37 +84,37 @@ namespace ConsoleApplication1
         var test = $@"#nullable enable
 {TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public int Switch()
-        {{
-            var option = Compute(""test"");
-            return option switch
-                {{
-                    Option<int>.Some some => some.Value,
-                    Option<int>.None => 0,
-                    null => -1,
-                }};
-        }}
+namespace Unions;
 
-        private static Option<int> Compute(string test)
-        {{
-            if (test == ""test"")
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public int Switch()
+    {{
+        var option = Compute(""test"");
+        return option switch
             {{
-                return new Option<int>.Some(45);
-            }}
-
-            return new Option<int>.None();
-        }}
+                Option<int>.Some some => some.Value,
+                Option<int>.None => 0,
+                null => -1,
+            }};
     }}
-{TestData.ValidGenericOptionDiscriminatedUnion}
-}}";
+
+    private static Option<int> Compute(string test)
+    {{
+        if (test == ""test"")
+        {{
+            return new Option<int>.Some(45);
+        }}
+
+        return new Option<int>.None();
+    }}
+}}
+{TestData.ValidGenericOptionUnion}
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
-                .WithSpan(17, 24, 22, 22));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
+                .WithSpan(18, 24, 23, 22));
     }
 }

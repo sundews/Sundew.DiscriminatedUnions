@@ -12,7 +12,9 @@
     <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>Sundew.DiscriminatedUnions, analyzers</PackageTags>
-    <Description>A poor man's implementation of discriminated unions for C# until a future version of C# provides it out of the box.</Description>
+    <Description>Sundew.DiscriminatedUnions implement discriminated unions for C#, until a future version of C# provides it out of the box.
+The idea is that this package can be deleted once unions are supported in C#, without requiring changes to switch expressions and statements.
+    </Description>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>

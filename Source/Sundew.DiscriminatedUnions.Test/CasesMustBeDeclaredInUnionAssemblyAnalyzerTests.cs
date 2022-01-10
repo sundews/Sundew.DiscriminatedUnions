@@ -1,51 +1,37 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SwitchShouldNotHaveDefaultCaseAnalyzerTests.cs" company="Hukano">
+// <copyright file="CasesMustBeDeclaredInUnionAssemblyAnalyzerTests.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test.SwitchExpression;
+namespace Sundew.DiscriminatedUnions.Test;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class SwitchShouldNotHaveDefaultCaseAnalyzerTests
+public class CasesMustBeDeclaredInUnionAssemblyAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_SwitchExpression_When_DefaultCaseIsHandled_Then_SwitchShouldNotHaveDefaultCaseIsReported()
+    public async Task Given_Union_When_CaseIsDeclaredInDifferentAssembly_Then_CasesMustBeDeclaredInUnionAssemblyIsReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
-
 namespace Unions;
 
-public class DiscriminatedUnionSymbolAnalyzerTests
-{{
-    public bool Switch(Result result)
-    {{
-        return result switch
-            {{
-                Result.Success => true,
-                Result.Warning warning => true,
-                Result.Error error => false,
-                _ => false,
-            }};
-    }}
-}}
-{TestData.ValidResultUnion}
+public sealed record DoubleValueExpression(double Value) : IExpression;
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsResult)
-                .WithSpan(23, 17, 23, 27));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule)
+                .WithArguments("Unions.DoubleValueExpression", "Sundew.DiscriminatedUnions.TestData")
+                .WithSpan(13, 1, 13, 72));
     }
 }

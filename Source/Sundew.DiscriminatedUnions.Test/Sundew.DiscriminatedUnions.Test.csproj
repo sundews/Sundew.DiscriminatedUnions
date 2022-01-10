@@ -19,8 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.7" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest" Version="1.1.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest" Version="1.1.0" />
@@ -37,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.TestData\Sundew.DiscriminatedUnions.TestData.csproj" />
   </ItemGroup>
 
 </Project>

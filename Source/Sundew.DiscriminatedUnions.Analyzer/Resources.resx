@@ -138,14 +138,14 @@
   <data name="SwitchAllCasesNotHandledMessageFormat" xml:space="preserve">
     <value>{0} {1} in '{2}' {3} not handled.</value>
   </data>
-  <data name="DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsTitle" xml:space="preserve">
-    <value>Discriminated union constructors must be private protected.</value>
+  <data name="UnionsCannotBeExtendedOutsideTheirAssemblyTitle" xml:space="preserve">
+    <value>Unions extensions must be declared in the same assembly as their union.</value>
   </data>
-  <data name="DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsDescription" xml:space="preserve">
-    <value>Discriminated union constructors must be private protected, so only nested types can derived from it.</value>
+  <data name="UnionsCannotBeExtendedOutsideTheirAssemblyDescription" xml:space="preserve">
+    <value>A union and its extensions must be declared in the same assembly, so that all cases are known at compile time.</value>
   </data>
-  <data name="DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsMessageFormat" xml:space="preserve">
-    <value>'{0}' contains non private protected constructor(s).</value>
+  <data name="UnionsCannotBeExtendedOutsideTheirAssemblyMessageFormat" xml:space="preserve">
+    <value>'{0}' must be declared in assembly '{1}'.</value>
   </data>
   <data name="CasesShouldBeSealedTitle" xml:space="preserve">
     <value>All cases should be sealed.</value>
@@ -160,10 +160,10 @@
     <value>Default case should not be handled.</value>
   </data>
   <data name="SwitchShouldNotHaveDefaultCaseDescription" xml:space="preserve">
-    <value>A switch on a discriminated union should not handle the default case.</value>
+    <value>A switch on a union should not handle the default case.</value>
   </data>
   <data name="SwitchShouldNotHaveDefaultCaseMessageFormat" xml:space="preserve">
-    <value>'{0}' is a discriminated union and should not handle the default case.</value>
+    <value>'{0}' is a union and should not handle the default case.</value>
   </data>
   <data name="SwitchHasUnreachableNullCaseTitle" xml:space="preserve">
     <value>Null case should not be handled.</value>
@@ -174,32 +174,32 @@
   <data name="SwitchHasUnreachableNullCaseMessageFormat" xml:space="preserve">
     <value>The null case is unreachable and should not be handled.</value>
   </data>
-  <data name="DiscriminatedUnionsMustHavePrivateProtectedConstructorTitle" xml:space="preserve">
-    <value>Discriminated unions should only have private protected constructors.</value>
-  </data>
-  <data name="DiscriminatedUnionsMustHavePrivateProtectedConstructorDescription" xml:space="preserve">
-    <value>Discriminated unions should only have private protected constructors, so that all cases are known at compile time</value>
-  </data>
-  <data name="DiscriminatedUnionsMustHavePrivateProtectedConstructorMessageFormat" xml:space="preserve">
-    <value>'{0}' has an undeclared non private protected constructor: '{1}'.</value>
-  </data>
   <data name="ClassDiscriminatedUnionsMustBeAbstractDescription" xml:space="preserve">
-    <value>A discriminated union declared for a class/class record must be abstract.</value>
+    <value>A union declared for a class/record class must be abstract.</value>
   </data>
-  <data name="ClassDiscriminatedUnionsMustBeAbstractTitle" xml:space="preserve">
-    <value>Class-based discriminated union must be abstract.</value>
+  <data name="ClassUnionsMustBeAbstractTitle" xml:space="preserve">
+    <value>Class-based union must be abstract.</value>
   </data>
-  <data name="ClassDiscriminatedUnionsMustBeAbstractMessageFormat" xml:space="preserve">
-    <value>'{0}' discriminated union is not abstract.</value>
+  <data name="ClassUnionsMustBeAbstractMessageFormat" xml:space="preserve">
+    <value>'{0}' union is not abstract.</value>
   </data>
-  <data name="InterfaceDiscriminatedUnionsMustBeInternalDescription" xml:space="preserve">
-    <value>A discriminated declared for an interface must be internal.</value>
+  <data name="OnlyUnionsCanExtendOtherUnionsDescription" xml:space="preserve">
+    <value>Only unions can extend other unions, so that all cases are known at compile time..</value>
   </data>
-  <data name="InterfaceDiscriminatedUnionsMustBeInternalTitle" xml:space="preserve">
-    <value>Interface-based discriminated union must be internal.</value>
+  <data name="OnlyUnionsCanExtendOtherUnionsTitle" xml:space="preserve">
+    <value>Only unions can extend other unions.</value>
   </data>
-  <data name="InterfaceDiscriminatedUnionsMustBeInternalMessageFormat" xml:space="preserve">
-    <value>{0} discriminated union must be internal.</value>
+  <data name="OnlyUnionsCanExtendOtherUnionsMessageFormat" xml:space="preserve">
+    <value>'{0}' is not marked with union attribute.</value>
+  </data>
+  <data name="CasesMustBeDeclaredInUnionAssemblyDescription" xml:space="preserve">
+    <value>A union and its cases must be declared in the same assembly, so that all cases are known at compile time.</value>
+  </data>
+  <data name="CasesMustBeDeclaredInUnionAssemblyTitle" xml:space="preserve">
+    <value>Cases must be declared in the same assembly as their unions</value>
+  </data>
+  <data name="CasesMustBeDeclaredInUnionAssemblyMessageFormat" xml:space="preserve">
+    <value>{0} must be declared in assembly {1}.</value>
   </data>
   <data name="UnnestedCasesShouldHaveFactoryMethodDescription" xml:space="preserve">
     <value>Discriminated unions with unnested cases should declare factory methods.</value>
@@ -210,16 +210,25 @@
   <data name="UnnestedCasesShouldHaveFactoryMethodMessageFormat" xml:space="preserve">
     <value>Case '{0}' should have factory method in '{1}'.</value>
   </data>
+  <data name="PopulateFactoryMethodsDescription" xml:space="preserve">
+    <value>Populates factory methods for all cases in the union.</value>
+  </data>
+  <data name="PopulateFactoryMethodsTitle" xml:space="preserve">
+    <value>Populate factory methods.</value>
+  </data>
+  <data name="PopulateFactoryMethodsMessageFormat" xml:space="preserve">
+    <value>'{0}' should have factory methods for all cases.</value>
+  </data>
   <data name="SwitchShouldThrowInDefaultCaseTitle" xml:space="preserve">
     <value>Default case should throw UnreachableCaseException.</value>
   </data>
   <data name="SwitchShouldThrowInDefaultCaseDescription" xml:space="preserve">
-    <value>A switch on a discriminated union should throw UnreachableCaseException in default case.</value>
+    <value>A switch on a union should throw UnreachableCaseException in default case.</value>
   </data>
   <data name="SwitchShouldThrowInDefaultCaseMessageFormat" xml:space="preserve">
-    <value>'{0}' is a discriminated union and should throw UnreachableCaseException in default case.</value>
+    <value>'{0}' is a union and should throw UnreachableCaseException in default case.</value>
   </data>
   <data name="SuppressCS8509Justification" xml:space="preserve">
-    <value>Switch over a discriminated union, which is checked for exhaustiveness by another analyzer.</value>
+    <value>Switch over a union, which is checked for exhaustiveness by another analyzer.</value>
   </data>
 </root>

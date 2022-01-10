@@ -20,4 +20,28 @@ internal static class EnumerableExtensions
             previous = item;
         }
     }
+
+    public static IEnumerable<(TItem Current, TItem? Next)> Pair2<TItem>(this IEnumerable<TItem> enumerable)
+    {
+        var enumerator = enumerable.GetEnumerator();
+        if (enumerator.MoveNext())
+        {
+            var current = enumerator.Current;
+            try
+            {
+                while (enumerator.MoveNext())
+                {
+                    var item = enumerator.Current;
+                    yield return (current, item);
+                    current = item;
+                }
+            }
+            finally
+            {
+                enumerator.Dispose();
+            }
+
+            yield return (current, default);
+        }
+    }
 }

@@ -17,7 +17,7 @@ using Sundew.DiscriminatedUnions.Analyzer;
 
 internal class SwitchShouldNotHaveDefaultCaseCodeFixer : ICodeFixer
 {
-    public string DiagnosticId => SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule.Id;
+    public string DiagnosticId => DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule.Id;
 
     public CodeFixStatus GetCodeFixState(
         SyntaxNode syntaxNode,

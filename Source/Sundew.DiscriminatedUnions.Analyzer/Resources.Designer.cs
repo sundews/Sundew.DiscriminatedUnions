@@ -19,7 +19,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -88,6 +88,33 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A union and its cases must be declared in the same assembly, so that all cases are known at compile time..
+        /// </summary>
+        public static string CasesMustBeDeclaredInUnionAssemblyDescription {
+            get {
+                return ResourceManager.GetString("CasesMustBeDeclaredInUnionAssemblyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be declared in assembly {1}..
+        /// </summary>
+        public static string CasesMustBeDeclaredInUnionAssemblyMessageFormat {
+            get {
+                return ResourceManager.GetString("CasesMustBeDeclaredInUnionAssemblyMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cases must be declared in the same assembly as their unions.
+        /// </summary>
+        public static string CasesMustBeDeclaredInUnionAssemblyTitle {
+            get {
+                return ResourceManager.GetString("CasesMustBeDeclaredInUnionAssemblyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cases should be sealed so that all cases are known at compile time..
         /// </summary>
         public static string CasesShouldBeSealedDescription {
@@ -115,7 +142,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A discriminated union declared for a class/class record must be abstract..
+        ///   Looks up a localized string similar to A union declared for a class/record class must be abstract..
         /// </summary>
         public static string ClassDiscriminatedUnionsMustBeAbstractDescription {
             get {
@@ -124,101 +151,20 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; discriminated union is not abstract..
+        ///   Looks up a localized string similar to &apos;{0}&apos; union is not abstract..
         /// </summary>
-        public static string ClassDiscriminatedUnionsMustBeAbstractMessageFormat {
+        public static string ClassUnionsMustBeAbstractMessageFormat {
             get {
-                return ResourceManager.GetString("ClassDiscriminatedUnionsMustBeAbstractMessageFormat", resourceCulture);
+                return ResourceManager.GetString("ClassUnionsMustBeAbstractMessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Class-based discriminated union must be abstract..
+        ///   Looks up a localized string similar to Class-based union must be abstract..
         /// </summary>
-        public static string ClassDiscriminatedUnionsMustBeAbstractTitle {
+        public static string ClassUnionsMustBeAbstractTitle {
             get {
-                return ResourceManager.GetString("ClassDiscriminatedUnionsMustBeAbstractTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Discriminated union constructors must be private protected, so only nested types can derived from it..
-        /// </summary>
-        public static string DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsDescription {
-            get {
-                return ResourceManager.GetString("DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; contains non private protected constructor(s)..
-        /// </summary>
-        public static string DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsMessageFormat {
-            get {
-                return ResourceManager.GetString("DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsMessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Discriminated union constructors must be private protected..
-        /// </summary>
-        public static string DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsTitle {
-            get {
-                return ResourceManager.GetString("DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Discriminated unions should only have private protected constructors, so that all cases are known at compile time.
-        /// </summary>
-        public static string DiscriminatedUnionsMustHavePrivateProtectedConstructorDescription {
-            get {
-                return ResourceManager.GetString("DiscriminatedUnionsMustHavePrivateProtectedConstructorDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; has an undeclared non private protected constructor: &apos;{1}&apos;..
-        /// </summary>
-        public static string DiscriminatedUnionsMustHavePrivateProtectedConstructorMessageFormat {
-            get {
-                return ResourceManager.GetString("DiscriminatedUnionsMustHavePrivateProtectedConstructorMessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Discriminated unions should only have private protected constructors..
-        /// </summary>
-        public static string DiscriminatedUnionsMustHavePrivateProtectedConstructorTitle {
-            get {
-                return ResourceManager.GetString("DiscriminatedUnionsMustHavePrivateProtectedConstructorTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A discriminated declared for an interface must be internal..
-        /// </summary>
-        public static string InterfaceDiscriminatedUnionsMustBeInternalDescription {
-            get {
-                return ResourceManager.GetString("InterfaceDiscriminatedUnionsMustBeInternalDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} discriminated union must be internal..
-        /// </summary>
-        public static string InterfaceDiscriminatedUnionsMustBeInternalMessageFormat {
-            get {
-                return ResourceManager.GetString("InterfaceDiscriminatedUnionsMustBeInternalMessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Interface-based discriminated union must be internal..
-        /// </summary>
-        public static string InterfaceDiscriminatedUnionsMustBeInternalTitle {
-            get {
-                return ResourceManager.GetString("InterfaceDiscriminatedUnionsMustBeInternalTitle", resourceCulture);
+                return ResourceManager.GetString("ClassUnionsMustBeAbstractTitle", resourceCulture);
             }
         }
         
@@ -232,7 +178,61 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Switch over a discriminated union, which is checked for exhaustiveness by another analyzer..
+        ///   Looks up a localized string similar to Only unions can extend other unions, so that all cases are known at compile time...
+        /// </summary>
+        public static string OnlyUnionsCanExtendOtherUnionsDescription {
+            get {
+                return ResourceManager.GetString("OnlyUnionsCanExtendOtherUnionsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not marked with union attribute..
+        /// </summary>
+        public static string OnlyUnionsCanExtendOtherUnionsMessageFormat {
+            get {
+                return ResourceManager.GetString("OnlyUnionsCanExtendOtherUnionsMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only unions can extend other unions..
+        /// </summary>
+        public static string OnlyUnionsCanExtendOtherUnionsTitle {
+            get {
+                return ResourceManager.GetString("OnlyUnionsCanExtendOtherUnionsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Populates factory methods for all cases in the union..
+        /// </summary>
+        public static string PopulateFactoryMethodsDescription {
+            get {
+                return ResourceManager.GetString("PopulateFactoryMethodsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; should have factory methods for all cases..
+        /// </summary>
+        public static string PopulateFactoryMethodsMessageFormat {
+            get {
+                return ResourceManager.GetString("PopulateFactoryMethodsMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Populate factory methods..
+        /// </summary>
+        public static string PopulateFactoryMethodsTitle {
+            get {
+                return ResourceManager.GetString("PopulateFactoryMethodsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch over a union, which is checked for exhaustiveness by another analyzer..
         /// </summary>
         public static string SuppressCS8509Justification {
             get {
@@ -295,7 +295,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A switch on a discriminated union should not handle the default case..
+        ///   Looks up a localized string similar to A switch on a union should not handle the default case..
         /// </summary>
         public static string SwitchShouldNotHaveDefaultCaseDescription {
             get {
@@ -304,7 +304,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is a discriminated union and should not handle the default case..
+        ///   Looks up a localized string similar to &apos;{0}&apos; is a union and should not handle the default case..
         /// </summary>
         public static string SwitchShouldNotHaveDefaultCaseMessageFormat {
             get {
@@ -322,7 +322,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A switch on a discriminated union should throw UnreachableCaseException in default case..
+        ///   Looks up a localized string similar to A switch on a union should throw UnreachableCaseException in default case..
         /// </summary>
         public static string SwitchShouldThrowInDefaultCaseDescription {
             get {
@@ -331,7 +331,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is a discriminated union and should throw UnreachableCaseException in default case..
+        ///   Looks up a localized string similar to &apos;{0}&apos; is a union and should throw UnreachableCaseException in default case..
         /// </summary>
         public static string SwitchShouldThrowInDefaultCaseMessageFormat {
             get {
@@ -345,6 +345,33 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         public static string SwitchShouldThrowInDefaultCaseTitle {
             get {
                 return ResourceManager.GetString("SwitchShouldThrowInDefaultCaseTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A union and its extensions must be declared in the same assembly, so that all cases are known at compile time..
+        /// </summary>
+        public static string UnionsCannotBeExtendedOutsideTheirAssemblyDescription {
+            get {
+                return ResourceManager.GetString("UnionsCannotBeExtendedOutsideTheirAssemblyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; must be declared in assembly &apos;{1}&apos;..
+        /// </summary>
+        public static string UnionsCannotBeExtendedOutsideTheirAssemblyMessageFormat {
+            get {
+                return ResourceManager.GetString("UnionsCannotBeExtendedOutsideTheirAssemblyMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unions extensions must be declared in the same assembly as their union..
+        /// </summary>
+        public static string UnionsCannotBeExtendedOutsideTheirAssemblyTitle {
+            get {
+                return ResourceManager.GetString("UnionsCannotBeExtendedOutsideTheirAssemblyTitle", resourceCulture);
             }
         }
         

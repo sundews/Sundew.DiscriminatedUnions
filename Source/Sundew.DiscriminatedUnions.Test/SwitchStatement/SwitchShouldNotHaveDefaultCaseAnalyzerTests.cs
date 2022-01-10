@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionsAnalyzer,
-    Sundew.DiscriminatedUnions.CodeFixes.SundewDiscriminatedUnionsCodeFixProvider,
-    Sundew.DiscriminatedUnions.Analyzer.SundewDiscriminatedUnionSwitchWarningSuppressor>;
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
+    Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
+    Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
 public class SwitchShouldNotHaveDefaultCaseAnalyzerTests
@@ -24,33 +24,33 @@ public class SwitchShouldNotHaveDefaultCaseAnalyzerTests
         var test = $@"#nullable enable
 {TestData.Usings}
 
-    namespace ConsoleApplication1
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{
+    public void Switch(Result result)
     {{
-        public class DiscriminatedUnionSymbolAnalyzerTests
+        switch(result)
         {{
-            public void Switch(Result result)
-            {{
-                switch(result)
-                {{
-                    case Result.Success:
-                        break;
-                    case Result.Warning warning:
-                        break;
-                    case Result.Error error:
-                        break;
-                    default:
-                        break;
-                }}
-            }}
+            case Result.Success:
+                break;
+            case Result.Warning warning:
+                break;
+            case Result.Error error:
+                break;
+            default:
+                break;
         }}
-{TestData.ValidResultDiscriminatedUnion}
-    }}";
+    }}
+}}
+{TestData.ValidResultUnion}
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
-                .WithSpan(25, 21, 26, 31));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                .WithArguments(TestData.UnionsResult)
+                .WithSpan(26, 13, 27, 23));
     }
 
     [TestMethod]
@@ -58,36 +58,36 @@ public class SwitchShouldNotHaveDefaultCaseAnalyzerTests
     {
         var test = $@"{TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success:
-                    break;
-                case Result.Warning warning:
-                    break;
-                case Result.Error error:
-                    break;
-                default:
-                    break;
-            }}
+            case Result.Success:
+                break;
+            case Result.Warning warning:
+                break;
+            case Result.Error error:
+                break;
+            default:
+                break;
         }}
     }}
-{TestData.ValidResultDiscriminatedUnion}
-}}";
+}}
+{TestData.ValidResultUnion}
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
-                .WithSpan(24, 17, 25, 27),
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'null'", Resources.Case, TestData.ConsoleApplication1Result, Resources.Is)
-                .WithSpan(16, 13, 26, 14));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                .WithArguments(TestData.UnionsResult)
+                .WithSpan(25, 13, 26, 23),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'null'", Resources.Case, TestData.UnionsResult, Resources.Is)
+                .WithSpan(17, 9, 27, 10));
     }
 
     [TestMethod]
@@ -96,31 +96,31 @@ namespace ConsoleApplication1
     {
         var test = $@"{TestData.Usings}
 
-namespace ConsoleApplication1
-{{
-    public class DiscriminatedUnionSymbolAnalyzerTests
-    {{   
-        public void Switch(Result result)
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public void Switch(Result result)
+    {{
+        switch(result)
         {{
-            switch(result)
-            {{
-                case Result.Success:
-                    break;
-                default:
-                    break;
-            }}
+            case Result.Success:
+                break;
+            default:
+                break;
         }}
     }}
-{TestData.ValidResultDiscriminatedUnion}
-}}";
+}}
+{TestData.ValidResultUnion}
+";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.ConsoleApplication1Result, Resources.Are)
-                .WithSpan(16, 13, 22, 14),
-            VerifyCS.Diagnostic(SundewDiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.ConsoleApplication1Result)
-                .WithSpan(20, 17, 21, 27));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
+                .WithSpan(17, 9, 23, 10),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                .WithArguments(TestData.UnionsResult)
+                .WithSpan(21, 13, 22, 23));
     }
 }

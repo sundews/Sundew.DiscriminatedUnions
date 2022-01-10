@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SundewDiscriminatedUnionsCodeFixProvider.cs" company="Hukano">
+// <copyright file="DiscriminatedUnionsCodeFixProvider.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -20,28 +20,25 @@ using Microsoft.CodeAnalysis.CodeFixes;
 /// Code fix for diagnostics related to discriminated unions.
 /// </summary>
 /// <seealso cref="Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider" />
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SundewDiscriminatedUnionsCodeFixProvider))]
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DiscriminatedUnionsCodeFixProvider))]
 [Shared]
-public class SundewDiscriminatedUnionsCodeFixProvider : CodeFixProvider
+public class DiscriminatedUnionsCodeFixProvider : CodeFixProvider
 {
     private readonly Dictionary<string, ICodeFixer> codeFixers;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SundewDiscriminatedUnionsCodeFixProvider"/> class.
+    /// Initializes a new instance of the <see cref="DiscriminatedUnionsCodeFixProvider"/> class.
     /// </summary>
-    public SundewDiscriminatedUnionsCodeFixProvider()
+    public DiscriminatedUnionsCodeFixProvider()
     {
         this.codeFixers = new ICodeFixer[]
         {
             new SwitchAllCasesNotHandledCodeFixer(),
             new SwitchShouldNotHaveDefaultCaseCodeFixer(),
             new SwitchHasUnreachableNullCaseCodeFixer(),
-            new DiscriminatedUnionsCanOnlyHavePrivateProtectedConstructorsCodeFixer(),
-            new DiscriminatedUnionsMustHavePrivateProtectedConstructorCodeFixer(),
-            new DiscriminatedUnionsMustBeAbstractCodeFixer(),
-            new InterfaceDiscriminatedUnionsMustBeInternalCodeFixer(),
+            new UnionsMustBeAbstractCodeFixer(),
             new CasesShouldBeSealedCodeFixer(),
-            new UnnestedCasesShouldHaveFactoryMethodCodeFixer(),
+            new PopulateFactoryMethodsCodeFixer(),
         }.ToDictionary(x => x.DiagnosticId);
         this.FixableDiagnosticIds = ImmutableArray.CreateRange(this.codeFixers.Keys);
     }
