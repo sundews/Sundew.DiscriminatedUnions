@@ -83,7 +83,7 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
                             generator,
                             index != 0)
                         .WithAdditionalAnnotations(Formatter.Annotation);
-                }).Where(x => x != null).ToArray();
+                }).Where(x => x != null).Select(x => x!).ToArray();
 
         if (!factoryMethods.Any())
         {
