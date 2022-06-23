@@ -9,3 +9,5 @@ updates:
     directory: "/Source" # Location of package manifests
     schedule:
       interval: "daily"
+    assignees:
+      - "hugener"
