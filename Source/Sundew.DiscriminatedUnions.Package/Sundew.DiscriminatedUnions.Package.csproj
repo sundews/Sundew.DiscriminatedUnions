@@ -20,7 +20,7 @@ The idea is that this package can be deleted once unions are supported in C#, wi
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sundew.Packaging.Publish" Version="8.0.1">
+    <PackageReference Include="Sundew.Packaging.Publish" Version="8.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
