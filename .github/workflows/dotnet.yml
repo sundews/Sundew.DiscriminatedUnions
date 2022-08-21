@@ -47,7 +47,7 @@ jobs:
         --prerelease-format "u{DateTime}-{Stage}-{Postfix}-${{ steps.build-setup.outputs.git-hash }}"
         --metadata ${{ steps.build-setup.outputs.git-hash }}
         --force-version '"${{ secrets.SPP_FORCE_VERSION_IF_SET }}"'
-        --output-formats "Stage={Stage}, Version={Version}" "::set-output name=stage::{Stage}" "::set-output name=version::{Version}" "::set-output name=buildConfiguration::{Configuration}" 
+        --output-formats "Stage {Stage}, {FullVersion}, {Configuration}" "::set-output name=stage::{Stage}" "::set-output name=version::{Version}" "::set-output name=buildConfiguration::{Configuration}" 
         "::set-output name=nuGetPackagesPath::{WorkingDirectory}/NuGet" "::set-output name=dev-package-source-if-set::{DevFeedSource}" "::set-output name=feedSource::{FeedSource}" 
         "::set-output name=pushSource::{PushSource}" "::set-output name=apiKey::{ApiKey}" "::set-output name=fullVersion::{FullVersion}" "::set-output name=symbolsPushSource::{SymbolsPushSource}"
         "::set-output name=symbolsApiKey::{SymbolsApiKey}"
