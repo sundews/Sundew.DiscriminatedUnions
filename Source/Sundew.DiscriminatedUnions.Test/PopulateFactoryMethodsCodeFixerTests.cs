@@ -64,7 +64,7 @@ public sealed record ValueExpression(int Value) : Expression;
         var expected = new[]
         {
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(14, 24, 14, 34),
         };
@@ -116,7 +116,7 @@ public sealed record ValueExpression(int Value) : Expression;
         var expected = new[]
         {
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(14, 24, 14, 34),
         };
@@ -220,15 +220,15 @@ public sealed record ValueExpression(int Value) : Expression;
         var expected = new[]
         {
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.IAssociativeExpression")
                 .WithSpan(14, 18, 14, 40),
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(36, 24, 36, 34),
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.ArithmeticExpression")
                 .WithSpan(22, 24, 22, 44),
         };
@@ -331,15 +331,15 @@ public sealed record ValueExpression(int Value) : Expression;
         var expected = new[]
         {
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.IAssociativeExpression")
                 .WithSpan(14, 18, 14, 40),
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(22, 24, 22, 34),
             VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Hidden)
+                .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.ArithmeticExpression")
                 .WithSpan(34, 24, 34, 44),
         };

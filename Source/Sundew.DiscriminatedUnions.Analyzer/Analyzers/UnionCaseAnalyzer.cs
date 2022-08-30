@@ -8,7 +8,6 @@
 namespace Sundew.DiscriminatedUnions.Analyzer.Analyzers;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -38,13 +37,13 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
                             var propertyBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
                             propertyBuilder.Add(DiagnosticPropertyNames.QualifiedCaseName, namedTypeSymbol.ToDisplayString());
                             propertyBuilder.Add(DiagnosticPropertyNames.Name, namedTypeSymbol.Name);
-                            foreach (var syntaxReference in baseType.DeclaringSyntaxReferences)
+                            foreach (var syntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
                             {
                                 reportDiagnostic(Diagnostic.Create(
                                     DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule,
                                     syntaxReference.GetSyntax().GetLocation(),
                                     DiagnosticSeverity.Error,
-                                    namedTypeSymbol.DeclaringSyntaxReferences.Select(x => x.GetSyntax().GetLocation()),
+                                    baseType.DeclaringSyntaxReferences.Select(x => x.GetSyntax().GetLocation()),
                                     propertyBuilder.ToImmutable(),
                                     namedTypeSymbol,
                                     baseType));
