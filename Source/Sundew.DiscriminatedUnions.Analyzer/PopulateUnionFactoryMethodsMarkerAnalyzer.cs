@@ -69,7 +69,7 @@ public class PopulateUnionFactoryMethodsMarkerAnalyzer : DiagnosticAnalyzer
                             Diagnostic.Create(
                                 PopulateFactoryMethodsRule,
                                 location,
-                                DiagnosticSeverity.Hidden,
+                                DiagnosticSeverity.Info,
                                 null,
                                 null,
                                 namedTypeSymbol));

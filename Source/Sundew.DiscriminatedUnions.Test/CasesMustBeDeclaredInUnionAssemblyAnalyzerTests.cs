@@ -32,6 +32,9 @@ public sealed record DoubleValueExpression(double Value) : IExpression;
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule)
                 .WithArguments("Unions.DoubleValueExpression", "Sundew.DiscriminatedUnions.TestData")
+                .WithSpan(13, 1, 13, 72),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
+                .WithArguments("Unions.DoubleValueExpression", "Sundew.DiscriminatedUnions.TestData.IExpression")
                 .WithSpan(13, 1, 13, 72));
     }
 }

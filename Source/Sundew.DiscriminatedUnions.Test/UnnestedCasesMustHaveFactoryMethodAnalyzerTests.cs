@@ -43,12 +43,12 @@ public sealed record ValueExpression(int Value) : Expression;
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.SubtractionExpression", "Unions.Expression")
-                .WithSpan(13, 1, 17, 2)
-                .WithSpan(21, 1, 21, 89),
+                .WithSpan(21, 1, 21, 89)
+                .WithSpan(13, 1, 17, 2),
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.ValueExpression", "Unions.Expression")
-                .WithSpan(13, 1, 17, 2)
-                .WithSpan(23, 1, 23, 62));
+                .WithSpan(23, 1, 23, 62)
+                .WithSpan(13, 1, 17, 2));
     }
 
     [TestMethod]
@@ -75,11 +75,11 @@ internal sealed record ValueExpression(int Value) : Expression;
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.SubtractionExpression", "Unions.Expression")
-                .WithSpan(13, 1, 17, 2)
-                .WithSpan(21, 1, 21, 91),
+                .WithSpan(21, 1, 21, 91)
+                .WithSpan(13, 1, 17, 2),
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.ValueExpression", "Unions.Expression")
-                .WithSpan(13, 1, 17, 2)
-                .WithSpan(23, 1, 23, 64));
+                .WithSpan(23, 1, 23, 64)
+                .WithSpan(13, 1, 17, 2));
     }
 }

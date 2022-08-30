@@ -385,7 +385,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Case &apos;{0}&apos; should have factory method in &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Case &apos;{0}&apos; should have factory method in &apos;{1}&apos;. Navigate to &apos;{1}&apos; and execute code fix PDU0001 to fix..
         /// </summary>
         public static string UnnestedCasesShouldHaveFactoryMethodMessageFormat {
             get {

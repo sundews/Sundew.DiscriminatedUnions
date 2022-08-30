@@ -208,7 +208,7 @@
     <value>Unnested cases should have factory method.</value>
   </data>
   <data name="UnnestedCasesShouldHaveFactoryMethodMessageFormat" xml:space="preserve">
-    <value>Case '{0}' should have factory method in '{1}'.</value>
+    <value>Case '{0}' should have factory method in '{1}'. Navigate to '{1}' and execute code fix PDU0001 to fix.</value>
   </data>
   <data name="PopulateFactoryMethodsDescription" xml:space="preserve">
     <value>Populates factory methods for all cases in the union.</value>
