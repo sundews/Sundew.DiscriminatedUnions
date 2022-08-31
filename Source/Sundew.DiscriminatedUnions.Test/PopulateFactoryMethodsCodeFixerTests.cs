@@ -363,6 +363,8 @@ public abstract record SingleOrMultiple<TItem>
 public sealed record Single<TItem>(TItem Item) : SingleOrMultiple<TItem>;
 
 public sealed record Multiple<TItem>(IReadOnlyList<TItem> Items) : SingleOrMultiple<TItem>;
+
+public sealed record Empty<TItem>() : SingleOrMultiple<TItem>;
 ";
 
         var fixtest = $@"{TestData.Usings}
@@ -375,11 +377,15 @@ public abstract record SingleOrMultiple<TItem>
     public static SingleOrMultiple<TItem> Single(TItem item) => new Single<TItem>(item);
 
     public static SingleOrMultiple<TItem> Multiple(IReadOnlyList<TItem> items) => new Multiple<TItem>(items);
+
+    public static SingleOrMultiple<TItem> Empty() => new Empty<TItem>();
 }}
 
 public sealed record Single<TItem>(TItem Item) : SingleOrMultiple<TItem>;
 
 public sealed record Multiple<TItem>(IReadOnlyList<TItem> Items) : SingleOrMultiple<TItem>;
+
+public sealed record Empty<TItem>() : SingleOrMultiple<TItem>;
 ";
 
         var expected = new[]

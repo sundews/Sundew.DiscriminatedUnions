@@ -60,7 +60,8 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         var factoryMethods = GetCaseTypesWithMissingFactoryMethods(unionType, semanticModel.Compilation)
             .Select((caseType, index) =>
                 {
-                    var constructor = caseType.Constructors.OrderByDescending(x => x.Parameters.Length).FirstOrDefault();
+                    var constructor = caseType.Constructors.OrderByDescending(x => x.Parameters.Length).FirstOrDefault(
+                        x => x.ContainingType.IsRecord && !SymbolEqualityComparer.Default.Equals(x.Parameters.FirstOrDefault()?.Type, x.ContainingType));
                     if (constructor == null)
                     {
                         return null;
