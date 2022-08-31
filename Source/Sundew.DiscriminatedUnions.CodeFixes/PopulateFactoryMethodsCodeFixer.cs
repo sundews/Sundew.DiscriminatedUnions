@@ -101,9 +101,18 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         INamedTypeSymbol unionType,
         Compilation compilation)
     {
-        var knownCaseTypes = UnionHelper.GetKnownCaseTypes(unionType, compilation);
+        var knownCaseTypes = UnionHelper.GetKnownCaseTypes(unionType, compilation).ToList();
         var allCaseTypes = GetDerivedTypes(compilation, unionType);
-        return allCaseTypes.Except(knownCaseTypes);
+
+        return allCaseTypes.Where(x =>
+        {
+            GetEquatableType(ref x);
+            return !knownCaseTypes.Any(knownType =>
+            {
+                GetEquatableType(ref knownType);
+                return SymbolEqualityComparer.Default.Equals(x, knownType);
+            });
+        });
     }
 
     private static SyntaxNode GetFactoryMethod(
@@ -190,10 +199,10 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
                 .Where(x => x.Parameters.Select(x => x.Type).SequenceEqual(parameterTypes, SymbolEqualityComparer.Default))).Any();
     }
 
-    private static IEnumerable<INamedTypeSymbol> GetDerivedTypes(Compilation compilation, ITypeSymbol baseClassTypeSymbol) =>
+    private static IEnumerable<INamedTypeSymbol> GetDerivedTypes(Compilation compilation, INamedTypeSymbol baseClassTypeSymbol) =>
         GetAllTypes(compilation.GlobalNamespace, baseClassTypeSymbol);
 
-    private static IEnumerable<INamedTypeSymbol> GetAllTypes(INamespaceSymbol @namespace, ITypeSymbol baseClassTypeSymbol)
+    private static IEnumerable<INamedTypeSymbol> GetAllTypes(INamespaceSymbol @namespace, INamedTypeSymbol baseClassTypeSymbol)
     {
         foreach (var type in @namespace.GetTypeMembers())
         {
@@ -227,16 +236,19 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         }
     }
 
-    private static bool CanBeAssignedTo(ITypeSymbol? typeSymbol, ITypeSymbol assignmentTypeSymbol)
+    private static bool CanBeAssignedTo(INamedTypeSymbol? typeSymbol, INamedTypeSymbol assignmentTypeSymbol)
     {
         while (typeSymbol != null)
         {
+            GetEquatableType(ref typeSymbol);
+            GetEquatableType(ref assignmentTypeSymbol);
             if (SymbolEqualityComparer.Default.Equals(typeSymbol, assignmentTypeSymbol))
             {
                 return true;
             }
 
-            var any = typeSymbol.Interfaces.Any(x => CanBeAssignedTo(x, assignmentTypeSymbol));
+            var symbol = assignmentTypeSymbol;
+            var any = typeSymbol.Interfaces.Any(x => CanBeAssignedTo(x, symbol));
             if (any)
             {
                 return true;
@@ -246,5 +258,13 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         }
 
         return false;
+    }
+
+    private static void GetEquatableType(ref INamedTypeSymbol namedTypeSymbol)
+    {
+        if (namedTypeSymbol.IsGenericType)
+        {
+            namedTypeSymbol = namedTypeSymbol.OriginalDefinition;
+        }
     }
 }

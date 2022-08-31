@@ -345,4 +345,50 @@ public sealed record ValueExpression(int Value) : Expression;
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true, 1);
     }
+
+    [TestMethod]
+    public async Task
+        Given_DiscriminatedUnionWithUnnestedCases_When_UnionIsGenericAndMultipleHasNoFactoryMethod_Then_FactoryMethodsAreImplemented()
+    {
+        var test = $@"{TestData.Usings}
+
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record SingleOrMultiple<TItem>
+{{
+    public static SingleOrMultiple<TItem> Single(TItem item) => new Single<TItem>(item);
+}}
+
+public sealed record Single<TItem>(TItem Item) : SingleOrMultiple<TItem>;
+
+public sealed record Multiple<TItem>(IReadOnlyList<TItem> Items) : SingleOrMultiple<TItem>;
+";
+
+        var fixtest = $@"{TestData.Usings}
+
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record SingleOrMultiple<TItem>
+{{
+    public static SingleOrMultiple<TItem> Single(TItem item) => new Single<TItem>(item);
+
+    public static SingleOrMultiple<TItem> Multiple(IReadOnlyList<TItem> items) => new Multiple<TItem>(items);
+}}
+
+public sealed record Single<TItem>(TItem Item) : SingleOrMultiple<TItem>;
+
+public sealed record Multiple<TItem>(IReadOnlyList<TItem> Items) : SingleOrMultiple<TItem>;
+";
+
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+                .WithSeverity(DiagnosticSeverity.Info)
+                .WithArguments("Unions.SingleOrMultiple<TItem>")
+                .WithSpan(14, 24, 14, 40),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
+    }
 }
