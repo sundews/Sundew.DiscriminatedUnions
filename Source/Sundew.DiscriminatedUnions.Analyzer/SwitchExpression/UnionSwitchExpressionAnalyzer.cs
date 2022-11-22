@@ -16,8 +16,8 @@ internal class UnionSwitchExpressionAnalyzer
 {
     public void Analyze(OperationAnalysisContext operationAnalysisContext)
     {
-        if (!(operationAnalysisContext.Operation is ISwitchExpressionOperation switchExpressionOperation
-              && switchExpressionOperation.SemanticModel != null))
+        if (!(operationAnalysisContext.Operation is ISwitchExpressionOperation switchExpressionOperation &&
+              switchExpressionOperation.SemanticModel != null))
         {
             return;
         }
@@ -45,7 +45,7 @@ internal class UnionSwitchExpressionAnalyzer
                 unionType));
         }
 
-        var caseTypes = UnionHelper.GetKnownCaseTypes(unionTypeWithoutNull, operationAnalysisContext.Compilation);
+        var caseTypes = UnionHelper.GetKnownCaseTypes(unionTypeWithoutNull);
         DiagnosticReporterHelper.ReportDiagnostics(
             caseTypes.ToList(),
             SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).Where(x => x.HandlesCase).Select(x => x.Type),

@@ -14,6 +14,6 @@ using System;
 /// </summary>
 /// <seealso cref="System.Attribute" />
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-public class DiscriminatedUnion : Attribute
+internal class DiscriminatedUnion : Attribute
 {
 }

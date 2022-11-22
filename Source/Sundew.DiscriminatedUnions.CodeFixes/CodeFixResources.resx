@@ -144,4 +144,7 @@
   <data name="MakeInternal" xml:space="preserve">
     <value>Make '{0}' internal</value>
   </data>
+  <data name="InsertCorrectCaseTypeAttribute" xml:space="preserve">
+    <value>Insert the correct CaseTypeAttribute.</value>
+  </data>
 </root>

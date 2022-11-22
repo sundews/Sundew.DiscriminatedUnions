@@ -41,7 +41,7 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
             TestCode = source,
         };
 
-        test.TestCode = CSharpVerifierHelper.IsExternalInit;
+        test.TestCode = CSharpVerifierHelper.RequiredTypes;
         test.SolutionTransforms.Add((solution, id) =>
             solution
                 .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location))
@@ -59,7 +59,7 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
         => await VerifyCodeFixAsync(source, new[] { expected }, fixedSource);
 
     /// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult[], string)"/>
-    public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, bool diagnosticWillRemain = false, int? numberIterations = null)
+    public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, DiagnosticResult[]? expectedAfter, int? numberIterations = null)
     {
         var test = new Test
         {
@@ -67,21 +67,26 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix, TSuppress
             FixedCode = fixedSource,
         };
 
-        test.TestCode = CSharpVerifierHelper.IsExternalInit;
-        test.FixedCode = CSharpVerifierHelper.IsExternalInit;
+        test.TestCode = CSharpVerifierHelper.RequiredTypes;
+        test.FixedCode = CSharpVerifierHelper.RequiredTypes;
         test.SolutionTransforms.Add((solution, id) =>
             solution
                 .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(DiscriminatedUnion).Assembly.Location))
                 .AddMetadataReference(id, MetadataReference.CreateFromFile(typeof(IExpression).Assembly.Location)));
         test.ExpectedDiagnostics.AddRange(expected);
-        if (diagnosticWillRemain)
+        if (expectedAfter != null)
         {
-            test.FixedState.ExpectedDiagnostics.AddRange(expected);
+            test.FixedState.ExpectedDiagnostics.AddRange(expectedAfter);
         }
 
         test.NumberOfIncrementalIterations = numberIterations;
         test.NumberOfFixAllIterations = numberIterations;
 
         await test.RunAsync(CancellationToken.None);
+    }
+
+    public static Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource, bool diagnosticWillRemain = false, int? numberIterations = null)
+    {
+        return VerifyCodeFixAsync(source, expected, fixedSource, diagnosticWillRemain ? expected : null, numberIterations);
     }
 }

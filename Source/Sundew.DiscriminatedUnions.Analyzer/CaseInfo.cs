@@ -17,7 +17,7 @@ public readonly struct CaseInfo
     /// <summary>
     /// Gets the type.
     /// </summary>
-    public ITypeSymbol Type { get; init; }
+    public INamedTypeSymbol Type { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether the case is handled.

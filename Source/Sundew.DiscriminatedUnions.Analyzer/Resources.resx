@@ -231,4 +231,13 @@
   <data name="SuppressCS8509Justification" xml:space="preserve">
     <value>Switch over a union, which is checked for exhaustiveness by another analyzer.</value>
   </data>
+  <data name="FactoryMethodShouldHaveMatchingCaseTypeAttributeDescription" xml:space="preserve">
+    <value>Factory method must have CaseTypeAttribute specifying the created case type to support unions in referenced libraries.</value>
+  </data>
+  <data name="FactoryMethodShouldHaveMatchingCaseTypeAttributeMessageFormat" xml:space="preserve">
+    <value>Factory method '{0}' did not specify '{1}' in a CaseTypeAttribute.</value>
+  </data>
+  <data name="FactoryMethodShouldHaveMatchingCaseTypeAttributeTitle" xml:space="preserve">
+    <value>Factory method must have CaseTypeAttribute.</value>
+  </data>
 </root>

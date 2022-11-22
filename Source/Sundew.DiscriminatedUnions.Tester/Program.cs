@@ -8,38 +8,39 @@
 namespace Sundew.DiscriminatedUnions.Tester;
 
 using System;
+using TestData;
 
 public static class Program
 {
     public static void Main(string[] args)
     {
-        var expression = new AddExpression(new ValueExpression(5),
-            new SubtractExpression(new ValueExpression(3), new ValueExpression(1)));
+        var expression = new AdditionExpression(new ValueExpression(5),
+            new SubtractionExpression(new ValueExpression(3), new ValueExpression(1)));
 
-        int Evaluate(Expression expression)
+        static int Evaluate(IExpression expression)
         {
             return expression switch
             {
-                AddExpression addExpression => Evaluate(addExpression.Lhs) + Evaluate(addExpression.Rhs),
-                SubtractExpression subtractExpression => Evaluate(subtractExpression.Lhs) - Evaluate(subtractExpression.Rhs),
+                AdditionExpression additionExpression => throw new System.NotImplementedException(),
+                SubtractionExpression subtractionExpression => throw new System.NotImplementedException(),
+                MultiplicationExpression multiplicationExpression => throw new System.NotImplementedException(),
                 ValueExpression valueExpression => valueExpression.Value,
-                _ => throw new ArgumentOutOfRangeException(nameof(expression))
             };
         }
             
         Console.WriteLine(Evaluate(expression));
-
+        /*
         Console.WriteLine("Hello World!");
         Result? result = Compute("Error");
         var message = result switch
         {
             Error { Code: > 70 } error => $"Error code: {error.Code}",
+            FatalError fatalError => throw new System.NotImplementedException(),
             Error error => $"Error code: {error.Code}",
             Warning { Message: "Tough warning" } => "Not good",
             Warning warning => warning.Message,
             Success => "Great",
             null => "dd",
-            _ => throw new UnreachableCaseException(typeof(Result)),
         };
 
         switch (result)
@@ -52,30 +53,34 @@ public static class Program
                 break;
             case Error:
                 break;
+            case FatalError fatalError:
+                throw new System.NotImplementedException();
             case null:
-                break;
-            default:
                 break;
         }
 
         Console.WriteLine(result);
 
         SwitchReturn(result);
-        Switch(result);
+        Switch(result);*/
     }
-
+    /*
     private static bool SwitchReturn(Result? result)
     {
         switch (result)
         {
             case Error error:
                 return false;
+            case FatalError fatalError:
+                throw new System.NotImplementedException();
             case Warning { Message: "Tough Warning" } warning:
                 return false;
             case Warning warning:
                 return true;
             case Success:
                 return true;
+            case null:
+                throw new System.NotImplementedException();
             default:
                 throw new UnreachableCaseException(typeof(Result));
         }
@@ -87,10 +92,14 @@ public static class Program
         {
             case Error error:
                 break;
+            case FatalError fatalError:
+                throw new System.NotImplementedException();
             case Warning warning:
                 break;
             case Success:
                 break;
+            case null:
+                throw new System.NotImplementedException();
         }
     }
 
@@ -103,5 +112,5 @@ public static class Program
             "null" => null,
             _ => new Warning(magic),
         };
-    }
+    }*/
 }

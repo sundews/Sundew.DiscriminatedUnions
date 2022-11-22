@@ -43,39 +43,24 @@ public static class UnionHelper
     /// Gets all case types.
     /// </summary>
     /// <param name="unionType">Type of the union.</param>
-    /// <param name="compilation">The Compilation.</param>
     /// <returns>All case types within the discriminated unions.</returns>
-    public static IEnumerable<INamedTypeSymbol> GetKnownCaseTypes(ITypeSymbol unionType, Compilation compilation)
+    public static IEnumerable<INamedTypeSymbol> GetKnownCaseTypes(ITypeSymbol unionType)
     {
-        return unionType.GetMembers()
-            .Where(x => x.Kind == SymbolKind.Method && x.IsStatic)
-            .OfType<IMethodSymbol>()
-            .Where(x => SymbolEqualityComparer.Default.Equals(x.ReturnType, unionType))
-            .SelectMany(
-                x => x!.DeclaringSyntaxReferences,
-                (methodSymbol, syntaxReference) => (syntaxReferences: syntaxReference, name: methodSymbol.Name))
-            .Select(x => (
-                methodBodyOperation: compilation.GetSemanticModel(x.syntaxReferences.SyntaxTree)
-                    .GetOperation(x.syntaxReferences.GetSyntax()) as IMethodBodyOperation, x.name))
-            .Where(x => x.methodBodyOperation != null)
-            .Select(x => (methodBodyOperation: x.methodBodyOperation!, x.name))
+        return GetFactoryMethodSymbols(unionType)
             .Select(x =>
             {
-                var blockBody = x.methodBodyOperation.BlockBody;
-                if (blockBody != null)
+                var caseTypeAttribute = x.GetAttributes().FirstOrDefault(x =>
+                    x.AttributeClass?.ToDisplayString() == typeof(CaseTypeAttribute).FullName);
+                if (caseTypeAttribute != null)
                 {
-                    return TryGetActualReturnType(blockBody, x.name);
-                }
+                    var caseTypeSymbol = (INamedTypeSymbol?)caseTypeAttribute.ConstructorArguments.FirstOrDefault().Value ??
+                                         (INamedTypeSymbol?)caseTypeAttribute.NamedArguments.FirstOrDefault().Value.Value;
 
-                var expressionBody = x.methodBodyOperation.ExpressionBody;
-                if (expressionBody != null)
-                {
-                    return TryGetActualReturnType(expressionBody, x.name);
+                    return caseTypeSymbol;
                 }
 
                 return null;
-            })
-            .Where(x => x != null).Select(x => x!)
+            }).Where(x => x != null).Select(x => x!)
             .Concat(
                 unionType.GetTypeMembers()
                     .Where(x =>
@@ -93,6 +78,77 @@ public static class UnionHelper
 
                         return false;
                     }));
+    }
+
+    /// <summary>
+    /// Gets factory method symbols for the union type.
+    /// </summary>
+    /// <param name="unionType">The union type.</param>
+    /// <returns>The method symbols.</returns>
+    public static IEnumerable<IMethodSymbol> GetFactoryMethodSymbols(ITypeSymbol unionType)
+    {
+        return unionType.GetMembers()
+               .Where(x => x.Kind == SymbolKind.Method && x.IsStatic)
+               .OfType<IMethodSymbol>()
+               .Where(x => SymbolEqualityComparer.Default.Equals(x.ReturnType, unionType));
+    }
+
+    /// <summary>
+    /// Gets the instantiated case type symbol.
+    /// </summary>
+    /// <param name="factoryMethod">The factory method.</param>
+    /// <param name="compilation">The compilation.</param>
+    /// <returns>The type symbol for the instantiated type.</returns>
+    public static INamedTypeSymbol? GetInstantiatedCaseTypeSymbol(IMethodSymbol factoryMethod, Compilation compilation)
+    {
+        static INamedTypeSymbol? TryGetActualReturnType(
+            IBlockOperation? body,
+            string name)
+        {
+            var lastOperation = body?.Operations.LastOrDefault();
+            if (lastOperation is IReturnOperation
+                {
+                    ReturnedValue: IConversionOperation
+                    {
+                        Operand: IObjectCreationOperation
+                        {
+                            Type: INamedTypeSymbol namedTypeSymbol
+                        }
+                    }
+                })
+            {
+                if (namedTypeSymbol.Name == name)
+                {
+                    return namedTypeSymbol;
+                }
+            }
+
+            return null;
+        }
+
+        var name = factoryMethod.Name;
+        return factoryMethod.DeclaringSyntaxReferences
+            .Select(x => (
+                methodBodyOperation: compilation.GetSemanticModel(x.SyntaxTree)
+                    .GetOperation(x.GetSyntax()) as IMethodBodyOperation, name))
+            .Where(x => x.methodBodyOperation != null)
+            .Select(x => (methodBodyOperation: x.methodBodyOperation!, name))
+            .Select(x =>
+            {
+                var blockBody = x.methodBodyOperation.BlockBody;
+                if (blockBody != null)
+                {
+                    return TryGetActualReturnType(blockBody, name);
+                }
+
+                var expressionBody = x.methodBodyOperation.ExpressionBody;
+                if (expressionBody != null)
+                {
+                    return TryGetActualReturnType(expressionBody, name);
+                }
+
+                return null;
+            }).FirstOrDefault();
     }
 
     internal static SwitchNullability EvaluateSwitchNullability(
@@ -114,31 +170,6 @@ public static class UnionHelper
             (_, _, false, false) => SwitchNullability.None,
         };
         return switchNullability;
-    }
-
-    private static INamedTypeSymbol? TryGetActualReturnType(
-        IBlockOperation? body,
-        string name)
-    {
-        var lastOperation = body?.Operations.LastOrDefault();
-        if (lastOperation is IReturnOperation
-            {
-                ReturnedValue: IConversionOperation
-                {
-                    Operand: IObjectCreationOperation
-                    {
-                        Type: INamedTypeSymbol namedTypeSymbol
-                    }
-                }
-            })
-        {
-            if (namedTypeSymbol.Name == name)
-            {
-                return namedTypeSymbol;
-            }
-        }
-
-        return null;
     }
 
     private static bool IsNullableEnabled(SemanticModel semanticModel, IOperation operation)

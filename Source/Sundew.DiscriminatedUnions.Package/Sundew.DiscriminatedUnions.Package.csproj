@@ -17,6 +17,10 @@ The idea is that this package can be deleted once unions are supported in C#, wi
     </Description>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
+    <PackageReleaseNotes>
+2.0 - Support matching unions in referenced projects, marker attributes included as source rather than library reference.
+1.0 - Initial version
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,8 +41,6 @@ The idea is that this package can be deleted once unions are supported in C#, wi
 
   <Target Name="_AddAnalyzersToOutput">
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.dll" PackagePath="lib/netstandard1.0" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.dll" PackagePath="analyzers/dotnet/cs" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.Analyzer.dll" PackagePath="analyzers/dotnet/cs" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
     </ItemGroup>

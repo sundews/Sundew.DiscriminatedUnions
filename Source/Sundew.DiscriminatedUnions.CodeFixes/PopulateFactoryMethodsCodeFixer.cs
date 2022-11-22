@@ -45,13 +45,13 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         Document document,
         SyntaxNode root,
         SyntaxNode node,
+        IReadOnlyList<Location> additionalLocations,
         ImmutableDictionary<string, string?> diagnosticProperties,
         SemanticModel semanticModel,
         CancellationToken cancellationToken)
     {
         var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
         var generator = editor.Generator;
-        var index = generator.GetMembers(node).Count;
         if (semanticModel.GetDeclaredSymbol(node) is not INamedTypeSymbol unionType)
         {
             return document;
@@ -59,51 +59,73 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
 
         var factoryMethods = GetCaseTypesWithMissingFactoryMethods(unionType, semanticModel.Compilation)
             .Select((caseType, index) =>
+            {
+                var constructor = caseType.Constructors.OrderByDescending(x => x.Parameters.Length).SkipWhile(x =>
+                        x.ContainingType.IsRecord &&
+                        SymbolEqualityComparer.Default.Equals(x.Parameters.FirstOrDefault()?.Type, x.ContainingType))
+                    .FirstOrDefault();
+
+                if (constructor == null)
                 {
-                    var constructor = caseType.Constructors.OrderByDescending(x => x.Parameters.Length).FirstOrDefault(
-                        x => x.ContainingType.IsRecord && !SymbolEqualityComparer.Default.Equals(x.Parameters.FirstOrDefault()?.Type, x.ContainingType));
-                    if (constructor == null)
-                    {
-                        return null;
-                    }
+                    return null;
+                }
 
-                    var parameters = constructor.Parameters.Select(x =>
-                    {
-                        var name = x.Name.Uncapitalize();
-                        return (Parameter: generator.WithName(generator.ParameterDeclaration(x), name), name);
-                    }).ToList();
+                var parameters = constructor.Parameters.Select(x =>
+                {
+                    var name = x.Name.Uncapitalize();
+                    return (Parameter: generator.WithName(generator.ParameterDeclaration(x), name), name);
+                }).ToList();
 
-                    return GetFactoryMethod(
-                            semanticModel,
-                            unionType,
-                            caseType.Name,
-                            constructor,
-                            caseType,
-                            constructor.Parameters.Select(x => x.Type).ToArray(),
-                            parameters,
-                            generator,
-                            index != 0)
-                        .WithAdditionalAnnotations(Formatter.Annotation);
-                }).Where(x => x != null).Select(x => x!).ToArray();
+                return GetFactoryMethodSyntaxNodes(
+                        semanticModel,
+                        unionType,
+                        caseType.Name,
+                        constructor,
+                        caseType,
+                        constructor.Parameters.Select(x => x.Type).ToArray(),
+                        parameters,
+                        generator,
+                        index != 0)
+                    .WithAdditionalAnnotations(Formatter.Annotation);
+            }).Where(x => x != null).Select(x => x!).ToArray();
 
         if (!factoryMethods.Any())
         {
             return document;
         }
 
-        var newNode = generator.InsertMembers(
-            node,
-            index,
-            factoryMethods);
-        return document.WithSyntaxRoot(root.ReplaceNode(node, newNode));
+        var index = generator.GetMembers(node).Count;
+        var newNode = node;
+        if (node is InterfaceDeclarationSyntax interfaceDeclarationSyntax)
+        {
+            var members = interfaceDeclarationSyntax.Members.InsertRange(index, factoryMethods.Cast<MemberDeclarationSyntax>());
+            newNode = SyntaxFactory.InterfaceDeclaration(
+                interfaceDeclarationSyntax.AttributeLists,
+                interfaceDeclarationSyntax.Modifiers,
+                interfaceDeclarationSyntax.Identifier,
+                interfaceDeclarationSyntax.TypeParameterList,
+                interfaceDeclarationSyntax.BaseList,
+                interfaceDeclarationSyntax.ConstraintClauses,
+                members);
+        }
+        else
+        {
+            newNode = generator.InsertMembers(
+                newNode,
+                index,
+                factoryMethods);
+        }
+
+        var newRoot = root.ReplaceNode(node, newNode);
+        return document.WithSyntaxRoot(newRoot);
     }
 
     private static IEnumerable<INamedTypeSymbol> GetCaseTypesWithMissingFactoryMethods(
         INamedTypeSymbol unionType,
         Compilation compilation)
     {
-        var knownCaseTypes = UnionHelper.GetKnownCaseTypes(unionType, compilation).ToList();
         var allCaseTypes = GetDerivedTypes(compilation, unionType);
+        var knownCaseTypes = UnionHelper.GetKnownCaseTypes(unionType).ToList();
 
         return allCaseTypes.Where(x =>
         {
@@ -116,7 +138,7 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         });
     }
 
-    private static SyntaxNode GetFactoryMethod(
+    private static SyntaxNode GetFactoryMethodSyntaxNodes(
         SemanticModel semanticModel,
         INamedTypeSymbol unionType,
         string name,
@@ -137,8 +159,18 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
             }
 
             tokenList = tokenList.Add(SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+            var attributeCaseType = caseType.IsGenericType ? caseType.ConstructUnboundGenericType() : caseType;
             var syntaxNode = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.List<AttributeListSyntax>(),
+                SyntaxFactory.List(
+                        SyntaxFactory.SingletonSeparatedList(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.ParseName(typeof(CaseTypeAttribute).FullName),
+                                SyntaxFactory.AttributeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList(
+                            SyntaxFactory.AttributeArgument(SyntaxFactory.TypeOfExpression(SyntaxFactory.ParseTypeName(
+                                attributeCaseType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat))))))))))),
                 tokenList,
                 SyntaxFactory.ParseTypeName(unionType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)),
                 null,
@@ -188,7 +220,7 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
                     generator.ObjectCreationExpression(
                         caseType,
                         parameterTypes.Select(x => generator.IdentifierName(x.Name)))),
-            });
+            }).NormalizeWhitespace();
     }
 
     private static bool HasInheritedSameFactoryMethodSignature(INamedTypeSymbol unionType, INamedTypeSymbol caseType, IReadOnlyCollection<ITypeSymbol> parameterTypes)

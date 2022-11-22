@@ -1,20 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CodeFixStatus.cs" company="Hukano">
+// <copyright file="CaseTypeAttribute.cs" company="Hukano">
 // Copyright (c) Hukano. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes;
+namespace Sundew.DiscriminatedUnions;
 
-[DiscriminatedUnion]
-internal abstract record CodeFixStatus
+using System;
+
+[AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false)]
+internal class CaseTypeAttribute : Attribute
 {
-    private CodeFixStatus()
+    public CaseTypeAttribute(Type caseType)
     {
+        this.CaseType = caseType;
     }
 
-    internal sealed record CanFix(string Title, string EquivalenceKey) : CodeFixStatus;
-
-    internal sealed record CannotFix : CodeFixStatus;
+    public Type CaseType { get; }
 }

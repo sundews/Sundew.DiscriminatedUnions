@@ -97,6 +97,15 @@ namespace Sundew.DiscriminatedUnions.CodeFixes {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert the correct CaseTypeAttribute..
+        /// </summary>
+        internal static string InsertCorrectCaseTypeAttribute {
+            get {
+                return ResourceManager.GetString("InsertCorrectCaseTypeAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Make &apos;{0}&apos; abstract.
         /// </summary>
         internal static string MakeAbstract {

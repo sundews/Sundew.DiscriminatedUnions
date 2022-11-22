@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Roslyn Component": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\Sundew.DiscriminatedUnions.Tester\\Sundew.DiscriminatedUnions.Tester.csproj"
+    }
+  }
+}

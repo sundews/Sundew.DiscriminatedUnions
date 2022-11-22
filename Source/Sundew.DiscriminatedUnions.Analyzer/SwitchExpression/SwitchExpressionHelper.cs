@@ -9,6 +9,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer.SwitchExpression;
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 /// <summary>
@@ -28,15 +29,15 @@ public static class SwitchExpressionHelper
                 if (switchExpressionArmOperation.Pattern is IDeclarationPatternOperation
                     declarationPatternSyntax)
                 {
-                    return (Type: declarationPatternSyntax.MatchedType, HandlesCase: true);
+                    return (Type: declarationPatternSyntax.MatchedType as INamedTypeSymbol, HandlesCase: true);
                 }
 
                 if (switchExpressionArmOperation.Pattern is ITypePatternOperation typePatternOperation)
                 {
-                    return (Type: typePatternOperation.MatchedType, HandlesCase: true);
+                    return (Type: typePatternOperation.MatchedType as INamedTypeSymbol, HandlesCase: true);
                 }
 
-                return (Type: switchExpressionArmOperation.Pattern.NarrowedType, HandlesCase: false);
+                return (Type: switchExpressionArmOperation.Pattern.NarrowedType as INamedTypeSymbol, HandlesCase: false);
             }).Where(x => x.Type != null)
             .Select(x => new CaseInfo { Type = x.Type!, HandlesCase = x.HandlesCase });
     }

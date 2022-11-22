@@ -169,6 +169,33 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Factory method must have CaseTypeAttribute specifying the created case type to support unions in referenced libraries..
+        /// </summary>
+        public static string FactoryMethodShouldHaveMatchingCaseTypeAttributeDescription {
+            get {
+                return ResourceManager.GetString("FactoryMethodShouldHaveMatchingCaseTypeAttributeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Factory method &apos;{0}&apos; did not specify &apos;{1}&apos; in a CaseTypeAttribute..
+        /// </summary>
+        public static string FactoryMethodShouldHaveMatchingCaseTypeAttributeMessageFormat {
+            get {
+                return ResourceManager.GetString("FactoryMethodShouldHaveMatchingCaseTypeAttributeMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Factory method must have CaseTypeAttribute..
+        /// </summary>
+        public static string FactoryMethodShouldHaveMatchingCaseTypeAttributeTitle {
+            get {
+                return ResourceManager.GetString("FactoryMethodShouldHaveMatchingCaseTypeAttributeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to is.
         /// </summary>
         public static string Is {

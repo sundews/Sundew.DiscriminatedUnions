@@ -56,10 +56,13 @@ public abstract record Expression
     private protected Expression()
     { }
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
     public static Expression AdditionExpression(Expression lhs, Expression rhs) => new AdditionExpression(lhs, rhs);
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(SubtractionExpression))]
     public static Expression SubtractionExpression(Expression lhs, Expression rhs) => new SubtractionExpression(lhs, rhs);
  
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(ValueExpression))]
     public static Expression ValueExpression(int value) => new ValueExpression(value);
 }
 
@@ -69,8 +72,10 @@ public abstract record ArithmeticExpression : Expression
     private protected ArithmeticExpression()
     { }
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
     public static ArithmeticExpression AdditionExpression(Expression lhs, Expression rhs) => new AdditionExpression(lhs, rhs);
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(SubtractionExpression))]
     public static ArithmeticExpression SubtractionExpression(Expression lhs, Expression rhs)
     {
         return new SubtractionExpression(lhs, rhs);

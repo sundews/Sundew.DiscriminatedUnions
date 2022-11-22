@@ -14,12 +14,39 @@ using Microsoft.CodeAnalysis.CSharp;
 
 internal static class CSharpVerifierHelper
 {
-    public const string IsExternalInit = @"
-
+    public const string RequiredTypes = @"
 namespace System.Runtime.CompilerServices
 {
     internal static class IsExternalInit { }
-}";
+}
+
+namespace Sundew.DiscriminatedUnions
+{
+    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Interface)]
+    internal class DiscriminatedUnion : System.Attribute
+    {
+    }
+
+    [System.AttributeUsage(System.AttributeTargets.Method)]
+    internal class CaseTypeAttribute : System.Attribute
+    {
+        public CaseTypeAttribute(System.Type caseType)
+        {
+            this.CaseType = caseType;
+        }
+
+        public System.Type CaseType { get; }
+    }
+
+    internal class UnreachableCaseException : System.Exception
+    {
+        public UnreachableCaseException(System.Type enumType)
+            : base($""{enumType.Name} is not a valid discriminated union."")
+        {
+        }
+    }
+}
+";
 
     /// <summary>
     /// Gets the nullable warnings.
