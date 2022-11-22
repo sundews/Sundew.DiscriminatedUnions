@@ -10,7 +10,9 @@ namespace Sundew.DiscriminatedUnions;
 using System;
 
 [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false)]
+#pragma warning disable SA1649 // File header file name documentation should match file name
 internal class CaseTypeAttribute : Attribute
+#pragma warning restore SA1649 // File header file name documentation should match file name
 {
     public CaseTypeAttribute(Type caseType)
     {
