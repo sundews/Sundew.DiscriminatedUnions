@@ -29,6 +29,7 @@ namespace Unions;
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract record Expression
 {{
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
     public static Expression AdditionExpression(Expression lhs, Expression rhs) => new AdditionExpression(lhs, rhs);
 }}
 
@@ -43,12 +44,12 @@ public sealed record ValueExpression(int Value) : Expression;
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.SubtractionExpression", "Unions.Expression")
-                .WithSpan(21, 1, 21, 89)
-                .WithSpan(13, 1, 17, 2),
+                .WithSpan(22, 1, 22, 89)
+                .WithSpan(13, 1, 18, 2),
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.ValueExpression", "Unions.Expression")
-                .WithSpan(23, 1, 23, 62)
-                .WithSpan(13, 1, 17, 2));
+                .WithSpan(24, 1, 24, 62)
+                .WithSpan(13, 1, 18, 2));
     }
 
     [TestMethod]
@@ -61,6 +62,7 @@ namespace Unions;
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 internal interface Expression
 {{
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
     public static Expression AdditionExpression(Expression lhs, Expression rhs) => new AdditionExpression(lhs, rhs);
 }}
 
@@ -75,11 +77,11 @@ internal sealed record ValueExpression(int Value) : Expression;
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.SubtractionExpression", "Unions.Expression")
-                .WithSpan(21, 1, 21, 91)
-                .WithSpan(13, 1, 17, 2),
+                .WithSpan(22, 1, 22, 91)
+                .WithSpan(13, 1, 18, 2),
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
                 .WithArguments("Unions.ValueExpression", "Unions.Expression")
-                .WithSpan(23, 1, 23, 64)
-                .WithSpan(13, 1, 17, 2));
+                .WithSpan(24, 1, 24, 64)
+                .WithSpan(13, 1, 18, 2));
     }
 }

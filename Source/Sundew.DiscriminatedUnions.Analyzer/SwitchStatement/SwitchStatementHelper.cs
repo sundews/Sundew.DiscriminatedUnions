@@ -9,6 +9,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer.SwitchStatement;
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 /// <summary>
@@ -31,15 +32,15 @@ public static class SwitchStatementHelper
                         if (patternCaseClauseOperation.Pattern is IDeclarationPatternOperation
                             declarationPatternOperation)
                         {
-                            return (Type: declarationPatternOperation.MatchedType, HandlesCase: true);
+                            return (Type: declarationPatternOperation.MatchedType as INamedTypeSymbol, HandlesCase: true);
                         }
 
                         if (patternCaseClauseOperation.Pattern is ITypePatternOperation typePatternOperation)
                         {
-                            return (Type: typePatternOperation.MatchedType, HandlesCase: true);
+                            return (Type: typePatternOperation.MatchedType as INamedTypeSymbol, HandlesCase: true);
                         }
 
-                        return (Type: patternCaseClauseOperation.Pattern.NarrowedType, HandlesCase: false);
+                        return (Type: patternCaseClauseOperation.Pattern.NarrowedType as INamedTypeSymbol, HandlesCase: false);
                     }
 
                     return (Type: null, HandlesCase: false);

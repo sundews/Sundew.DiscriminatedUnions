@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <IsRoslynComponent>true</IsRoslynComponent>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,6 +16,11 @@
   
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
+    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\CaseTypeAttribute.cs" />
+    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\DiscriminatedUnion.cs" />
+    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\UnreachableCaseException.cs" />
+    <EmbeddedResource Include="@(SundewDiscriminatedUnions)" LinkBase="Api" />
+    <Compile Include="@(SundewDiscriminatedUnions)" LinkBase="Api" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +32,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
     <PackageReference Include="Nullable" Version="1.3.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -38,12 +44,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.csproj" />
+    <Compile Update="Resources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Resources.resx" />
+    <EmbeddedResource Update="Resources.resx" Generator="PublicResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Resources.resx" />
-    <EmbeddedResource Update="Resources.resx" Generator="PublicResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <Folder Include="Api\" />
+    <Folder Include="FactoryMethod\" />
   </ItemGroup>
 
 </Project>

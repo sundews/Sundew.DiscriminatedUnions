@@ -43,39 +43,50 @@ var message = result switch
 ```
 
 ### Dimensional unions
-To support dimensional unions, unnested cases help because the cases are no longer defined inside a union. However, for this to work the unions are required to declare a factory method named exactly like the case type, that consists of a single return statement that creates the cases. The return type of a factory method should match the union in which it is declared. A code fix is available to generate the factory methods. 
+To support dimensional unions, unnested cases help because the cases are no longer defined inside a union. However, for this to work the unions are required to declare a factory method named exactly like the case type, that consists of a single return statement that creates the cases. The return type of a factory method should match the union in which it is declared. A code fix (PDU0001) is available to generate the factory methods. 
 ```csharp
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public interface IExpression
 {
-    public static IExpression AddExpression(IExpression lhs, IExpression rhs) => new AddExpression(lhs, rhs);
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
+    public static IExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(SubtractionExpression))]
     public static IExpression SubtractionExpression(IExpression lhs, IExpression rhs) => new SubtractionExpression(lhs, rhs);
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(MultiplicationExpression))]
     public static IExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(DivisionExpression))]
     public static IExpression DivisionExpression(IExpression lhs, IExpression rhs) => new DivisionExpression(lhs, rhs);
  
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(ValueExpression))]
     public static IExpression ValueExpression(int value) => new ValueExpression(value);
 }
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public interface IArithmeticExpression : IExpression
 {
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
     public new static IArithmeticExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(SubtractionExpression))]
     public new static IArithmeticExpression SubtractionExpression(IExpression lhs, IExpression rhs) => new SubtractionExpression(lhs, rhs);
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(MultiplicationExpression))]
     public new static IArithmeticExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(DivisionExpression))]
     public new static IArithmeticExpression DivisionExpression(IExpression lhs, IExpression rhs) => new DivisionExpression(lhs, rhs);
 }
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public interface ICommutativeExpression : IArithmeticExpression
 {
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
     public new static ICommutativeExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
 
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(MultiplicationExpression))]
     public new static ICommutativeExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
 }
 
@@ -102,6 +113,7 @@ public sealed record ValueExpression(int Value) : IExpression;
 | SDU0007       | Cases must be declared in the same assembly as their unions            |   no      |
 | SDU0008       | Cases should be sealed                                                 |   yes     |
 | SDU0009       | Unnested cases should have factory method                              |   PDU0001 |
+| SDU0010       | Factory method should have correct CaseTypeAttribute                   |   yes     |
 | PDU0001       | Populate union factory methods                                         |   yes     |
 | SDU9999       | Switch should throw in default case                                    |   no      |
 

@@ -7,6 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.CodeFixes;
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ internal class CasesShouldBeSealedCodeFixer : ICodeFixer
         Document document,
         SyntaxNode root,
         SyntaxNode node,
+        IReadOnlyList<Location> additionalLocations,
         ImmutableDictionary<string, string?> diagnosticProperties,
         SemanticModel semanticModel,
         CancellationToken cancellationToken)

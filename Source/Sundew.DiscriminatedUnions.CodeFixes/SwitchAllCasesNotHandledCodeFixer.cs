@@ -41,6 +41,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         Document document,
         SyntaxNode root,
         SyntaxNode node,
+        IReadOnlyList<Location> additionalLocations,
         ImmutableDictionary<string, string?> diagnosticProperties,
         SemanticModel semanticModel,
         CancellationToken cancellationToken)
@@ -74,7 +75,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
             return document;
         }
 
-        var cases = UnionHelper.GetKnownCaseTypes(switchType, semanticModel.Compilation).Pair().ToList();
+        var cases = UnionHelper.GetKnownCaseTypes(switchType).Pair().ToList();
         var handledCaseTypes = SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).ToList();
 
         if (switchExpressionOperation.Syntax is not SwitchExpressionSyntax switchExpressionSyntax)
@@ -138,7 +139,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
             return document;
         }
 
-        var cases = UnionHelper.GetKnownCaseTypes(switchType, semanticModel.Compilation).Pair().ToList();
+        var cases = UnionHelper.GetKnownCaseTypes(switchType).Pair().ToList();
         var handledCaseTypes = SwitchStatementHelper.GetHandledCaseTypes(switchOperation).ToList();
 
         if (switchOperation.Syntax is not SwitchStatementSyntax switchStatementSyntax)

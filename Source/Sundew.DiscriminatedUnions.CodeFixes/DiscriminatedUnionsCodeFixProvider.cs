@@ -39,6 +39,7 @@ public class DiscriminatedUnionsCodeFixProvider : CodeFixProvider
             new UnionsMustBeAbstractCodeFixer(),
             new CasesShouldBeSealedCodeFixer(),
             new PopulateFactoryMethodsCodeFixer(),
+            new CaseTypeAttributeCodeFixer(),
         }.ToDictionary(x => x.DiagnosticId);
         this.FixableDiagnosticIds = ImmutableArray.CreateRange(this.codeFixers.Keys);
     }
@@ -92,7 +93,7 @@ public class DiscriminatedUnionsCodeFixProvider : CodeFixProvider
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             canFix.Title,
-                            cancellationToken => codeFixer.Fix(document, root, node, diagnostic.Properties, semanticModel, cancellationToken),
+                            cancellationToken => codeFixer.Fix(document, root, node, diagnostic.AdditionalLocations, diagnostic.Properties, semanticModel, cancellationToken),
                             canFix.EquivalenceKey),
                         diagnostic);
                     return;

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Sundew.DiscriminatedUnions.Analyzer.Analyzers;
+using Sundew.DiscriminatedUnions.Analyzer.FactoryMethod;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchExpression;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchStatement;
 
@@ -66,6 +67,11 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
     /// Diagnostic id indicating that unnested cases should have a factory method in its unions.
     /// </summary>
     public const string UnnestedCasesShouldHaveFactoryMethodDiagnosticId = "SDU0009";
+
+    /// <summary>
+    /// Diagnostic id indicating that factory method should have a matching CaseTypeAttribute.
+    /// </summary>
+    public const string FactoryMethodShouldHaveMatchingCaseTypeAttributeDiagnosticId = "SDU0010";
 
     /// <summary>
     /// Diagnostic id indicating that the switch should throw in default case.
@@ -175,7 +181,7 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
         nameof(Resources.CasesShouldBeSealedDescription));
 
     /// <summary>
-    /// The switch should throw in default case rule.
+    /// The unnested case should have factory method rule.
     /// </summary>
     public static readonly DiagnosticDescriptor UnnestedCasesShouldHaveFactoryMethodRule =
         DiagnosticDescriptorHelper.Create(
@@ -186,6 +192,19 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
             DiagnosticSeverity.Error,
             true,
             nameof(Resources.UnnestedCasesShouldHaveFactoryMethodDescription));
+
+    /// <summary>
+    /// The factory method should have a matching CaseTypeAttribute rule.
+    /// </summary>
+    public static readonly DiagnosticDescriptor FactoryMethodShouldHaveMatchingCaseTypeAttributeRule =
+        DiagnosticDescriptorHelper.Create(
+            FactoryMethodShouldHaveMatchingCaseTypeAttributeDiagnosticId,
+            nameof(Resources.FactoryMethodShouldHaveMatchingCaseTypeAttributeTitle),
+            nameof(Resources.FactoryMethodShouldHaveMatchingCaseTypeAttributeMessageFormat),
+            Category,
+            DiagnosticSeverity.Error,
+            true,
+            nameof(Resources.FactoryMethodShouldHaveMatchingCaseTypeAttributeDescription));
 
     /// <summary>
     /// The switch should throw in default case rule.
@@ -215,6 +234,7 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
         CasesMustBeDeclaredInUnionAssemblyRule,
         CasesShouldBeSealedRule,
         UnnestedCasesShouldHaveFactoryMethodRule,
+        FactoryMethodShouldHaveMatchingCaseTypeAttributeRule,
         SwitchShouldThrowInDefaultCaseRule);
 
     /// <summary>
@@ -248,6 +268,9 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
                 },
                 SymbolKind.NamedType);
         }
+
+        var factoryMethodAnalyzer = new FactoryMethodAnalyzer();
+        context.RegisterSymbolAction(factoryMethodAnalyzer.Analyze, SymbolKind.Method);
 
         var unionSwitchExpressionAnalyzer = new UnionSwitchExpressionAnalyzer();
         var unionSwitchStatementAnalyzer = new UnionSwitchStatementAnalyzer();

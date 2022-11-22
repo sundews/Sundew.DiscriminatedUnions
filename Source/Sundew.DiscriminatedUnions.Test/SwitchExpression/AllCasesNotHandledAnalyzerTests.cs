@@ -194,4 +194,50 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'SubtractionExpression', 'ValueExpression'", Resources.Cases, "Unions.Expression", Resources.Are)
                 .WithSpan(18, 16, 21, 10));
     }
+
+    [TestMethod]
+    public async Task Given_GenericSwitchExpressionInEnabledNullableContext_When_MultipleCasesAreMissingForUnnestedCases_Then_AllCasesNotHandledIsReported()
+    {
+        var test = $@"#nullable enable
+{TestData.Usings}
+
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract record SingleOrMultiple<TItem>
+{{
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(Single<>))]
+    public static SingleOrMultiple<TItem> Single(TItem item) => new Single<TItem>(item);
+
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(Multiple<>))]
+    public static SingleOrMultiple<TItem> Multiple(IReadOnlyList<TItem> item) => new Multiple<TItem>(item);
+
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(Empty<>))]
+    public static SingleOrMultiple<TItem> Empty() => new Empty<TItem>();
+}}
+
+public sealed record Single<TItem>(TItem Item) : SingleOrMultiple<TItem>;
+
+public sealed record Multiple<TItem>(IReadOnlyList<TItem> Items) : SingleOrMultiple<TItem>;
+
+public sealed record Empty<TItem>() : SingleOrMultiple<TItem>;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public string Evaluate<TItem>(SingleOrMultiple<TItem> singleOrMultiple)
+    {{
+        return singleOrMultiple switch
+        {{
+            Single<TItem> single => single.ToString(),
+        }};
+    }}
+}}
+";
+
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Multiple', 'Empty'", Resources.Cases, "Unions.SingleOrMultiple<TItem>", Resources.Are)
+                .WithSpan(37, 16, 40, 10));
+    }
 }

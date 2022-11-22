@@ -14,10 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="stylecop.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
 
@@ -26,7 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.4.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.1" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -34,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
   </ItemGroup>
 
   <ItemGroup>

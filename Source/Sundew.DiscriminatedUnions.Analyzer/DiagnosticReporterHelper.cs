@@ -18,16 +18,30 @@ internal static class DiagnosticReporterHelper
     private const string Null = "null";
 
     public static void ReportDiagnostics(
-        IReadOnlyList<ITypeSymbol> caseTypes,
-        IEnumerable<ITypeSymbol> handledCaseTypes,
+        IReadOnlyList<INamedTypeSymbol> caseTypes,
+        IEnumerable<INamedTypeSymbol> handledCaseTypes,
         IOperation? nullCase,
         SwitchNullability switchNullability,
         ITypeSymbol unionType,
         IOperation operation,
         Action<Diagnostic> reportDiagnostic)
     {
-        var missingCaseTypes = caseTypes.Except(handledCaseTypes, SymbolEqualityComparer.Default)
-            .Where(x => x != null).Select(x => x!);
+        var missingCaseTypes = new HashSet<INamedTypeSymbol>(caseTypes, SymbolEqualityComparer.Default);
+        foreach (var handledCaseType in handledCaseTypes)
+        {
+            missingCaseTypes.RemoveWhere(x =>
+            {
+                var actualHandledCaseType = handledCaseType;
+                if (x.IsGenericType || handledCaseType.IsGenericType)
+                {
+                    x = x.OriginalDefinition;
+                    actualHandledCaseType = actualHandledCaseType.OriginalDefinition;
+                }
+
+                return SymbolEqualityComparer.Default.Equals(actualHandledCaseType, x);
+            });
+        }
+
         if (nullCase != null && switchNullability == SwitchNullability.HasUnreachableNullCase)
         {
             reportDiagnostic(Diagnostic.Create(

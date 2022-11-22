@@ -13,7 +13,7 @@ using System;
 /// Exception used to silence CS8509 by throwing it in the default case of switch expression.
 /// </summary>
 /// <seealso cref="System.Exception" />
-public class UnreachableCaseException : Exception
+internal class UnreachableCaseException : Exception
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="UnreachableCaseException"/> class.
