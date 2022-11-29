@@ -83,7 +83,7 @@ jobs:
         git tag -a v.${{ steps.stage-build.outputs.version }} -m "v.${{ steps.stage-build.outputs.version }}"
         git push ${{ env.repository }} v.${{ steps.stage-build.outputs.version }}
 
-        cb --if "${{ steps.stage-build.outputs.isReleaseCommand }} == 'true'" -c "git|push --delete ${{ env.repository }} ${{ github.ref }}"
+        cb --if "${{ steps.stage-build.outputs.isReleaseCommand }} == true" -c "git|push --delete ${{ env.repository }} ${{ github.ref }}"
     - name: 'Await stable package publish'
       if: ${{ steps.stage-build.outputs.stage == 'production' }}
       run: cb -c "spt|await -s ${{ steps.stage-build.outputs.feedSource }} {0}.{2}" -bs NewLine -bvs '=' -bf ${{ env.source-packages-to-push }}
