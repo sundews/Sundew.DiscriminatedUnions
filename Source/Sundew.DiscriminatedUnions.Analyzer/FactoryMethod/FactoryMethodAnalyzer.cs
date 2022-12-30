@@ -7,9 +7,12 @@
 
 namespace Sundew.DiscriminatedUnions.Analyzer.FactoryMethod;
 
+using System.Globalization;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 internal class FactoryMethodAnalyzer
 {
@@ -64,14 +67,26 @@ internal class FactoryMethodAnalyzer
                 }
                 else
                 {
-                    foreach (var declaringSyntaxReference in factoryMethod.DeclaringSyntaxReferences)
+                    if (factoryMethod.DeclaringSyntaxReferences.Any(x =>
+                        {
+                            var syntaxNode = x.GetSyntax();
+                            if (!(syntaxNode is MethodDeclarationSyntax methodDeclarationSyntax))
+                            {
+                                return false;
+                            }
+
+                            return UnionHelper.GetInstantiatedCaseTypeSymbol(factoryMethod, symbolAnalysisContext.Compilation) != null;
+                        }))
                     {
-                        symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(
-                            DiscriminatedUnionsAnalyzer
-                                .FactoryMethodShouldHaveMatchingCaseTypeAttributeRule,
-                            declaringSyntaxReference.GetSyntax().GetLocation(),
-                            factoryMethod,
-                            createdCaseTypeSymbol));
+                        foreach (var declaringSyntaxReference in factoryMethod.DeclaringSyntaxReferences)
+                        {
+                            symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(
+                                DiscriminatedUnionsAnalyzer
+                                    .FactoryMethodShouldHaveMatchingCaseTypeAttributeRule,
+                                declaringSyntaxReference.GetSyntax().GetLocation(),
+                                factoryMethod,
+                                createdCaseTypeSymbol));
+                        }
                     }
                 }
             }

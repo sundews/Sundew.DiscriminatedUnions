@@ -97,4 +97,38 @@ internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : E
 ";
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
+
+    [TestMethod]
+    public async Task Given_ConditionalFactoryMethod_Then_NoDiagnosticsAreReported()
+    {
+        var test = $@"#nullable enable
+{TestData.Usings}
+namespace Unions;
+
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+internal interface Expression
+{{
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
+    public static Expression AdditionExpression(Expression lhs, Expression rhs) => new AdditionExpression(lhs, rhs);
+
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(SubtractionExpression))]
+    public static Expression SubtractionExpression(Expression lhs, Expression rhs) => new SubtractionExpression(lhs, rhs);
+
+    public static Expression From(Expression lhs, Expression rhs, bool isAddition)
+    {{
+        if (isAddition)
+        {{
+            return new AdditionExpression(lhs, rhs);
+        }}
+
+        return new SubtractionExpression(lhs, rhs);
+    }}
+}}
+
+internal sealed record AdditionExpression(Expression Lhs, Expression Rhs) : Expression;
+
+internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : Expression;
+";
+        await VerifyCS.VerifyAnalyzerAsync(test);
+    }
 }
