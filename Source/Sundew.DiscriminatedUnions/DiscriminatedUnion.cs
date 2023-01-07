@@ -5,17 +5,18 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions;
-
-using System;
-
-/// <summary>
-/// Attribute for indicating a discriminated union.
-/// </summary>
-/// <seealso cref="System.Attribute" />
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-#pragma warning disable SA1649 // File header file name documentation should match file name
-internal class DiscriminatedUnion : Attribute
-#pragma warning restore SA1649 // File header file name documentation should match file name
+namespace Sundew.DiscriminatedUnions
 {
+    using System;
+
+    /// <summary>
+    /// Attribute for indicating a discriminated union.
+    /// </summary>
+    /// <seealso cref="System.Attribute" />
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
+#pragma warning disable SA1649 // File header file name documentation should match file name
+    internal class DiscriminatedUnion : Attribute
+#pragma warning restore SA1649 // File header file name documentation should match file name
+    {
+    }
 }
