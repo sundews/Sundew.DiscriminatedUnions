@@ -7,8 +7,8 @@
 
 namespace Sundew.DiscriminatedUnions.Analyzer;
 
-using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 
 /// <summary>
 /// Extends <see cref="INamedTypeSymbol"/> with easy to use methods.
@@ -18,16 +18,16 @@ public static class NamedTypeSymbolExtensions
     /// <summary>
     /// Enumerates the type hierarchy.
     /// </summary>
-    /// <param name="discriminatedUnionType">The discriminated union type.</param>
+    /// <param name="typeSymbol">The type symbol.</param>
     /// <returns>An enumerable of all base types.</returns>
-    public static IEnumerable<INamedTypeSymbol> EnumerateBaseTypes(this INamedTypeSymbol? discriminatedUnionType)
+    public static IEnumerable<INamedTypeSymbol> EnumerateBaseTypes(this ITypeSymbol? typeSymbol)
     {
-        if (discriminatedUnionType == null)
+        if (typeSymbol == null)
         {
             yield break;
         }
 
-        discriminatedUnionType = discriminatedUnionType.BaseType;
+        var discriminatedUnionType = typeSymbol.BaseType;
         while (discriminatedUnionType != null)
         {
             yield return discriminatedUnionType;

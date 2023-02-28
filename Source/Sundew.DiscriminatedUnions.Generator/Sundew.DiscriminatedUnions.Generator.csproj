@@ -2,27 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>11</LangVersion>
+    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <IsRoslynComponent>true</IsRoslynComponent>
+    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin/Debug\Sundew.DiscriminatedUnions.Analyzer.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/Release\Sundew.DiscriminatedUnions.Analyzer.xml</DocumentationFile>
   </PropertyGroup>
   
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
-    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\CaseTypeAttribute.cs" />
-    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\DiscriminatedUnion.cs" />
-    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\UnreachableCaseException.cs" />
-    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\GeneratorFeatures.cs" />
-    <EmbeddedResource Include="@(SundewDiscriminatedUnions)" LinkBase="Api" />
-    <Compile Include="@(SundewDiscriminatedUnions)" LinkBase="Api" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,14 +36,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" ReferenceOutputAssembly="true" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Resources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Resources.resx" />
     <EmbeddedResource Update="Resources.resx" Generator="PublicResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\" />
-    <Folder Include="FactoryMethod\" />
-    <InternalsVisibleTo Include="Sundew.DiscriminatedUnions.Generator" />
+    <Folder Include="Sundew.Base\" />
   </ItemGroup>
+
 
 </Project>

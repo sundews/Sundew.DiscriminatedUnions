@@ -7,7 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Tester;
 
-[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+[Sundew.DiscriminatedUnions.DiscriminatedUnion(GeneratorFeatures.Segregate)]
 public abstract class Result
 {
 

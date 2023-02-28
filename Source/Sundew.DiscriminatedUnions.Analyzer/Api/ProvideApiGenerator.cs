@@ -9,8 +9,8 @@ namespace Sundew.DiscriminatedUnions.Analyzer.Api;
 
 using System.IO;
 using System.Linq;
-using Microsoft.CodeAnalysis;
 using System.Reflection;
+using Microsoft.CodeAnalysis;
 
 /// <summary>
 /// Provides the required types to create discriminated unions.
