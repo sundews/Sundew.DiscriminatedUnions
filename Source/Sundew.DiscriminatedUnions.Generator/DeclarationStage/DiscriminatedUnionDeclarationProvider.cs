@@ -19,10 +19,11 @@ using Sundew.DiscriminatedUnions.Generator;
 using Sundew.DiscriminatedUnions.Generator.Extensions;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Accessibility = Sundew.DiscriminatedUnions.Generator.Model.Accessibility;
-using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class DiscriminatedUnionDeclarationProvider
 {
+    private const string GeneratorFeaturesText = "generatorFeatures";
+
     public static IncrementalValuesProvider<DiscriminatedUnionDeclaration> SetupDiscriminatedUnionDeclarationStage(this SyntaxValueProvider syntaxProvider)
     {
         return syntaxProvider.CreateSyntaxProvider(
@@ -37,7 +38,7 @@ internal static class DiscriminatedUnionDeclarationProvider
         {
             IEnumerable<INamedTypeSymbol> baseSymbol = typeSymbol.BaseType != null ? new[] { typeSymbol.BaseType } : Array.Empty<INamedTypeSymbol>();
             var isConstrainingUnion = baseSymbol.Concat(typeSymbol.Interfaces).Any(UnionHelper.IsDiscriminatedUnion);
-            return new DiscriminatedUnionDeclaration(new Type(typeSymbol.MetadataName, typeSymbol.ContainingNamespace.ToDisplayString(CodeAnalysisHelper.NamespaceQualifiedDisplayFormat)), GetUnderlyingType(typeSymbol), accessibility, memberDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword), isConstrainingUnion, generatorFeatures);
+            return new DiscriminatedUnionDeclaration(typeSymbol.GetSourceType(), GetUnderlyingType(typeSymbol), accessibility, memberDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword), isConstrainingUnion, generatorFeatures);
         }
 
         return null;
@@ -45,18 +46,23 @@ internal static class DiscriminatedUnionDeclarationProvider
 
     private static bool TryGetUnionWithFeatures(ITypeSymbol typeSymbol, out GeneratorFeatures generatorFeatures)
     {
+        generatorFeatures = GeneratorFeatures.None;
         var discriminatedUnionAttributeSyntax = typeSymbol.GetAttributes().FirstOrDefault(attribute =>
         {
             var containingClass = attribute.AttributeClass?.ToDisplayString();
             return containingClass == typeof(Sundew.DiscriminatedUnions.DiscriminatedUnion).FullName;
         })?.ApplicationSyntaxReference?.GetSyntax() as AttributeSyntax;
 
+        if (discriminatedUnionAttributeSyntax == null)
+        {
+            return false;
+        }
+
         var generatorFeatureArgumentSyntax = discriminatedUnionAttributeSyntax?.ArgumentList?.Arguments.FirstOrDefault(x =>
-            x.NameColon == null || x.NameColon.Name.Identifier.ToString() == "generatorFeatures");
+            x.NameColon == null || x.NameColon.Name.Identifier.ToString() == GeneratorFeaturesText);
         if (generatorFeatureArgumentSyntax == null)
         {
-            generatorFeatures = GeneratorFeatures.None;
-            return false;
+            return true;
         }
 
         generatorFeatures = generatorFeatureArgumentSyntax.Expression.ToFullString().ParseFlagsEnum<GeneratorFeatures>(CultureInfo.InvariantCulture, '|');

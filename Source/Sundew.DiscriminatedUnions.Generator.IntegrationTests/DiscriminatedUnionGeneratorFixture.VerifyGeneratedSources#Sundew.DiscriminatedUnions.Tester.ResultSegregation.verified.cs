@@ -1,9 +1,9 @@
 ﻿//HintName: Sundew.DiscriminatedUnions.Tester.ResultSegregation.cs
 namespace Sundew.DiscriminatedUnions.Tester
 {
-    public sealed class ResultSegregation
+    public sealed class ResultSegregation<T>
     {
-        internal ResultSegregation(System.Collections.Generic.IReadOnlyList<Sundew.DiscriminatedUnions.Tester.Success> successes, System.Collections.Generic.IReadOnlyList<Sundew.DiscriminatedUnions.Tester.Warning> warnings, System.Collections.Generic.IReadOnlyList<Sundew.DiscriminatedUnions.Tester.Error> errors, System.Collections.Generic.IReadOnlyList<Sundew.DiscriminatedUnions.Tester.FatalError> fatalErrors)
+        internal ResultSegregation(System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.Success<T>> successes, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.Warning<T>> warnings, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.Error<T>> errors, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.FatalError<T>> fatalErrors)
         {
             this.Successes = successes;
             this.Warnings = warnings;
@@ -11,12 +11,12 @@ namespace Sundew.DiscriminatedUnions.Tester
             this.FatalErrors = fatalErrors;
         }
 
-        public System.Collections.Generic.IReadOnlyList<Sundew.DiscriminatedUnions.Tester.Success> Successes { get; }
+        public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.Success<T>> Successes { get; }
 
-        public System.Collections.Generic.IReadOnlyList<Sundew.DiscriminatedUnions.Tester.Warning> Warnings { get; }
+        public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.Warning<T>> Warnings { get; }
 
-        public System.Collections.Generic.IReadOnlyList<Sundew.DiscriminatedUnions.Tester.Error> Errors { get; }
+        public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.Error<T>> Errors { get; }
 
-        public System.Collections.Generic.IReadOnlyList<Sundew.DiscriminatedUnions.Tester.FatalError> FatalErrors { get; }
+        public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.FatalError<T>> FatalErrors { get; }
     }
 }

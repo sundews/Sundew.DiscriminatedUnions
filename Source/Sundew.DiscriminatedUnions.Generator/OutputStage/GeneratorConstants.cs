@@ -47,4 +47,5 @@ internal static class GeneratorConstants
     public const string Return = "return";
     public const string NewLine = "\r\n";
     public const string ListSeparator = ", ";
+    public const string DoubleColon = "::";
 }

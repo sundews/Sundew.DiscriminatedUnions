@@ -33,14 +33,14 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         var symbol = generatorContextSyntax.SemanticModel.GetDeclaredSymbol(generatorContextSyntax.Node);
         if (symbol is INamedTypeSymbol namedTypeSymbol)
         {
-            var owners = FindOwners(namedTypeSymbol).Select(x => new Type(x.MetadataName, x.ContainingNamespace.ToDisplayString(CodeAnalysisHelper.NamespaceQualifiedDisplayFormat)));
+            var owners = FindOwners(namedTypeSymbol).Select(x => x.GetSourceType());
             var parameters = TryGetParameters(namedTypeSymbol);
             if (parameters == null)
             {
                 return null;
             }
 
-            return new DiscriminatedUnionCaseDeclaration(new Type(namedTypeSymbol.MetadataName, namedTypeSymbol.ContainingNamespace.ToDisplayString(CodeAnalysisHelper.NamespaceQualifiedDisplayFormat)), owners.ToImmutableArray(), parameters.ToImmutableArray());
+            return new DiscriminatedUnionCaseDeclaration(namedTypeSymbol.GetSourceType(), owners.ToImmutableArray(), parameters.ToImmutableArray());
         }
 
         return null;
@@ -55,7 +55,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         }
 
         return selectedConstructor.Parameters.Select(x =>
-            new Parameter(new Type(x.Type.MetadataName, x.Type.ContainingNamespace.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)), x.Name.Uncapitalize().AvoidKeywordCollision()));
+            new Parameter(x.Type.GetSourceType(), x.Name.Uncapitalize().AvoidKeywordCollision()));
     }
 
     private static IEnumerable<INamedTypeSymbol> FindOwners(ITypeSymbol typeSymbol)

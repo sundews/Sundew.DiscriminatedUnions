@@ -7,8 +7,13 @@
 
 namespace Sundew.DiscriminatedUnions.Generator;
 
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
+using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
+using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class CodeAnalysisHelper
 {
@@ -107,5 +112,28 @@ internal static class CodeAnalysisHelper
         }
 
         return value;
+    }
+
+    public static Type GetSourceType(this ITypeSymbol typeSymbol)
+    {
+        switch (typeSymbol)
+        {
+            case INamedTypeSymbol namedTypeSymbol:
+                return new Type(
+                    namedTypeSymbol.Name,
+                    namedTypeSymbol.ContainingNamespace.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                    namedTypeSymbol.TypeParameters.Select(x => new TypeParameter(x.MetadataName)).ToImmutableArray(),
+                    false);
+            case IArrayTypeSymbol arrayTypeSymbol:
+                return new Type(
+                    arrayTypeSymbol.ElementType.Name,
+                    arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                    ImmutableArray<TypeParameter>.Empty,
+                    true);
+            case ITypeParameterSymbol typeParameterSymbol:
+                return new Type(typeParameterSymbol.MetadataName, string.Empty, ImmutableArray<TypeParameter>.Empty, false);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(typeSymbol));
+        }
     }
 }

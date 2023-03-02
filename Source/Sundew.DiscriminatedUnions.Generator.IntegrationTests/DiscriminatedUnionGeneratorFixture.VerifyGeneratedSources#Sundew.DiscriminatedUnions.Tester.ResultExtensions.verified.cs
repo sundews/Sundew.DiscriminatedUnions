@@ -3,33 +3,33 @@ namespace Sundew.DiscriminatedUnions.Tester
 {
     public static class ResultExtensions
     {
-        public static ResultSegregation Segregate(this System.Collections.Generic.IEnumerable<Sundew.DiscriminatedUnions.Tester.Result> results)
+        public static ResultSegregation<T> Segregate<T>(this System.Collections.Generic.IEnumerable<global::Sundew.DiscriminatedUnions.Tester.Result<T>> results)
         {
-            var successes = new System.Collections.Generic.List<Sundew.DiscriminatedUnions.Tester.Success>();
-            var warnings = new System.Collections.Generic.List<Sundew.DiscriminatedUnions.Tester.Warning>();
-            var errors = new System.Collections.Generic.List<Sundew.DiscriminatedUnions.Tester.Error>();
-            var fatalErrors = new System.Collections.Generic.List<Sundew.DiscriminatedUnions.Tester.FatalError>();
+            var successes = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.Success<T>>();
+            var warnings = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.Warning<T>>();
+            var errors = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.Error<T>>();
+            var fatalErrors = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.FatalError<T>>();
 
             foreach (var value in results)
             {
                 switch (value)
                 {
-                    case Sundew.DiscriminatedUnions.Tester.Success success:
+                    case global::Sundew.DiscriminatedUnions.Tester.Success<T> success:
                         successes.Add(success);
                         break;
-                    case Sundew.DiscriminatedUnions.Tester.Warning warning:
+                    case global::Sundew.DiscriminatedUnions.Tester.Warning<T> warning:
                         warnings.Add(warning);
                         break;
-                    case Sundew.DiscriminatedUnions.Tester.Error error:
+                    case global::Sundew.DiscriminatedUnions.Tester.Error<T> error:
                         errors.Add(error);
                         break;
-                    case Sundew.DiscriminatedUnions.Tester.FatalError fatalError:
+                    case global::Sundew.DiscriminatedUnions.Tester.FatalError<T> fatalError:
                         fatalErrors.Add(fatalError);
                         break;
                 }
             }
 
-            return new ResultSegregation(successes, warnings, errors, fatalErrors);
+            return new ResultSegregation<T>(successes, warnings, errors, fatalErrors);
         }
     }
 }

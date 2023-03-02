@@ -9,18 +9,48 @@ namespace Sundew.DiscriminatedUnions.Generator.OutputStage;
 
 using System;
 using System.Text;
+using Sundew.Base;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using static GeneratorConstants;
 using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class StringBuilderExtensions
 {
-    public static StringBuilder AppendType(this StringBuilder stringBuilder, Type type)
+    public static StringBuilder AppendType(this StringBuilder stringBuilder, Type type, bool fullyQualify = true, bool omitTypeParameters = false)
     {
-        stringBuilder.Append(type.Namespace);
-        stringBuilder.Append(".");
+        if (fullyQualify && type.Namespace != string.Empty)
+        {
+            stringBuilder.Append(type.Namespace);
+            stringBuilder.Append('.');
+        }
+
         stringBuilder.Append(type.Name);
+
+        TryAppendTypeParameters(stringBuilder, type, omitTypeParameters);
+        if (type.IsArray)
+        {
+            stringBuilder.Append('[').Append(']');
+        }
+
         return stringBuilder;
+    }
+
+    public static void TryAppendTypeParameters(this StringBuilder stringBuilder, Type type, bool omitTypeParameters = false)
+    {
+        if (type.TypeParameters.Count > 0)
+        {
+            stringBuilder.Append('<');
+            if (!omitTypeParameters)
+            {
+                type.TypeParameters.JoinToStringBuilder(stringBuilder, (builder, parameter) => builder.Append(parameter.Name), ListSeparator);
+            }
+            else
+            {
+                stringBuilder.Append(',', type.TypeParameters.Count - 1);
+            }
+
+            stringBuilder.Append('>');
+        }
     }
 
     public static StringBuilder AppendUnderlyingType(this StringBuilder stringBuilder, UnderlyingType underlyingType)
