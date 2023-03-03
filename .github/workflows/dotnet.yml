@@ -42,7 +42,7 @@ jobs:
 
         git rev-parse --short=10 HEAD | cb -c ">> $GITHUB_OUTPUT|git-hash={0}" --batches-stdin
 
-        echo "=$GITHUB_OUTPUT" >> $GITHUB_OUTPUT
+        echo "github-output=$GITHUB_OUTPUT" >> $GITHUB_OUTPUT
     - name: Stage Build
       id: stage-build
       run: >
