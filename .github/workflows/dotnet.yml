@@ -22,7 +22,7 @@ jobs:
       dev-symbols-source: 'https://www.myget.org/F/sundew-dev/api/v3/index.json'
       packages-to-push: 'logs/packages.push'
       source-packages-to-push: './Source/logs/packages.push'
-      output-file: '$GITHUB_OUTPUT'
+      output-file: $GITHUB_OUTPUT
     steps:
     - name: 'Await other builds'
       uses: softprops/turnstyle@v1
