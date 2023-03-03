@@ -57,9 +57,9 @@ jobs:
         ">|nuGetPackagesPath={WorkingDirectory}/NuGet" ">|dev-package-source-if-set={DevFeedSource}" ">|feedSource={FeedSource}"
         ">|pushSource={PushSource}" ">|apiKey={ApiKey}" ">|fullVersion={FullVersion}" ">|symbolsPushSource={SymbolsPushSource}"
         ">|symbolsApiKey={SymbolsApiKey}"
-        --output-file '"${{ env.GITHUB_OUTPUT }}"'
+        --output-file '"${{ $GITHUB_OUTPUT }}"'
 
-        cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true" -i "${{ github.ref }}" "${{ env.GITHUB_OUTPUT }}"
+        cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true" -i "${{ github.ref }}" "${{ $GITHUB_OUTPUT }}"
     - name: Restore
       run: dotnet restore ${{ env.solutionPath }} --verbosity normal -s ${{ env.source }}${{ steps.stage-build.outputs.dev-package-source-if-set }}
     - name: Build
