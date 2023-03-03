@@ -41,6 +41,7 @@ jobs:
         dotnet tool update CommandlineBatcher -g --version 7.4.*
 
         git rev-parse --short=10 HEAD | cb -c ">> $GITHUB_OUTPUT|git-hash={0}" --batches-stdin
+        cb -c ">> $GITHUB_OUTPUT|github-output={$GITHUB_OUTPUT}"
     - name: Stage Build
       id: stage-build
       run: >
@@ -57,9 +58,9 @@ jobs:
         ">|nuGetPackagesPath={WorkingDirectory}/NuGet" ">|dev-package-source-if-set={DevFeedSource}" ">|feedSource={FeedSource}"
         ">|pushSource={PushSource}" ">|apiKey={ApiKey}" ">|fullVersion={FullVersion}" ">|symbolsPushSource={SymbolsPushSource}"
         ">|symbolsApiKey={SymbolsApiKey}"
-        --output-file $GITHUB_OUTPUT
+        --output-file '"${{ steps.build-setup.outputs.github-output }}"'
 
-        cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true" -i "${{ github.ref }}" $GITHUB_OUTPUT
+        cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true" -i "${{ github.ref }}" "${{ steps.build-setup.outputs.github-output }}"
     - name: Restore
       run: dotnet restore ${{ env.solutionPath }} --verbosity normal -s ${{ env.source }}${{ steps.stage-build.outputs.dev-package-source-if-set }}
     - name: Build
