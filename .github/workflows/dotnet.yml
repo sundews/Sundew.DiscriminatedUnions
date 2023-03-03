@@ -40,7 +40,7 @@ jobs:
 
         dotnet tool update CommandlineBatcher -g --version 7.4.*
 
-        git rev-parse --short=10 HEAD | cb -c "|::set-output name=git-hash::{0}" --batches-stdin
+        git rev-parse --short=10 HEAD | cb -c ">> $GITHUB_OUTPUT|git-hash={0}" --batches-stdin
     - name: Stage Build
       id: stage-build
       run: >
