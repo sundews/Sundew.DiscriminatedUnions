@@ -57,7 +57,7 @@ jobs:
         ">|nuGetPackagesPath={WorkingDirectory}/NuGet{NL}" ">|dev-package-source-if-set={DevFeedSource}{NL}" ">|feedSource={FeedSource}{NL}"
         ">|pushSource={PushSource}{NL}" ">|apiKey={ApiKey}{NL}" ">|fullVersion={FullVersion}{NL}" ">|symbolsPushSource={SymbolsPushSource}{NL}"
         ">|symbolsApiKey={SymbolsApiKey}{NL}"
-        --output-file '$GITHUB_OUTPUT'
+        --output-file $GITHUB_OUTPUT
 
         cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true{NL}" -i "${{ github.ref }}" "${{ steps.build-setup.outputs.github-output }}"
     - name: Restore
