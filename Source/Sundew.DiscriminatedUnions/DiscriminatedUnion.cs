@@ -18,5 +18,24 @@ namespace Sundew.DiscriminatedUnions
     internal class DiscriminatedUnion : Attribute
 #pragma warning restore SA1649 // File header file name documentation should match file name
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DiscriminatedUnion"/> class.
+        /// </summary>
+        public DiscriminatedUnion()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DiscriminatedUnion"/> class.
+        /// </summary>
+        public DiscriminatedUnion(GeneratorFeatures generatorFeatures)
+        {
+            this.GeneratorFeatures = generatorFeatures;
+        }
+
+        /// <summary>
+        /// Gets the generator features.
+        /// </summary>
+        public GeneratorFeatures GeneratorFeatures { get; }
     }
 }

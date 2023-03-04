@@ -7,8 +7,8 @@
 
 namespace Sundew.DiscriminatedUnions.Analyzer;
 
-using System.Collections.Immutable;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Sundew.DiscriminatedUnions.Analyzer.Analyzers;
@@ -243,7 +243,7 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
     /// <param name="context">The context.</param>
     public override void Initialize(AnalysisContext context)
     {
-        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
         context.EnableConcurrentExecution();
 
         var unionSymbolAnalyzers = new List<IUnionSymbolAnalyzer>

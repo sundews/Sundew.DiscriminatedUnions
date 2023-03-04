@@ -23,6 +23,7 @@ using Sundew.DiscriminatedUnions.Analyzer;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchExpression;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchStatement;
 using Sundew.DiscriminatedUnions.CodeFixes.Collections;
+using Sundew.DiscriminatedUnions.Text;
 
 internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
 {
@@ -86,15 +87,15 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         var arms = switchExpressionSyntax.Arms;
         foreach (var (previousCaseType, missingCaseType) in cases)
         {
-            var caseInfo = FindIndex(handledCaseTypes, missingCaseType, previousCaseType);
-            if (caseInfo.WasHandled)
+            var (index, wasHandled) = FindIndex(handledCaseTypes, missingCaseType, previousCaseType);
+            if (wasHandled)
             {
                 continue;
             }
 
-            handledCaseTypes.Insert(caseInfo.Index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
+            handledCaseTypes.Insert(index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
             arms = arms.Insert(
-                caseInfo.Index,
+                index,
                 SyntaxFactory.SwitchExpressionArm(
                         SyntaxFactory.DeclarationPattern(
                             (TypeSyntax)generator.TypeExpression(missingCaseType),
@@ -150,15 +151,15 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         var sections = switchStatementSyntax.Sections;
         foreach (var (previousCaseType, missingCaseType) in cases)
         {
-            var caseInfo = FindIndex(handledCaseTypes, missingCaseType, previousCaseType);
-            if (caseInfo.WasHandled)
+            var (index, wasHandled) = FindIndex(handledCaseTypes, missingCaseType, previousCaseType);
+            if (wasHandled)
             {
                 continue;
             }
 
-            handledCaseTypes.Insert(caseInfo.Index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
+            handledCaseTypes.Insert(index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
             sections = sections.Insert(
-                caseInfo.Index,
+                index,
                 SyntaxFactory.SwitchSection(
                     SyntaxFactory.List(
                         new SwitchLabelSyntax[]

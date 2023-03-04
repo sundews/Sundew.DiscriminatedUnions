@@ -18,6 +18,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 using Sundew.DiscriminatedUnions.Analyzer;
+using Sundew.DiscriminatedUnions.Text;
 
 internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
 {

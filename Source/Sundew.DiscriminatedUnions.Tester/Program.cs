@@ -8,12 +8,20 @@
 namespace Sundew.DiscriminatedUnions.Tester;
 
 using System;
+using System.Collections.Generic;
 using TestData;
 
 public static class Program
 {
     public static void Main(string[] args)
     {
+        var types = new List<DefiniteType>
+        {
+            DefiniteType.NamedType("1", "2", "3"), DefiniteType.DefiniteArrayType(DefiniteType.NamedType("2", "3", "4"))
+        };
+
+        var result = types.Segregate();
+
         var expression = new AdditionExpression(new ValueExpression(5),
             new SubtractionExpression(new ValueExpression(3), new ValueExpression(1)));
 

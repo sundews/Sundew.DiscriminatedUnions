@@ -13,7 +13,8 @@ C# 8 and 9 already comes with great pattern matching support for evaluation.
 In order that the inheritance hierarchy remain closed (All cases in the same assembly), an analyzer ensure that unions are not derived from in referencing assemblies.
 Similarly all case classes should be sealed.
 
-Create a union by inheriting from an abstract base (record) class (or interface) marked with the Union attribute to build various cases.
+Create a union by inheriting from an abstract base (record) class (or interface) marked with the DiscriminatedUnion attribute to build various cases.
+Either specify the partial keyword to the union for a source generator to implement factory methods or use the codefix PDU0001 to generate them.
 
 ## Sample
 ### Defining a union
@@ -46,49 +47,13 @@ var message = result switch
 To support dimensional unions, unnested cases help because the cases are no longer defined inside a union. However, for this to work the unions are required to declare a factory method named exactly like the case type, that consists of a single return statement that creates the cases. The return type of a factory method should match the union in which it is declared. A code fix (PDU0001) is available to generate the factory methods. 
 ```csharp
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public interface IExpression
-{
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
-    public static IExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
-
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(SubtractionExpression))]
-    public static IExpression SubtractionExpression(IExpression lhs, IExpression rhs) => new SubtractionExpression(lhs, rhs);
-
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(MultiplicationExpression))]
-    public static IExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
-
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(DivisionExpression))]
-    public static IExpression DivisionExpression(IExpression lhs, IExpression rhs) => new DivisionExpression(lhs, rhs);
- 
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(ValueExpression))]
-    public static IExpression ValueExpression(int value) => new ValueExpression(value);
-}
+public partial interface IExpression;
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public interface IArithmeticExpression : IExpression
-{
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
-    public new static IArithmeticExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
-
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(SubtractionExpression))]
-    public new static IArithmeticExpression SubtractionExpression(IExpression lhs, IExpression rhs) => new SubtractionExpression(lhs, rhs);
-
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(MultiplicationExpression))]
-    public new static IArithmeticExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
-
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(DivisionExpression))]
-    public new static IArithmeticExpression DivisionExpression(IExpression lhs, IExpression rhs) => new DivisionExpression(lhs, rhs);
-}
+public partial interface IArithmeticExpression : IExpression;
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public interface ICommutativeExpression : IArithmeticExpression
-{
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(AdditionExpression))]
-    public new static ICommutativeExpression AdditionExpression(IExpression lhs, IExpression rhs) => new AdditionExpression(lhs, rhs);
-
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(MultiplicationExpression))]
-    public new static ICommutativeExpression MultiplicationExpression(IExpression lhs, IExpression rhs) => new MultiplicationExpression(lhs, rhs);
-}
+public partial interface ICommutativeExpression : IArithmeticExpression;
 
 public sealed record AdditionExpression(IExpression Lhs, IExpression Rhs) : ICommutativeExpression;
 
@@ -100,6 +65,12 @@ public sealed record DivisionExpression(IExpression Lhs, IExpression Rhs) : IAri
 
 public sealed record ValueExpression(int Value) : IExpression;
 ```
+
+## Generator features
+As mentioned the source generator is automatically activated for generating Factory Methods by specifying the partial keyword.
+In addition, the DiscriminatedUnion attribute can specify a flags enum (GeneratorFeatures) to control additional code generation.
+
+### Segregate - Generates and extension method for IEnumerable<Union> that segregates all items into buckets of the different result.
 
 ## Supported diagnostics:
 | Diagnostic Id | Description                                                            | Code Fix  |
@@ -116,10 +87,10 @@ public sealed record ValueExpression(int Value) : IExpression;
 | SDU0010       | Factory method should have correct CaseTypeAttribute                   |   yes     |
 | PDU0001       | Populate union factory methods                                         |   yes     |
 | SDU9999       | Switch should throw in default case                                    |   no      |
+| GDU0001       | Discriminated union declaration could not be found                     |   no      |
 
 ## Issues/Todos
 * Switch appears with red squiggly lines in VS: https://github.com/dotnet/roslyn/issues/57041
 * Nullability is falsely evaluated when the switch hints null is possible: https://github.com/dotnet/roslyn/issues/57042
 * SDU0009 gets reported in VS, but no code fix is offered. VS issue here: https://github.com/dotnet/roslyn/issues/57621
   * Workaround: A PDU0001 is always reported on unions offering to generate factory methods, as it is not technically possible to implement a code fix for SDU0009 (See issue).
-* Verbose syntax for defining unions. (No SourceGenerators implemented yet)
