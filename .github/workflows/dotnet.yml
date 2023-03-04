@@ -36,7 +36,7 @@ jobs:
     - name: Build setup
       id: build-setup
       run: >
-        dotnet tool update Sundew.Packaging.Tool -g --version 7.8.*
+        dotnet tool update Sundew.Packaging.Tool -g --version 7.8.2-u20230304-081320-ci --prerelease
 
         dotnet tool update CommandlineBatcher -g --version 7.4.*
 
@@ -55,11 +55,12 @@ jobs:
         --prerelease-format "u{DateTime}-{Stage}-{Postfix}"
         --metadata ${{ steps.build-setup.outputs.git-hash }}
         --force-version '"${{ secrets.SPP_FORCE_VERSION_IF_SET }}"'
-        --output-formats "Stage {Stage}, {FullVersion}, {Configuration}" ">|stage={Stage}{NL}" ">|version={Version}{NL}" ">|buildConfiguration={Configuration}"
+        --output-formats "Stage {Stage}, {FullVersion}, {Configuration}" ">|stage={Stage}{NL}" ">|version={Version}{NL}" ">|buildConfiguration={Configuration}{NL}"
         ">|nuGetPackagesPath={WorkingDirectory}/NuGet{NL}" ">|dev-package-source-if-set={DevFeedSource}{NL}" ">|feedSource={FeedSource}{NL}"
         ">|pushSource={PushSource}{NL}" ">|apiKey={ApiKey}{NL}" ">|fullVersion={FullVersion}{NL}" ">|symbolsPushSource={SymbolsPushSource}{NL}"
         ">|symbolsApiKey={SymbolsApiKey}{NL}"
-        --output-file "${{ steps.build-setup.outputs.github-output }}"
+        --output-file '${{ steps.build-setup.outputs.github-output }}'
+        --file-encoding utf-8
 
         cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true{NL}" -i "${{ github.ref }}" "${{ steps.build-setup.outputs.github-output }}"
     - name: Restore
