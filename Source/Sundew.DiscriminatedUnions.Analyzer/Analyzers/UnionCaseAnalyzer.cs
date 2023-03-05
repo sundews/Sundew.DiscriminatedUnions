@@ -11,6 +11,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Sundew.DiscriminatedUnions.Shared;
 
 internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
 {
@@ -21,7 +22,7 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
         {
             foreach (var baseType in namedTypeSymbol.EnumerateBaseTypes().Concat(namedTypeSymbol.AllInterfaces))
             {
-                if (UnionHelper.IsDiscriminatedUnion(baseType))
+                if (baseType.IsDiscriminatedUnion())
                 {
                     isCase = true;
                     if (namedTypeSymbol.ContainingType == null)

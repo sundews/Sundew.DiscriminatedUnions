@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Generator.IntegrationTests", "Sundew.DiscriminatedUnions.Generator.IntegrationTests\Sundew.DiscriminatedUnions.Generator.IntegrationTests.csproj", "{341C2E7A-55E5-49BF-BF3B-8BB27DACFA82}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sundew.DiscriminatedUnions.Shared", "Sundew.DiscriminatedUnions.Shared\Sundew.DiscriminatedUnions.Shared.csproj", "{7FEB79EE-BE02-47E4-A9A4-5B0573B3498E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,10 @@ Global
 		{341C2E7A-55E5-49BF-BF3B-8BB27DACFA82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{341C2E7A-55E5-49BF-BF3B-8BB27DACFA82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{341C2E7A-55E5-49BF-BF3B-8BB27DACFA82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FEB79EE-BE02-47E4-A9A4-5B0573B3498E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FEB79EE-BE02-47E4-A9A4-5B0573B3498E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FEB79EE-BE02-47E4-A9A4-5B0573B3498E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FEB79EE-BE02-47E4-A9A4-5B0573B3498E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

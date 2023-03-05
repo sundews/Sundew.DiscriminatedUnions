@@ -9,14 +9,13 @@ namespace Sundew.DiscriminatedUnions.Generator;
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using Microsoft.CodeAnalysis;
-using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class CodeAnalysisHelper
 {
+    private const string GlobalAssemblyAlias = "global";
+
     private static readonly HashSet<string> Keywords = new HashSet<string>
     {
         "abstract",
@@ -119,19 +118,24 @@ internal static class CodeAnalysisHelper
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
+                var @namespace = namedTypeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat);
                 return new Type(
                     namedTypeSymbol.Name,
-                    namedTypeSymbol.ContainingNamespace.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                    namedTypeSymbol.TypeParameters.Select(x => new TypeParameter(x.MetadataName)).ToImmutableArray(),
+                    @namespace,
+                    namedTypeSymbol.IsGenericType ? namedTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Substring(GlobalAssemblyAlias.Length + @namespace.Length + namedTypeSymbol.Name.Length + 3) : null,
+                    GlobalAssemblyAlias,
+                    namedTypeSymbol.TypeParameters.Length,
                     false);
             case IArrayTypeSymbol arrayTypeSymbol:
                 return new Type(
                     arrayTypeSymbol.ElementType.Name,
-                    arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                    ImmutableArray<TypeParameter>.Empty,
+                    arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat),
+                    null,
+                    GlobalAssemblyAlias,
+                    0,
                     true);
             case ITypeParameterSymbol typeParameterSymbol:
-                return new Type(typeParameterSymbol.MetadataName, string.Empty, ImmutableArray<TypeParameter>.Empty, false);
+                return new Type(typeParameterSymbol.MetadataName, string.Empty, null, GlobalAssemblyAlias, 0, false);
             default:
                 throw new ArgumentOutOfRangeException(nameof(typeSymbol));
         }

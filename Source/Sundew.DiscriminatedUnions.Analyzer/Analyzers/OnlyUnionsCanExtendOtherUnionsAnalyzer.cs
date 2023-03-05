@@ -9,12 +9,13 @@ namespace Sundew.DiscriminatedUnions.Analyzer.Analyzers;
 
 using System;
 using Microsoft.CodeAnalysis;
+using Sundew.DiscriminatedUnions.Shared;
 
 internal class OnlyUnionsCanExtendOtherUnionsAnalyzer : IUnionSymbolAnalyzer
 {
     public void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> reportDiagnostic)
     {
-        if (UnionHelper.IsDiscriminatedUnion(namedTypeSymbol))
+        if (namedTypeSymbol.IsDiscriminatedUnion())
         {
             return;
         }
@@ -23,7 +24,7 @@ internal class OnlyUnionsCanExtendOtherUnionsAnalyzer : IUnionSymbolAnalyzer
         if (baseType != null &&
             namedTypeSymbol.TypeKind == TypeKind.Class &&
             namedTypeSymbol.IsAbstract &&
-            UnionHelper.IsDiscriminatedUnion(baseType))
+            baseType.IsDiscriminatedUnion())
         {
             foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
             {
@@ -39,7 +40,7 @@ internal class OnlyUnionsCanExtendOtherUnionsAnalyzer : IUnionSymbolAnalyzer
         {
             foreach (var @interface in namedTypeSymbol.Interfaces)
             {
-                if (UnionHelper.IsDiscriminatedUnion(@interface))
+                if (@interface.IsDiscriminatedUnion())
                 {
                     foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
                     {

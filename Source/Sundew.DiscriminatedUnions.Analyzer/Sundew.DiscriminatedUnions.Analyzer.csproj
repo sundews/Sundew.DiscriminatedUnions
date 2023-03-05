@@ -5,16 +5,9 @@
     <IsPackable>false</IsPackable>
     <IsRoslynComponent>true</IsRoslynComponent>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin/Debug\Sundew.DiscriminatedUnions.Analyzer.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/Release\Sundew.DiscriminatedUnions.Analyzer.xml</DocumentationFile>
-  </PropertyGroup>
-  
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
     <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\CaseTypeAttribute.cs" />
@@ -23,6 +16,11 @@
     <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\GeneratorFeatures.cs" />
     <EmbeddedResource Include="@(SundewDiscriminatedUnions)" LinkBase="Api" />
     <Compile Include="@(SundewDiscriminatedUnions)" LinkBase="Api" />
+
+    <SundewDiscriminatedUnionsShared Include="..\Sundew.DiscriminatedUnions.Shared\**\*.cs" />
+    <SundewDiscriminatedUnionsShared Remove="..\Sundew.DiscriminatedUnions.Shared\obj\**\*.cs" />
+    <Compile Remove="..\Sundew.DiscriminatedUnions.Shared\UnionHelper.cs" />
+    <Compile Include="@(SundewDiscriminatedUnionsShared)" LinkBase="Shared"></Compile>
   </ItemGroup>
 
   <ItemGroup>

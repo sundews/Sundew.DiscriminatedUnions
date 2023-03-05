@@ -20,13 +20,14 @@ internal static class StringBuilderExtensions
     {
         if (fullyQualify && type.Namespace != string.Empty)
         {
+            stringBuilder.Append(type.AssemblyAlias);
+            stringBuilder.Append(DoubleColon);
             stringBuilder.Append(type.Namespace);
             stringBuilder.Append('.');
         }
 
         stringBuilder.Append(type.Name);
-
-        TryAppendTypeParameters(stringBuilder, type, omitTypeParameters);
+        stringBuilder.TryAppendGenericQualifier(type, omitTypeParameters);
         if (type.IsArray)
         {
             stringBuilder.Append('[').Append(']');
@@ -35,21 +36,20 @@ internal static class StringBuilderExtensions
         return stringBuilder;
     }
 
-    public static void TryAppendTypeParameters(this StringBuilder stringBuilder, Type type, bool omitTypeParameters = false)
+    public static void TryAppendGenericQualifier(this StringBuilder stringBuilder, Type type, bool omitTypeParameters = false)
     {
-        if (type.TypeParameters.Count > 0)
+        if (type.GenericQualifier != null)
         {
-            stringBuilder.Append('<');
             if (!omitTypeParameters)
             {
-                type.TypeParameters.JoinToStringBuilder(stringBuilder, (builder, parameter) => builder.Append(parameter.Name), ListSeparator);
+                stringBuilder.Append(type.GenericQualifier);
             }
             else
             {
-                stringBuilder.Append(',', type.TypeParameters.Count - 1);
+                stringBuilder.Append('<');
+                stringBuilder.Append(',', type.TypeParameterCount - 1);
+                stringBuilder.Append('>');
             }
-
-            stringBuilder.Append('>');
         }
     }
 

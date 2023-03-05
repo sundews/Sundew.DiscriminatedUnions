@@ -13,11 +13,10 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Sundew.DiscriminatedUnions.Analyzer;
 using Sundew.DiscriminatedUnions.Generator;
 using Sundew.DiscriminatedUnions.Generator.Model;
+using Sundew.DiscriminatedUnions.Shared;
 using Sundew.DiscriminatedUnions.Text;
-using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class DiscriminatedUnionCaseDeclarationProvider
 {
@@ -63,7 +62,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         var baseType = typeSymbol.BaseType;
         while (baseType != null)
         {
-            if (UnionHelper.IsDiscriminatedUnion(baseType))
+            if (baseType.IsDiscriminatedUnion())
             {
                 yield return baseType;
             }
@@ -71,7 +70,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
             baseType = baseType.BaseType;
         }
 
-        foreach (var discriminatedUnionTypeSymbol in typeSymbol.AllInterfaces.Where(UnionHelper.IsDiscriminatedUnion))
+        foreach (var discriminatedUnionTypeSymbol in typeSymbol.AllInterfaces.Where(DiscriminatedUnionExtensions.IsDiscriminatedUnion))
         {
             yield return discriminatedUnionTypeSymbol;
         }

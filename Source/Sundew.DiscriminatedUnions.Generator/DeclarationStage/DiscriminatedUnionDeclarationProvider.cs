@@ -14,10 +14,10 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Sundew.DiscriminatedUnions.Analyzer;
 using Sundew.DiscriminatedUnions.Generator;
 using Sundew.DiscriminatedUnions.Generator.Extensions;
 using Sundew.DiscriminatedUnions.Generator.Model;
+using Sundew.DiscriminatedUnions.Shared;
 using Accessibility = Sundew.DiscriminatedUnions.Generator.Model.Accessibility;
 
 internal static class DiscriminatedUnionDeclarationProvider
@@ -37,7 +37,7 @@ internal static class DiscriminatedUnionDeclarationProvider
         if (generatorContextSyntax.Node is MemberDeclarationSyntax memberDeclarationSyntax && declaredSymbol is ITypeSymbol typeSymbol && TryGetUnionWithFeatures(typeSymbol, out var generatorFeatures) && TryGetSupportedAccessibility(typeSymbol, out var accessibility))
         {
             IEnumerable<INamedTypeSymbol> baseSymbol = typeSymbol.BaseType != null ? new[] { typeSymbol.BaseType } : Array.Empty<INamedTypeSymbol>();
-            var isConstrainingUnion = baseSymbol.Concat(typeSymbol.Interfaces).Any(UnionHelper.IsDiscriminatedUnion);
+            var isConstrainingUnion = baseSymbol.Concat(typeSymbol.Interfaces).Any(DiscriminatedUnionExtensions.IsDiscriminatedUnion);
             return new DiscriminatedUnionDeclaration(typeSymbol.GetSourceType(), GetUnderlyingType(typeSymbol), accessibility, memberDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword), isConstrainingUnion, generatorFeatures);
         }
 

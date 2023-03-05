@@ -11,6 +11,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Sundew.DiscriminatedUnions.Shared;
 
 internal class UnionSwitchStatementAnalyzer
 {
@@ -24,7 +25,7 @@ internal class UnionSwitchStatementAnalyzer
 
         var unionTypeSymbol = switchOperation.Value.Type;
         var unionType = unionTypeSymbol as INamedTypeSymbol;
-        if (!UnionHelper.IsDiscriminatedUnion(unionType))
+        if (!unionType.IsDiscriminatedUnion())
         {
             return;
         }

@@ -8,7 +8,6 @@
 namespace Sundew.DiscriminatedUnions.Generator;
 
 using Microsoft.CodeAnalysis;
-using Sundew.DiscriminatedUnions.Analyzer;
 
 internal static class Diagnostics
 {

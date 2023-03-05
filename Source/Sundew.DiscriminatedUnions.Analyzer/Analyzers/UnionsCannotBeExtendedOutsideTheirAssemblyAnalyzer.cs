@@ -9,12 +9,13 @@ namespace Sundew.DiscriminatedUnions.Analyzer.Analyzers;
 
 using System;
 using Microsoft.CodeAnalysis;
+using Sundew.DiscriminatedUnions.Shared;
 
 internal class UnionsCannotBeExtendedOutsideTheirAssemblyAnalyzer : IUnionSymbolAnalyzer
 {
     public void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> reportDiagnostic)
     {
-        if (!UnionHelper.IsDiscriminatedUnion(namedTypeSymbol))
+        if (!namedTypeSymbol.IsDiscriminatedUnion())
         {
             return;
         }
@@ -23,7 +24,7 @@ internal class UnionsCannotBeExtendedOutsideTheirAssemblyAnalyzer : IUnionSymbol
         if (baseType != null &&
             namedTypeSymbol.TypeKind == TypeKind.Class &&
             namedTypeSymbol.IsAbstract &&
-            UnionHelper.IsDiscriminatedUnion(baseType) &&
+            baseType.IsDiscriminatedUnion() &&
             !SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ContainingAssembly, baseType.ContainingAssembly))
         {
             foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
@@ -38,7 +39,7 @@ internal class UnionsCannotBeExtendedOutsideTheirAssemblyAnalyzer : IUnionSymbol
 
         foreach (var @interface in namedTypeSymbol.Interfaces)
         {
-            if (UnionHelper.IsDiscriminatedUnion(@interface) && !SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ContainingAssembly, @interface.ContainingAssembly))
+            if (@interface.IsDiscriminatedUnion() && !SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ContainingAssembly, @interface.ContainingAssembly))
             {
                 foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
                 {

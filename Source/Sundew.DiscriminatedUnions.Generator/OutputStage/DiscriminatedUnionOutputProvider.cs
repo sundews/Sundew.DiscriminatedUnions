@@ -7,7 +7,6 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.OutputStage;
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -31,12 +30,6 @@ internal static class DiscriminatedUnionOutputProvider
             {
                 var discriminatedUnion = discriminatedUnionResult.DiscriminatedUnion;
                 var discriminatedUnionNamespace = discriminatedUnion.Type.Namespace;
-                var colonIndex = discriminatedUnion.Type.Namespace.IndexOf(DoubleColon, StringComparison.InvariantCulture);
-                if (colonIndex > -1)
-                {
-                    discriminatedUnionNamespace = discriminatedUnionNamespace.Substring(colonIndex + DoubleColon.Length);
-                }
-
                 if (discriminatedUnion.IsPartial)
                 {
                     sourceProductionContext.AddSource(
@@ -47,11 +40,11 @@ internal static class DiscriminatedUnionOutputProvider
                 if (discriminatedUnion.GeneratorFeatures.HasFlag(GeneratorFeatures.Segregate))
                 {
                     var segregationTypeName = discriminatedUnion.Type.Name + Segregation;
-                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName, GetUnionSegregationSource(discriminatedUnion, segregationTypeName, discriminatedUnionNamespace));
+                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName, GetUnionSegregationSource(discriminatedUnion, segregationTypeName));
                     var extensionsTypeName = discriminatedUnion.Type.Name + Extensions;
                     sourceProductionContext.AddSource(
                         discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + Extensions,
-                        GetUnionSegregateExtensionSource(discriminatedUnion, extensionsTypeName, segregationTypeName, discriminatedUnionNamespace));
+                        GetUnionSegregateExtensionSource(discriminatedUnion, extensionsTypeName, segregationTypeName));
                 }
             }
             else
@@ -146,12 +139,12 @@ internal static class DiscriminatedUnionOutputProvider
         return stringBuilder.ToString();
     }
 
-    private static string GetUnionSegregationSource(DiscriminatedUnion discriminatedUnion, string segregationTypeName, string discriminatedUnionNamespace)
+    private static string GetUnionSegregationSource(DiscriminatedUnion discriminatedUnion, string segregationTypeName)
     {
         var stringBuilder = new StringBuilder();
         stringBuilder.Append(Namespace);
         stringBuilder.Append(' ');
-        stringBuilder.Append(discriminatedUnionNamespace);
+        stringBuilder.Append(discriminatedUnion.Type.Namespace);
         stringBuilder.AppendLine();
         stringBuilder.Append('{');
         stringBuilder.AppendLine();
@@ -164,7 +157,7 @@ internal static class DiscriminatedUnionOutputProvider
         stringBuilder.Append(' ');
         stringBuilder.Append(segregationTypeName);
 
-        stringBuilder.TryAppendTypeParameters(discriminatedUnion.Type);
+        stringBuilder.TryAppendGenericQualifier(discriminatedUnion.Type);
 
         stringBuilder.AppendLine();
         stringBuilder.Append(SpaceIndentedBy4);
@@ -241,14 +234,14 @@ internal static class DiscriminatedUnionOutputProvider
         return stringBuilder.ToString();
     }
 
-    private static string GetUnionSegregateExtensionSource(DiscriminatedUnion discriminatedUnion, string extensionsTypeName, string segregationTypeName, string discriminatedUnionNamespace)
+    private static string GetUnionSegregateExtensionSource(DiscriminatedUnion discriminatedUnion, string extensionsTypeName, string segregationTypeName)
     {
         var unionParameterName = discriminatedUnion.Type.Name.Uncapitalize();
         var unionsParameterName = unionParameterName.Pluralize();
         var stringBuilder = new StringBuilder();
         stringBuilder.Append(Namespace);
         stringBuilder.Append(' ');
-        stringBuilder.Append(discriminatedUnionNamespace);
+        stringBuilder.Append(discriminatedUnion.Type.Namespace);
         stringBuilder.AppendLine();
         stringBuilder.Append('{');
         stringBuilder.AppendLine();
@@ -271,11 +264,11 @@ internal static class DiscriminatedUnionOutputProvider
         stringBuilder.Append(Static);
         stringBuilder.Append(' ');
         stringBuilder.Append(segregationTypeName);
-        stringBuilder.TryAppendTypeParameters(discriminatedUnion.Type);
+        stringBuilder.TryAppendGenericQualifier(discriminatedUnion.Type);
         stringBuilder.Append(' ');
         stringBuilder.Append(Segregate);
 
-        stringBuilder.TryAppendTypeParameters(discriminatedUnion.Type);
+        stringBuilder.TryAppendGenericQualifier(discriminatedUnion.Type);
 
         stringBuilder.Append('(');
         stringBuilder.Append(This);
@@ -382,7 +375,7 @@ internal static class DiscriminatedUnionOutputProvider
         stringBuilder.Append(New);
         stringBuilder.Append(' ');
         stringBuilder.Append(segregationTypeName);
-        stringBuilder.TryAppendTypeParameters(discriminatedUnion.Type);
+        stringBuilder.TryAppendGenericQualifier(discriminatedUnion.Type);
         stringBuilder.Append('(');
 
         caseData.JoinToStringBuilder(stringBuilder, (stringBuilder, caseItem) => stringBuilder.Append(caseItem.ListVariableName), ListSeparator);
