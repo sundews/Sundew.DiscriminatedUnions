@@ -9,7 +9,6 @@ namespace Sundew.DiscriminatedUnions.Generator.OutputStage;
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -27,7 +26,7 @@ internal static class StringBuilderExtensions
     private const string Pragma = "#pragma";
     private const string Warning = "warning";
     private const string Restore = "restore";
-    private const string Disabled = "disabled";
+    private const string Disable = "disable";
 
     public static StringBuilder AppendType(this StringBuilder stringBuilder, in FullType fullType, bool fullyQualify = true, bool omitTypeParameters = false)
     {
@@ -99,7 +98,7 @@ internal static class StringBuilderExtensions
             .Append(' ')
             .Append(Warning)
             .Append(' ')
-            .Append(restore ? Restore : Disabled)
+            .Append(restore ? Restore : Disable)
             .Append(' ')
             .Append(id)
             .AppendLine();

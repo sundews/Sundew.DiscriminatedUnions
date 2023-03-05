@@ -1,7 +1,7 @@
 ﻿//HintName: Sundew.Base.Collections.AllOrFailed.cs
 namespace Sundew.Base.Collections
 {
-#pragma warning disabled SA1601
+#pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "2.1.0.0")]
     public partial class AllOrFailed<TItem, TResult, TError>
