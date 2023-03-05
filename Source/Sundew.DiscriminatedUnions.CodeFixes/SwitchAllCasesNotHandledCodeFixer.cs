@@ -23,6 +23,7 @@ using Sundew.DiscriminatedUnions.Analyzer;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchExpression;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchStatement;
 using Sundew.DiscriminatedUnions.CodeFixes.Collections;
+using Sundew.DiscriminatedUnions.Shared;
 using Sundew.DiscriminatedUnions.Text;
 
 internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
@@ -71,7 +72,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         SyntaxGenerator generator)
     {
         var switchType = switchExpressionOperation.Value.Type;
-        if (!UnionHelper.IsDiscriminatedUnion(switchType))
+        if (!switchType.IsDiscriminatedUnion())
         {
             return document;
         }
@@ -135,7 +136,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         SyntaxGenerator generator)
     {
         var switchType = switchOperation.Value.Type;
-        if (!UnionHelper.IsDiscriminatedUnion(switchType))
+        if (!switchType.IsDiscriminatedUnion())
         {
             return document;
         }

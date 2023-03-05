@@ -9,12 +9,13 @@ namespace Sundew.DiscriminatedUnions.Analyzer.Analyzers;
 
 using System;
 using Microsoft.CodeAnalysis;
+using Sundew.DiscriminatedUnions.Shared;
 
 internal class ClassUnionsMustBeAbstractAnalyzer : IUnionSymbolAnalyzer
 {
     public void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, Action<Diagnostic> reportDiagnostic)
     {
-        if (!UnionHelper.IsDiscriminatedUnion(namedTypeSymbol))
+        if (!namedTypeSymbol.IsDiscriminatedUnion())
         {
             return;
         }

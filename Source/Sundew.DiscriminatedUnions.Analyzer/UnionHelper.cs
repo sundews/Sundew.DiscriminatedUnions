@@ -19,27 +19,6 @@ using Microsoft.CodeAnalysis.Operations;
 public static class UnionHelper
 {
     /// <summary>
-    /// Determines whether [is discriminated union] [the specified union type].
-    /// </summary>
-    /// <param name="unionType">Type of the union.</param>
-    /// <returns>
-    ///   <c>true</c> if [is discriminated union] [the specified union type]; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool IsDiscriminatedUnion([NotNullWhen(true)] ITypeSymbol? unionType)
-    {
-        if (unionType == null)
-        {
-            return false;
-        }
-
-        return unionType.GetAttributes().Any(attribute =>
-        {
-            var containingClass = attribute.AttributeClass?.ToDisplayString();
-            return containingClass == typeof(Sundew.DiscriminatedUnions.DiscriminatedUnion).FullName;
-        });
-    }
-
-    /// <summary>
     /// Gets all case types.
     /// </summary>
     /// <param name="unionType">Type of the union.</param>
