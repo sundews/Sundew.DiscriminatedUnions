@@ -6,16 +6,9 @@
     <IsPackable>false</IsPackable>
     <!-- Avoid ID conflicts with the package project. -->
     <PackageId>Sundew.DiscriminatedUnion.Library</PackageId>
+    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin/Debug\Sundew.DiscriminatedUnions.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/Release\Sundew.DiscriminatedUnions.xml</DocumentationFile>
-  </PropertyGroup>
-
+  
   <ItemGroup>
     <None Remove="stylecop.json" />
   </ItemGroup>

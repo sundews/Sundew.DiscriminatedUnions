@@ -11,6 +11,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Sundew.DiscriminatedUnions.Shared;
 
 /// <summary>
 /// Suppressor for CS8509 in switch expressions that are checked by <see cref="DiscriminatedUnionsAnalyzer"/>.
@@ -59,7 +60,7 @@ public class DiscriminatedUnionSwitchWarningSuppressor : DiagnosticSuppressor
 
     private static void SuppressIfDiscriminatedUnion(SuppressionAnalysisContext context, ITypeSymbol? switchType, Diagnostic diagnostic)
     {
-        if (UnionHelper.IsDiscriminatedUnion(switchType))
+        if (switchType.IsDiscriminatedUnion())
         {
             context.ReportSuppression(
                 Suppression.Create(

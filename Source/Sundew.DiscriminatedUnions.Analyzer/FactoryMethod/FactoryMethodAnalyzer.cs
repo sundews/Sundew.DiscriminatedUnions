@@ -7,12 +7,11 @@
 
 namespace Sundew.DiscriminatedUnions.Analyzer.FactoryMethod;
 
-using System.Globalization;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Operations;
+using Sundew.DiscriminatedUnions.Shared;
 
 internal class FactoryMethodAnalyzer
 {
@@ -21,7 +20,7 @@ internal class FactoryMethodAnalyzer
         if (symbolAnalysisContext.Symbol is IMethodSymbol methodSymbol)
         {
             var unionType = methodSymbol.ContainingType;
-            if (UnionHelper.IsDiscriminatedUnion(unionType) &&
+            if (unionType.IsDiscriminatedUnion() &&
                 SymbolEqualityComparer.Default.Equals(methodSymbol.ReturnType, unionType))
             {
                 var factoryMethod = methodSymbol;

@@ -10,6 +10,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Sundew.DiscriminatedUnions.Shared;
 
 /// <summary>
 /// Marks all union types with a diagnostic, so that a code fix can be offered to generate factory methods.
@@ -27,7 +28,7 @@ public class PopulateUnionFactoryMethodsMarkerAnalyzer : DiagnosticAnalyzer
     /// The switch should throw in default case rule.
     /// </summary>
     public static readonly DiagnosticDescriptor PopulateFactoryMethodsRule =
-        DiagnosticDescriptorHelper.Create(
+        Sundew.DiscriminatedUnions.Analyzer.DiagnosticDescriptorHelper.Create(
             PopulateFactoryMethodsDiagnosticId,
             nameof(Resources.PopulateFactoryMethodsTitle),
             nameof(Resources.PopulateFactoryMethodsMessageFormat),
@@ -60,7 +61,7 @@ public class PopulateUnionFactoryMethodsMarkerAnalyzer : DiagnosticAnalyzer
                     return;
                 }
 
-                if (UnionHelper.IsDiscriminatedUnion(namedTypeSymbol) &&
+                if (namedTypeSymbol.IsDiscriminatedUnion() &&
                     (namedTypeSymbol.IsAbstract || namedTypeSymbol.TypeKind == TypeKind.Interface))
                 {
                     foreach (var location in namedTypeSymbol.Locations)
