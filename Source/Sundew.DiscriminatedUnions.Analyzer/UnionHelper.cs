@@ -8,7 +8,6 @@
 namespace Sundew.DiscriminatedUnions.Analyzer;
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;

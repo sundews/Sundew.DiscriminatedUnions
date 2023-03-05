@@ -10,7 +10,7 @@
     <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
     <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\CaseTypeAttribute.cs" />
@@ -23,6 +23,7 @@
     <SundewDiscriminatedUnionsShared Remove="..\Sundew.DiscriminatedUnions.Shared\obj\**\*.cs" />
     <Compile Remove="..\Sundew.DiscriminatedUnions.Shared\UnionHelper.cs" />
     <Compile Include="@(SundewDiscriminatedUnionsShared)" LinkBase="Shared"></Compile>
+
   </ItemGroup>
 
   <ItemGroup>

@@ -28,7 +28,7 @@ public class PopulateUnionFactoryMethodsMarkerAnalyzer : DiagnosticAnalyzer
     /// The switch should throw in default case rule.
     /// </summary>
     public static readonly DiagnosticDescriptor PopulateFactoryMethodsRule =
-        DiagnosticDescriptorHelper.Create(
+        Sundew.DiscriminatedUnions.Analyzer.DiagnosticDescriptorHelper.Create(
             PopulateFactoryMethodsDiagnosticId,
             nameof(Resources.PopulateFactoryMethodsTitle),
             nameof(Resources.PopulateFactoryMethodsMessageFormat),
