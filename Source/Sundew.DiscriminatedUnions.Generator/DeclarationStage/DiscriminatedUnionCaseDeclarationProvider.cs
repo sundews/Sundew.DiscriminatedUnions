@@ -40,7 +40,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
                 return null;
             }
 
-            return new DiscriminatedUnionCaseDeclaration(namedTypeSymbol.GetSourceType(), owners.ToImmutableArray(), parameters.ToImmutableArray());
+            return new DiscriminatedUnionCaseDeclaration(namedTypeSymbol.GetFullType(), owners.ToImmutableArray(), parameters.ToImmutableArray());
         }
 
         return null;
@@ -55,7 +55,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         }
 
         return selectedConstructor.Parameters.Select(x =>
-            new Parameter(x.Type.GetSourceType(), x.Name.Uncapitalize().AvoidKeywordCollision()));
+            new Parameter(x.Type.GetFullType(), x.Name.Uncapitalize().AvoidKeywordCollision()));
     }
 
     private static IEnumerable<INamedTypeSymbol> FindOwners(ITypeSymbol typeSymbol)

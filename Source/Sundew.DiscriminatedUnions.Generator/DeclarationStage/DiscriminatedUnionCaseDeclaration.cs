@@ -10,4 +10,4 @@ namespace Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.Base;
 using Sundew.DiscriminatedUnions.Generator.Model;
 
-internal readonly record struct DiscriminatedUnionCaseDeclaration(Type CaseType, ValueArray<Type> Owners, ValueArray<Parameter> Parameters);
+internal readonly record struct DiscriminatedUnionCaseDeclaration(FullType CaseType, ValueArray<Type> Owners, ValueArray<Parameter> Parameters);

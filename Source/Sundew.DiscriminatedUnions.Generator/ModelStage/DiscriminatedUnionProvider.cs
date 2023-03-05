@@ -27,10 +27,10 @@ internal static class DiscriminatedUnionProvider
                 foreach (var owner in discriminatedUnionCase.Owners)
                 {
                     token.ThrowIfCancellationRequested();
-                    var discriminatedUnionDeclaration = tuple.Declarations.FirstOrDefault(x => x.Type == owner);
+                    var discriminatedUnionDeclaration = tuple.Declarations.FirstOrDefault(x => x.Type.Equals(owner));
                     var discriminatedUnionResult = discriminatedUnionDeclaration != null
                         ? DiscriminatedUnionResult.Success(new DiscriminatedUnion(
-                            owner,
+                            new FullType(owner, discriminatedUnionDeclaration.Type.TypeMetadata),
                             discriminatedUnionDeclaration.UnderlyingType,
                             discriminatedUnionDeclaration.Accessibility,
                             discriminatedUnionDeclaration.IsPartial,

@@ -9,8 +9,6 @@ namespace Sundew.DiscriminatedUnions.Generator.OutputStage;
 
 internal static class GeneratorConstants
 {
-    public const string Class = "class";
-    public const string Record = "record";
     public const string Interface = "interface";
     public const string Internal = "internal";
     public const string Public = "public";
@@ -48,4 +46,12 @@ internal static class GeneratorConstants
     public const string NewLine = "\r\n";
     public const string ListSeparator = ", ";
     public const string DoubleColon = "::";
+    public const string Where = "where";
+    public const string GlobalAssemblyAlias = "global";
+    public const string Notnull = "notnull";
+    public const string Class = "class";
+    public const string Unmanaged = "unmanaged";
+    public const string Struct = "struct";
+    public const string NewConstructor = "new()";
+    public const string Record = "record";
 }

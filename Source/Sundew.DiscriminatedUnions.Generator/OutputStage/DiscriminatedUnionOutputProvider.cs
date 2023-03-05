@@ -7,7 +7,6 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.OutputStage;
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -22,6 +21,16 @@ using static GeneratorConstants;
 
 internal static class DiscriminatedUnionOutputProvider
 {
+    private const string Cs1591 = "CS1591";
+    private const string Sa1601 = "SA1601";
+    private const string GetPropertyDescription = "Gets the {0}";
+    private const string ReturnsDescription = "The {0}";
+    private const string SegregationExtensionMethodDescription = "Segregation extension method for {0}";
+    private const string SegregateMethodDescription = "Segregates the items in the specified enumerable by type";
+    private const string SegregateMethodReturnsDescription = "A new {0}Segregation";
+    private const string FactoryMethodDescription = "Factory method for the {0} case";
+    private const string FactoryMethodReturnsDescription = "A new {0}";
+
     public static void Generate(SourceProductionContext sourceProductionContext, ImmutableArray<DiscriminatedUnionResult> discriminatedUnionResults)
     {
         foreach (var discriminatedUnionResult in discriminatedUnionResults)
@@ -31,27 +40,21 @@ internal static class DiscriminatedUnionOutputProvider
             {
                 var discriminatedUnion = discriminatedUnionResult.DiscriminatedUnion;
                 var discriminatedUnionNamespace = discriminatedUnion.Type.Namespace;
-                var colonIndex = discriminatedUnion.Type.Namespace.IndexOf(DoubleColon, StringComparison.InvariantCulture);
-                if (colonIndex > -1)
-                {
-                    discriminatedUnionNamespace = discriminatedUnionNamespace.Substring(colonIndex + DoubleColon.Length);
-                }
-
                 if (discriminatedUnion.IsPartial)
                 {
                     sourceProductionContext.AddSource(
                         discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name,
-                        GetUnionSource(discriminatedUnion, discriminatedUnionNamespace));
+                        GetUnionSource(in discriminatedUnion, discriminatedUnionNamespace));
                 }
 
                 if (discriminatedUnion.GeneratorFeatures.HasFlag(GeneratorFeatures.Segregate))
                 {
                     var segregationTypeName = discriminatedUnion.Type.Name + Segregation;
-                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName, GetUnionSegregationSource(discriminatedUnion, segregationTypeName, discriminatedUnionNamespace));
+                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName, GetUnionSegregationSource(in discriminatedUnion, segregationTypeName));
                     var extensionsTypeName = discriminatedUnion.Type.Name + Extensions;
                     sourceProductionContext.AddSource(
                         discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + Extensions,
-                        GetUnionSegregateExtensionSource(discriminatedUnion, extensionsTypeName, segregationTypeName, discriminatedUnionNamespace));
+                        GetUnionSegregateExtensionSource(in discriminatedUnion, extensionsTypeName, segregationTypeName));
                 }
             }
             else
@@ -64,53 +67,60 @@ internal static class DiscriminatedUnionOutputProvider
         }
     }
 
-    private static string GetUnionSource(DiscriminatedUnion discriminatedUnion, string discriminatedUnionNamespace)
+    private static string GetUnionSource(in DiscriminatedUnion discriminatedUnion, string discriminatedUnionNamespace)
     {
         var stringBuilder = new StringBuilder();
-        stringBuilder.Append(Namespace);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(discriminatedUnionNamespace);
-        stringBuilder.AppendLine();
-        stringBuilder.Append('{');
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy4);
-        stringBuilder.Append(Partial);
-        stringBuilder.Append(' ');
-        stringBuilder.AppendUnderlyingType(discriminatedUnion.UnderlyingType);
-        stringBuilder.Append(' ');
-        stringBuilder.AppendType(discriminatedUnion.Type, false);
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy4);
-        stringBuilder.Append('{');
+        stringBuilder.Append(Namespace)
+            .Append(' ')
+            .Append(discriminatedUnionNamespace)
+            .AppendLine()
+            .Append('{')
+            .AppendLine()
+            .AppendPragmaWarning(false, Sa1601)
+            .AppendTypeAttributes()
+            .Append(SpaceIndentedBy4)
+            .AppendAccessibility(discriminatedUnion.Accessibility)
+            .Append(' ')
+            .Append(Partial)
+            .Append(' ')
+            .AppendUnderlyingType(discriminatedUnion.UnderlyingType)
+            .Append(' ')
+            .AppendType(discriminatedUnion.Type, false)
+            .AppendLine()
+            .TryAppendConstraints(discriminatedUnion.Type.TypeMetadata.TypeParameters, SpaceIndentedBy8)
+            .AppendPragmaWarning(true, Sa1601)
+            .Append(SpaceIndentedBy4)
+            .Append('{');
         foreach (var discriminatedUnionOwnedCase in discriminatedUnion.Cases)
         {
-            stringBuilder.AppendLine();
-            stringBuilder.Append(SpaceIndentedBy8);
-            stringBuilder.Append('[');
-            stringBuilder.Append(SundewDiscriminatedUnionsCaseType);
-            stringBuilder.Append('(');
-            stringBuilder.Append(Typeof);
-            stringBuilder.Append('(');
-            stringBuilder.AppendType(discriminatedUnionOwnedCase.Type, true, true);
-            stringBuilder.Append(')');
-            stringBuilder.Append(')');
-            stringBuilder.Append(']');
-            stringBuilder.AppendLine();
-            stringBuilder.Append(SpaceIndentedBy8);
-            stringBuilder.Append(Public);
-            stringBuilder.Append(' ');
+            stringBuilder.AppendLine()
+                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.Type.Name, discriminatedUnionOwnedCase.Type.TypeMetadata.TypeParameters, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
+                .Append(SpaceIndentedBy8)
+                .Append('[')
+                .Append(SundewDiscriminatedUnionsCaseType)
+                .Append('(')
+                .Append(Typeof)
+                .Append('(')
+                .AppendType(discriminatedUnionOwnedCase.Type, true, true)
+                .Append(')')
+                .Append(')')
+                .Append(']')
+                .AppendLine()
+                .Append(SpaceIndentedBy8)
+                .Append(Public)
+                .Append(' ');
             if (discriminatedUnion.IsConstrainingUnion)
             {
-                stringBuilder.Append(New);
-                stringBuilder.Append(' ');
+                stringBuilder.Append(New)
+                    .Append(' ');
             }
 
-            stringBuilder.Append(Static);
-            stringBuilder.Append(' ');
-            stringBuilder.AppendType(discriminatedUnion.Type);
-            stringBuilder.Append(' ');
-            stringBuilder.Append(discriminatedUnionOwnedCase.Type.Name);
-            stringBuilder.Append('(');
+            stringBuilder.Append(Static)
+                .Append(' ')
+                .AppendType(discriminatedUnion.Type)
+                .Append(' ')
+                .Append(discriminatedUnionOwnedCase.Type.Name)
+                .Append('(');
 
             discriminatedUnionOwnedCase.Parameters.JoinToStringBuilder(
                 stringBuilder,
@@ -122,283 +132,298 @@ internal static class DiscriminatedUnionOutputProvider
                 },
                 ListSeparator);
 
-            stringBuilder.Append(')');
-            stringBuilder.Append(' ');
-            stringBuilder.Append(Lambda);
-            stringBuilder.Append(' ');
-            stringBuilder.Append(New);
-            stringBuilder.Append(' ');
-            stringBuilder.AppendType(discriminatedUnionOwnedCase.Type);
-            stringBuilder.Append('(');
+            stringBuilder.Append(')')
+                .Append(' ')
+                .Append(Lambda)
+                .Append(' ')
+                .Append(New)
+                .Append(' ')
+                .AppendType(discriminatedUnionOwnedCase.Type)
+                .Append('(');
 
             discriminatedUnionOwnedCase.Parameters.JoinToStringBuilder(stringBuilder, (stringBuilder, parameter) => stringBuilder.Append(parameter.Name), ListSeparator);
 
-            stringBuilder.Append(')');
-            stringBuilder.Append(';');
+            stringBuilder.Append(')')
+                .Append(';');
             stringBuilder.AppendLine();
         }
 
-        stringBuilder.Append(SpaceIndentedBy4);
-        stringBuilder.Append('}');
-        stringBuilder.AppendLine();
-        stringBuilder.Append('}');
-        stringBuilder.AppendLine();
+        stringBuilder.Append(SpaceIndentedBy4)
+            .Append('}')
+            .AppendLine()
+            .Append('}')
+            .AppendLine();
         return stringBuilder.ToString();
     }
 
-    private static string GetUnionSegregationSource(DiscriminatedUnion discriminatedUnion, string segregationTypeName, string discriminatedUnionNamespace)
+    private static string GetUnionSegregationSource(in DiscriminatedUnion discriminatedUnion, string segregationTypeName)
     {
         var stringBuilder = new StringBuilder();
-        stringBuilder.Append(Namespace);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(discriminatedUnionNamespace);
-        stringBuilder.AppendLine();
-        stringBuilder.Append('{');
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy4);
-        stringBuilder.AppendAccessibility(discriminatedUnion.Accessibility);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(Sealed);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(Class);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(segregationTypeName);
+        stringBuilder.Append(Namespace)
+            .Append(' ')
+            .Append(discriminatedUnion.Type.Namespace)
+            .AppendLine()
+            .Append('{')
+            .AppendLine()
+            .AppendDocumentation(SpaceIndentedBy4, $"Contains individual lists of the different cases of the discriminated union {discriminatedUnion.Type.Name}", segregationTypeName)
+            .AppendTypeAttributes()
+            .Append(SpaceIndentedBy4)
+            .AppendAccessibility(discriminatedUnion.Accessibility)
+            .Append(' ')
+            .Append(Sealed)
+            .Append(' ')
+            .Append(Class)
+            .Append(' ')
+            .Append(segregationTypeName)
+            .TryAppendGenericQualifier(discriminatedUnion.Type)
+            .AppendLine()
 
-        stringBuilder.TryAppendTypeParameters(discriminatedUnion.Type);
+            .TryAppendConstraints(discriminatedUnion.Type.TypeMetadata.TypeParameters, SpaceIndentedBy8)
 
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy4);
-        stringBuilder.Append('{');
-        stringBuilder.AppendLine();
-
-        stringBuilder.Append(SpaceIndentedBy8);
-        stringBuilder.Append(Internal);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(segregationTypeName);
-        stringBuilder.Append('(');
+            .Append(SpaceIndentedBy4)
+            .Append('{')
+            .AppendLine()
+            .Append(SpaceIndentedBy8)
+            .Append(Internal)
+            .Append(' ')
+            .Append(segregationTypeName)
+            .Append('(');
         var caseData = discriminatedUnion.Cases.Select(x => (Case: x, PropertyName: x.Type.Name.Pluralize())).Select(x => (x.Case, x.PropertyName, ParameterName: x.PropertyName.Uncapitalize().AvoidKeywordCollision())).ToArray();
         caseData.JoinToStringBuilder(
             stringBuilder,
             (stringBuilder, caseItem) =>
             {
-                stringBuilder.Append(SystemCollectionsGenericIReadonlyList);
-                stringBuilder.Append('<');
-                stringBuilder.AppendType(caseItem.Case.Type);
-                stringBuilder.Append('>');
-                stringBuilder.Append(' ');
-                stringBuilder.Append(caseItem.ParameterName);
+                stringBuilder.Append(SystemCollectionsGenericIReadonlyList)
+                    .Append('<')
+                    .AppendType(caseItem.Case.Type)
+                    .Append('>')
+                    .Append(' ')
+                    .Append(caseItem.ParameterName);
             },
             ListSeparator);
 
-        stringBuilder.Append(')');
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy8);
-        stringBuilder.Append('{');
-        stringBuilder.AppendLine();
+        stringBuilder.Append(')')
+            .AppendLine()
+            .Append(SpaceIndentedBy8)
+            .Append('{')
+            .AppendLine();
 
         foreach (var discriminatedUnionOwnedCase in caseData)
         {
-            stringBuilder.Append(SpaceIndentedBy12);
-            stringBuilder.Append(This);
-            stringBuilder.Append('.');
-            stringBuilder.Append(discriminatedUnionOwnedCase.PropertyName);
-            stringBuilder.Append(' ');
-            stringBuilder.Append('=');
-            stringBuilder.Append(' ');
-            stringBuilder.Append(discriminatedUnionOwnedCase.ParameterName);
-            stringBuilder.Append(';');
-            stringBuilder.AppendLine();
+            stringBuilder.Append(SpaceIndentedBy12)
+                .Append(This)
+                .Append('.')
+                .Append(discriminatedUnionOwnedCase.PropertyName)
+                .Append(' ')
+                .Append('=')
+                .Append(' ')
+                .Append(discriminatedUnionOwnedCase.ParameterName)
+                .Append(';')
+                .AppendLine();
         }
 
-        stringBuilder.Append(SpaceIndentedBy8);
-        stringBuilder.Append('}');
-        stringBuilder.AppendLine();
-        stringBuilder.AppendLine();
+        stringBuilder
+            .Append(SpaceIndentedBy8)
+            .Append('}')
+            .AppendLine()
+            .AppendLine();
 
         caseData.JoinToStringBuilder(
             stringBuilder,
             (stringBuilder, caseItem) =>
             {
-                stringBuilder.Append(SpaceIndentedBy8);
-                stringBuilder.Append(Public);
-                stringBuilder.Append(' ');
-                stringBuilder.Append(SystemCollectionsGenericIReadonlyList);
-                stringBuilder.Append('<');
-                stringBuilder.AppendType(caseItem.Case.Type);
-                stringBuilder.Append('>');
-                stringBuilder.Append(' ');
-                stringBuilder.Append(caseItem.PropertyName);
-                stringBuilder.Append(' ');
-                stringBuilder.Append(Get);
+                stringBuilder
+                    .AppendDocumentation(SpaceIndentedBy8, GetPropertyDescription, caseItem.PropertyName, default, default, ReturnsDescription)
+                    .Append(SpaceIndentedBy8)
+                    .Append(Public)
+                    .Append(' ')
+                    .Append(SystemCollectionsGenericIReadonlyList)
+                    .Append('<')
+                    .AppendType(caseItem.Case.Type)
+                    .Append('>')
+                    .Append(' ')
+                    .Append(caseItem.PropertyName)
+                    .Append(' ')
+                    .Append(Get);
             },
             NewLine + NewLine);
 
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy4);
-        stringBuilder.Append('}');
-        stringBuilder.AppendLine();
-        stringBuilder.Append('}');
+        stringBuilder.AppendLine()
+            .Append(SpaceIndentedBy4)
+            .Append('}')
+            .AppendLine()
+            .Append('}');
         return stringBuilder.ToString();
     }
 
-    private static string GetUnionSegregateExtensionSource(DiscriminatedUnion discriminatedUnion, string extensionsTypeName, string segregationTypeName, string discriminatedUnionNamespace)
+    private static string GetUnionSegregateExtensionSource(in DiscriminatedUnion discriminatedUnion, string extensionsTypeName, string segregationTypeName)
     {
         var unionParameterName = discriminatedUnion.Type.Name.Uncapitalize();
         var unionsParameterName = unionParameterName.Pluralize();
         var stringBuilder = new StringBuilder();
-        stringBuilder.Append(Namespace);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(discriminatedUnionNamespace);
-        stringBuilder.AppendLine();
-        stringBuilder.Append('{');
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy4);
-        stringBuilder.AppendAccessibility(discriminatedUnion.Accessibility);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(Static);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(Class);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(extensionsTypeName);
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy4);
-        stringBuilder.Append('{');
-        stringBuilder.AppendLine();
+        stringBuilder.Append(Namespace)
+            .Append(' ')
+            .Append(discriminatedUnion.Type.Namespace)
+            .AppendLine()
+            .Append('{')
+            .AppendLine()
+            .AppendDocumentation(SpaceIndentedBy4, SegregationExtensionMethodDescription, discriminatedUnion.Type.Name)
+            .AppendTypeAttributes()
+            .Append(SpaceIndentedBy4)
+            .AppendAccessibility(discriminatedUnion.Accessibility)
+            .Append(' ')
+            .Append(Static)
+            .Append(' ')
+            .Append(Class)
+            .Append(' ')
+            .Append(extensionsTypeName)
+            .AppendLine()
+            .Append(SpaceIndentedBy4)
+            .Append('{')
+            .AppendLine()
+            .AppendDocumentation(SpaceIndentedBy8, SegregateMethodDescription, discriminatedUnion.Type.Name, default, new[] { unionsParameterName }, SegregateMethodReturnsDescription)
+            .Append(SpaceIndentedBy8)
+            .Append(Public)
+            .Append(' ')
+            .Append(Static)
+            .Append(' ')
+            .Append(segregationTypeName)
+            .TryAppendGenericQualifier(discriminatedUnion.Type)
+            .Append(' ')
+            .Append(Segregate)
 
-        stringBuilder.Append(SpaceIndentedBy8);
-        stringBuilder.Append(Public);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(Static);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(segregationTypeName);
-        stringBuilder.TryAppendTypeParameters(discriminatedUnion.Type);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(Segregate);
+            .TryAppendGenericQualifier(discriminatedUnion.Type)
 
-        stringBuilder.TryAppendTypeParameters(discriminatedUnion.Type);
+            .Append('(')
+            .Append(This)
+            .Append(' ')
+            .Append(SystemCollectionsGenericIEnumerable)
+            .Append('<')
+            .AppendType(discriminatedUnion.Type)
+            .Append('>')
+            .Append(' ')
+            .Append(unionsParameterName)
+            .Append(')')
+            .AppendLine()
+            .TryAppendConstraints(discriminatedUnion.Type.TypeMetadata.TypeParameters, SpaceIndentedBy12)
+            .Append(SpaceIndentedBy8)
+            .Append('{')
+            .AppendLine();
 
-        stringBuilder.Append('(');
-        stringBuilder.Append(This);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(SystemCollectionsGenericIEnumerable);
-        stringBuilder.Append('<');
-        stringBuilder.AppendType(discriminatedUnion.Type);
-        stringBuilder.Append('>');
-        stringBuilder.Append(' ');
-        stringBuilder.Append(unionsParameterName);
-        stringBuilder.Append(')');
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy8);
-        stringBuilder.Append('{');
-        stringBuilder.AppendLine();
-
-        var caseData = discriminatedUnion.Cases.Select(x => (Case: x, VariableName: x.Type.Name.Uncapitalize(), ListVariableName: x.Type.Name.Uncapitalize().Pluralize().AvoidKeywordCollision())).ToArray();
+        var caseData = discriminatedUnion.Cases.Select(x => (Case: x, VariableName: x.Type.Name.Uncapitalize(), ListVariableName: x.Type.Name.Uncapitalize().Pluralize(true).AvoidKeywordCollision())).ToArray();
         foreach (var discriminatedUnionOwnedCase in caseData)
         {
-            stringBuilder.Append(SpaceIndentedBy12);
-            stringBuilder.Append(Var);
-            stringBuilder.Append(' ');
-            stringBuilder.Append(discriminatedUnionOwnedCase.ListVariableName);
-            stringBuilder.Append(' ');
-            stringBuilder.Append('=');
-            stringBuilder.Append(' ');
-            stringBuilder.Append(New);
-            stringBuilder.Append(' ');
-            stringBuilder.Append(SystemCollectionsGenericList);
-            stringBuilder.Append('<');
-            stringBuilder.AppendType(discriminatedUnionOwnedCase.Case.Type);
-            stringBuilder.Append('>');
-            stringBuilder.Append('(');
-            stringBuilder.Append(')');
-            stringBuilder.Append(';');
-            stringBuilder.AppendLine();
+            stringBuilder.Append(SpaceIndentedBy12)
+            .Append(Var)
+            .Append(' ')
+            .Append(discriminatedUnionOwnedCase.ListVariableName)
+            .Append(' ')
+            .Append('=')
+            .Append(' ')
+            .Append(New)
+            .Append(' ')
+            .Append(SystemCollectionsGenericList)
+            .Append('<')
+            .AppendType(discriminatedUnionOwnedCase.Case.Type)
+            .Append('>')
+            .Append('(')
+            .Append(')')
+            .Append(';')
+            .AppendLine();
         }
 
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy12);
-        stringBuilder.Append(Foreach);
-        stringBuilder.Append(' ');
-        stringBuilder.Append('(');
-        stringBuilder.Append(Var);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(Value);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(In);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(unionsParameterName);
-        stringBuilder.Append(')');
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy12);
-        stringBuilder.Append('{');
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy16);
-        stringBuilder.Append(Switch);
-        stringBuilder.Append(' ');
-        stringBuilder.Append('(');
-        stringBuilder.Append(Value);
-        stringBuilder.Append(')');
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy16);
-        stringBuilder.Append('{');
-        stringBuilder.AppendLine();
+        stringBuilder
+            .AppendLine()
+            .Append(SpaceIndentedBy12)
+            .Append(Foreach)
+            .Append(' ')
+            .Append('(')
+            .Append(Var)
+            .Append(' ')
+            .Append(Value)
+            .Append(' ')
+            .Append(In)
+            .Append(' ')
+            .Append(unionsParameterName)
+            .Append(')')
+            .AppendLine()
+            .Append(SpaceIndentedBy12)
+            .Append('{')
+            .AppendLine()
+            .Append(SpaceIndentedBy16)
+            .Append(Switch)
+            .Append(' ')
+            .Append('(')
+            .Append(Value)
+            .Append(')')
+            .AppendLine()
+            .Append(SpaceIndentedBy16)
+            .Append('{')
+            .AppendLine();
 
         foreach (var discriminatedUnionOwnedCase in caseData)
         {
-            stringBuilder.Append(SpaceIndentedBy20);
-            stringBuilder.Append(Case);
-            stringBuilder.Append(' ');
-            stringBuilder.AppendType(discriminatedUnionOwnedCase.Case.Type);
-            stringBuilder.Append(' ');
-            stringBuilder.Append(discriminatedUnionOwnedCase.VariableName);
-            stringBuilder.Append(':');
-            stringBuilder.AppendLine();
-            stringBuilder.Append(SpaceIndentedBy24);
-            stringBuilder.Append(discriminatedUnionOwnedCase.ListVariableName);
-            stringBuilder.Append('.');
-            stringBuilder.Append(Add);
-            stringBuilder.Append('(');
-            stringBuilder.Append(discriminatedUnionOwnedCase.VariableName);
-            stringBuilder.Append(')');
-            stringBuilder.Append(';');
-            stringBuilder.AppendLine();
-            stringBuilder.Append(SpaceIndentedBy24);
-            stringBuilder.Append(Break);
-            stringBuilder.Append(';');
-            stringBuilder.AppendLine();
+            stringBuilder
+                .Append(SpaceIndentedBy20)
+                .Append(Case)
+                .Append(' ')
+                .AppendType(discriminatedUnionOwnedCase.Case.Type)
+                .Append(' ')
+                .Append(discriminatedUnionOwnedCase.VariableName)
+                .Append(':')
+                .AppendLine()
+                .Append(SpaceIndentedBy24)
+                .Append(discriminatedUnionOwnedCase.ListVariableName)
+                .Append('.')
+                .Append(Add)
+                .Append('(')
+                .Append(discriminatedUnionOwnedCase.VariableName)
+                .Append(')')
+                .Append(';')
+                .AppendLine()
+                .Append(SpaceIndentedBy24)
+                .Append(Break)
+                .Append(';')
+                .AppendLine();
         }
 
-        stringBuilder.Append(SpaceIndentedBy16);
-        stringBuilder.Append('}');
-        stringBuilder.AppendLine();
+        stringBuilder
+            .Append(SpaceIndentedBy16)
+            .Append('}')
+            .AppendLine()
 
-        stringBuilder.Append(SpaceIndentedBy12);
-        stringBuilder.Append('}');
-        stringBuilder.AppendLine();
-        stringBuilder.AppendLine();
+            .Append(SpaceIndentedBy12)
+            .Append('}')
+            .AppendLine()
+            .AppendLine()
 
-        stringBuilder.Append(SpaceIndentedBy12);
-        stringBuilder.Append(Return);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(New);
-        stringBuilder.Append(' ');
-        stringBuilder.Append(segregationTypeName);
-        stringBuilder.TryAppendTypeParameters(discriminatedUnion.Type);
-        stringBuilder.Append('(');
+            .Append(SpaceIndentedBy12)
+            .Append(Return)
+            .Append(' ')
+            .Append(New)
+            .Append(' ')
+            .Append(GlobalAssemblyAlias)
+            .Append(DoubleColon)
+            .Append(discriminatedUnion.Type.Namespace)
+            .Append('.')
+            .Append(segregationTypeName)
+            .TryAppendGenericQualifier(discriminatedUnion.Type)
+            .Append('(');
 
         caseData.JoinToStringBuilder(stringBuilder, (stringBuilder, caseItem) => stringBuilder.Append(caseItem.ListVariableName), ListSeparator);
 
-        stringBuilder.Append(')');
-        stringBuilder.Append(';');
+        stringBuilder.Append(')')
+            .Append(';')
 
-        stringBuilder.AppendLine();
-        stringBuilder.Append(SpaceIndentedBy8);
-        stringBuilder.Append('}');
-        stringBuilder.AppendLine();
+            .AppendLine()
+            .Append(SpaceIndentedBy8)
+            .Append('}')
+            .AppendLine()
 
-        stringBuilder.Append(SpaceIndentedBy4);
-        stringBuilder.Append('}');
-        stringBuilder.AppendLine();
-        stringBuilder.Append('}');
+            .Append(SpaceIndentedBy4)
+            .Append('}')
+            .AppendLine()
+            .Append('}');
         return stringBuilder.ToString();
     }
 }

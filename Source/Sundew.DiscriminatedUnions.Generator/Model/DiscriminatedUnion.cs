@@ -8,13 +8,12 @@
 namespace Sundew.DiscriminatedUnions.Generator.Model;
 
 using Sundew.Base;
-using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 
 internal readonly record struct DiscriminatedUnion(
-    Type Type,
+    FullType Type,
     UnderlyingType UnderlyingType,
     Accessibility Accessibility,
     bool IsPartial,
     bool IsConstrainingUnion,
     GeneratorFeatures GeneratorFeatures,
-    ValueArray<(Type Type, ValueArray<Parameter> Parameters)> Cases);
+    ValueArray<(FullType Type, ValueArray<Parameter> Parameters)> Cases);

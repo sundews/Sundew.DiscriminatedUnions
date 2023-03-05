@@ -13,6 +13,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
+using Sundew.DiscriminatedUnions.Generator.Model;
+using static Sundew.DiscriminatedUnions.Generator.OutputStage.GeneratorConstants;
 using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class CodeAnalysisHelper
@@ -119,21 +121,88 @@ internal static class CodeAnalysisHelper
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
+                var @namespace = namedTypeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat);
                 return new Type(
-                    namedTypeSymbol.Name,
-                    namedTypeSymbol.ContainingNamespace.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                    namedTypeSymbol.TypeParameters.Select(x => new TypeParameter(x.MetadataName)).ToImmutableArray(),
-                    false);
+                        namedTypeSymbol.Name,
+                        @namespace,
+                        GlobalAssemblyAlias,
+                        namedTypeSymbol.TypeParameters.Length,
+                        false);
             case IArrayTypeSymbol arrayTypeSymbol:
                 return new Type(
-                    arrayTypeSymbol.ElementType.Name,
-                    arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                    ImmutableArray<TypeParameter>.Empty,
-                    true);
+                        arrayTypeSymbol.ElementType.Name,
+                        arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat),
+                        GlobalAssemblyAlias,
+                        0,
+                        true);
             case ITypeParameterSymbol typeParameterSymbol:
-                return new Type(typeParameterSymbol.MetadataName, string.Empty, ImmutableArray<TypeParameter>.Empty, false);
+                return new Type(typeParameterSymbol.MetadataName, string.Empty, GlobalAssemblyAlias, 0, false);
             default:
                 throw new ArgumentOutOfRangeException(nameof(typeSymbol));
+        }
+    }
+
+    public static FullType GetFullType(this ITypeSymbol typeSymbol)
+    {
+        switch (typeSymbol)
+        {
+            case INamedTypeSymbol namedTypeSymbol:
+                var @namespace = namedTypeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat);
+                return new FullType(
+                    namedTypeSymbol.Name,
+                    @namespace,
+                    GlobalAssemblyAlias,
+                    false,
+                    new TypeMetadata(
+                        namedTypeSymbol.IsGenericType
+                            ? namedTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                                .Substring(GlobalAssemblyAlias.Length + @namespace.Length +
+                                           namedTypeSymbol.Name.Length + 3)
+                            : null,
+                        namedTypeSymbol.TypeParameters.Select(x => new TypeParameter(
+                            x.Name,
+                            GetUnderlyingTypeConstraint(x)
+                                .Concat(x.ConstraintTypes.Select(x =>
+                                    x.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
+                                .Concat(GetNewConstraints(x)).ToImmutableArray())).ToImmutableArray()));
+            case IArrayTypeSymbol arrayTypeSymbol:
+                return new FullType(
+                    arrayTypeSymbol.ElementType.Name,
+                    arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat),
+                    GlobalAssemblyAlias,
+                    true,
+                    new TypeMetadata(null, ImmutableArray<TypeParameter>.Empty));
+            case ITypeParameterSymbol typeParameterSymbol:
+                return new FullType(typeParameterSymbol.MetadataName, string.Empty, GlobalAssemblyAlias, false, new TypeMetadata(null, ImmutableArray<TypeParameter>.Empty));
+            default:
+                throw new ArgumentOutOfRangeException(nameof(typeSymbol));
+        }
+    }
+
+    private static IEnumerable<string> GetNewConstraints(ITypeParameterSymbol typeParameterSymbol)
+    {
+        if (typeParameterSymbol.HasConstructorConstraint)
+        {
+            yield return NewConstructor;
+        }
+    }
+
+    private static IEnumerable<string> GetUnderlyingTypeConstraint(ITypeParameterSymbol typeParameterSymbol)
+    {
+        switch (typeParameterSymbol)
+        {
+            case { HasNotNullConstraint: true }:
+                yield return Notnull;
+                break;
+            case { HasReferenceTypeConstraint: true }:
+                yield return Class;
+                break;
+            case { HasUnmanagedTypeConstraint: true }:
+                yield return Unmanaged;
+                break;
+            case { HasValueTypeConstraint: true }:
+                yield return Struct;
+                break;
         }
     }
 }

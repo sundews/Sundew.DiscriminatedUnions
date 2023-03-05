@@ -7,4 +7,6 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 
-internal readonly record struct TypeParameter(string Name);
+using Sundew.Base;
+
+internal readonly record struct TypeParameter(string Name, ValueArray<string> Constraints);

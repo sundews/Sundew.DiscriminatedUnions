@@ -1,11 +1,27 @@
 ﻿//HintName: Sundew.DiscriminatedUnions.Tester.DefiniteType.cs
 namespace Sundew.DiscriminatedUnions.Tester
 {
-    partial record DefiniteType
+#pragma warning disabled SA1601
+    [global::System.Diagnostics.DebuggerNonUserCode]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "2.1.0.0")]
+    public partial record DefiniteType
+#pragma warning restore SA1601
     {
+        /// <summary>
+        /// Factory method for the NamedType case.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="@namespace">The @namespace.</param>
+        /// <param name="assemblyName">The assemblyName.</param>
+        /// <returns>A new NamedType.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.NamedType))]
         public static global::Sundew.DiscriminatedUnions.Tester.DefiniteType NamedType(global::System.String name, global::System.String @namespace, global::System.String assemblyName) => new global::Sundew.DiscriminatedUnions.Tester.NamedType(name, @namespace, assemblyName);
 
+        /// <summary>
+        /// Factory method for the DefiniteArrayType case.
+        /// </summary>
+        /// <param name="elementType">The elementType.</param>
+        /// <returns>A new DefiniteArrayType.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType))]
         public static global::Sundew.DiscriminatedUnions.Tester.DefiniteType DefiniteArrayType(global::Sundew.DiscriminatedUnions.Tester.DefiniteType elementType) => new global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType(elementType);
     }

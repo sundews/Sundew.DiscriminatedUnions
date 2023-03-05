@@ -9,4 +9,4 @@ namespace Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 
 using Sundew.DiscriminatedUnions.Generator.Model;
 
-internal readonly record struct DiscriminatedUnionDeclaration(Type Type, UnderlyingType UnderlyingType, Accessibility Accessibility, bool IsPartial, bool IsConstrainingUnion, GeneratorFeatures GeneratorFeatures);
+internal readonly record struct DiscriminatedUnionDeclaration(FullType Type, UnderlyingType UnderlyingType, Accessibility Accessibility, bool IsPartial, bool IsConstrainingUnion, GeneratorFeatures GeneratorFeatures);
