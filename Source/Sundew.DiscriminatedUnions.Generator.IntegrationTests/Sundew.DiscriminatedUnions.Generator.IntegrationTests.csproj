@@ -40,14 +40,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sundew.CodeAnalysis.Testing\Sundew.CodeAnalysis.Testing.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator\Sundew.DiscriminatedUnions.Generator.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.TestData\Sundew.DiscriminatedUnions.TestData.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Testing\" />
   </ItemGroup>
 
 </Project>

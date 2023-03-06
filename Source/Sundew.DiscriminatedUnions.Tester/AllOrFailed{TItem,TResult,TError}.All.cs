@@ -7,6 +7,7 @@
 
 namespace Sundew.Base.Collections;
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,9 @@ using System.Linq;
 /// <typeparam name="TError">The error type.</typeparam>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "Discriminated union")]
 public sealed class All<TItem, TResult, TError> : AllOrFailed<TItem, TResult, TError>, IReadOnlyList<TResult>
+    where TError : Exception, TItem
+    where TResult : struct
+    where TItem : class, IEquatable<TItem>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="All{TItem, TResult, TError}" /> class.

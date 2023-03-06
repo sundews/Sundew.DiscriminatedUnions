@@ -1,8 +1,18 @@
 ﻿//HintName: Sundew.DiscriminatedUnions.Tester.ResultExtensions.cs
 namespace Sundew.DiscriminatedUnions.Tester
 {
+    /// <summary>
+    /// Segregation extension method for Result.
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCode]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "2.1.0.0")]
     public static class ResultExtensions
     {
+        /// <summary>
+        /// Segregates the items in the specified enumerable by type.
+        /// </summary>
+        /// <param name="results">The results.</param>
+        /// <returns>A new ResultSegregation.</returns>
         public static ResultSegregation<T> Segregate<T>(this System.Collections.Generic.IEnumerable<global::Sundew.DiscriminatedUnions.Tester.Result<T>> results)
         {
             var successes = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.Success<T>>();
@@ -29,7 +39,7 @@ namespace Sundew.DiscriminatedUnions.Tester
                 }
             }
 
-            return new ResultSegregation<T>(successes, warnings, errors, fatalErrors);
+            return new global::Sundew.DiscriminatedUnions.Tester.ResultSegregation<T>(successes, warnings, errors, fatalErrors);
         }
     }
 }

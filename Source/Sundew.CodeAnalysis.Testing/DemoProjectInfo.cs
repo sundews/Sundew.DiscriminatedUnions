@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Generator.IntegrationTests.Testing;
+namespace Sundew.CodeAnalysis.Testing;
 
 using System.IO;
 

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net7.0;net48</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator.Baseline\Sundew.DiscriminatedUnions.Generator.Baseline.csproj">
+      <Aliases>baseline</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator\Sundew.DiscriminatedUnions.Generator.csproj" />
+    <ProjectReference Include="..\Sundew.CodeAnalysis.Testing\Sundew.CodeAnalysis.Testing.csproj" />
+  </ItemGroup>
+
+</Project>

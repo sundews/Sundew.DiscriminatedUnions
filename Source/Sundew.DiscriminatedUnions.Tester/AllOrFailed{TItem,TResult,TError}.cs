@@ -7,13 +7,19 @@
 
 namespace Sundew.Base.Collections;
 
+using System;
+using Sundew.DiscriminatedUnions;
+
 /// <summary>
 /// Represents the result of an ensured select.
 /// </summary>
 /// <typeparam name="TItem">The item type.</typeparam>
 /// <typeparam name="TResult">The result type.</typeparam>
 /// <typeparam name="TError">The error type.</typeparam>
-[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+[Sundew.DiscriminatedUnions.DiscriminatedUnion(GeneratorFeatures.Segregate)]
 public abstract partial class AllOrFailed<TItem, TResult, TError>
+    where TItem : class, IEquatable<TItem>
+    where TResult : struct
+    where TError : Exception, TItem
 {
 }
