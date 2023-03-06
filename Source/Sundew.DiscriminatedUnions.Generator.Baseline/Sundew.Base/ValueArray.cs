@@ -32,6 +32,11 @@ public readonly struct ValueArray<TItem> : IReadOnlyList<TItem>, IEquatable<Valu
     public int Count => this.inner.Length;
 
     /// <summary>
+    /// Gets a value indicating whether this array is default.
+    /// </summary>
+    public bool IsDefault => this.inner.IsDefault;
+
+    /// <summary>
     /// Gets the index at the specified index.
     /// </summary>
     /// <param name="index">The index.</param>

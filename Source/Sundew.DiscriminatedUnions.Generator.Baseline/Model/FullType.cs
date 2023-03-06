@@ -21,6 +21,7 @@ internal readonly record struct FullType(string Name, string Namespace, string A
         return this.Name.Equals(other.Name) &&
                this.Namespace.Equals(other.Namespace) &&
                this.AssemblyAlias.Equals(other.AssemblyAlias) &&
-               this.IsArray.Equals(other.IsArray);
+               this.IsArray.Equals(other.IsArray) &&
+               this.TypeMetadata.TypeParameters.Count == other.TypeParameterCount;
     }
 }

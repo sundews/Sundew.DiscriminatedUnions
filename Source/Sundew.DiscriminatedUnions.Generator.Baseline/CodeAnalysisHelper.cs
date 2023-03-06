@@ -14,17 +14,11 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
+using static Sundew.DiscriminatedUnions.Generator.OutputStage.GeneratorConstants;
 using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class CodeAnalysisHelper
 {
-    private const string GlobalAssemblyAlias = "global";
-    private const string Notnull = "notnull";
-    private const string Class = "class";
-    private const string Unmanaged = "unmanaged";
-    private const string Struct = "struct";
-    private const string NewConstructor = "new()";
-
     private static readonly HashSet<string> Keywords = new HashSet<string>
     {
         "abstract",

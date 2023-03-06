@@ -8,6 +8,7 @@
 namespace Sundew.DiscriminatedUnions.Generator.OutputStage;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,15 +17,18 @@ using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using static GeneratorConstants;
 using Accessibility = Sundew.DiscriminatedUnions.Generator.Model.Accessibility;
-using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class StringBuilderExtensions
 {
     private const string DebuggerNonUserCode = "global::System.Diagnostics.DebuggerNonUserCode";
     private const string GeneratedCodeAttribute = "global::System.CodeDom.Compiler.GeneratedCodeAttribute";
     private const string SundewDiscriminateUnionsGenerator = "Sundew.DiscriminateUnions.Generator";
+    private const string Pragma = "#pragma";
+    private const string Warning = "warning";
+    private const string Restore = "restore";
+    private const string Disable = "disable";
 
-    public static StringBuilder AppendType(this StringBuilder stringBuilder, FullType fullType, bool fullyQualify = true, bool omitTypeParameters = false)
+    public static StringBuilder AppendType(this StringBuilder stringBuilder, in FullType fullType, bool fullyQualify = true, bool omitTypeParameters = false)
     {
         if (fullyQualify && fullType.Namespace != string.Empty)
         {
@@ -45,7 +49,7 @@ internal static class StringBuilderExtensions
         return stringBuilder;
     }
 
-    public static StringBuilder TryAppendGenericQualifier(this StringBuilder stringBuilder, FullType fullType, bool omitTypeParameters = false)
+    public static StringBuilder TryAppendGenericQualifier(this StringBuilder stringBuilder, in FullType fullType, bool omitTypeParameters = false)
     {
         if (fullType.TypeMetadata.GenericQualifier != null)
         {
@@ -86,6 +90,69 @@ internal static class StringBuilderExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(accessibility), accessibility, null),
         });
         return stringBuilder;
+    }
+
+    public static StringBuilder AppendPragmaWarning(this StringBuilder stringBuilder, bool restore, string id)
+    {
+        return stringBuilder.Append(Pragma)
+            .Append(' ')
+            .Append(Warning)
+            .Append(' ')
+            .Append(restore ? Restore : Disable)
+            .Append(' ')
+            .Append(id)
+            .AppendLine();
+    }
+
+    public static StringBuilder AppendDocumentation(this StringBuilder stringBuilder, string indentation, string summaryFormat, object element, ValueArray<TypeParameter> typeParameters = default, IEnumerable<string>? parameters = default, string? returns = null)
+    {
+        stringBuilder
+            .Append(indentation).Append("/// <summary>").AppendLine()
+            .Append(indentation).Append("/// ").AppendFormat(summaryFormat, element).Append('.').AppendLine()
+            .Append(indentation).Append("/// </summary>");
+
+        if (!typeParameters.IsDefault)
+        {
+            typeParameters.JoinToStringBuilder(
+                stringBuilder,
+                (builder, typeParameter) =>
+                {
+                    builder
+                        .AppendLine()
+                        .Append(indentation)
+                        .Append("/// <typeparam name=").Append('\"')
+                        .Append(typeParameter.Name).Append('\"')
+                        .Append('>').Append("The type of the").Append(' ')
+                        .Append(typeParameter.Name.Length > 1
+                            ? typeParameter.Name.Substring(1).ToLowerInvariant()
+                            : typeParameter.Name.ToLowerInvariant())
+                        .Append('.').Append("</typeparam>");
+                },
+                string.Empty);
+        }
+
+        if (parameters != null)
+        {
+            parameters.JoinToStringBuilder(
+                stringBuilder,
+                (builder, parameter) =>
+                {
+                    builder
+                        .AppendLine()
+                        .Append(indentation)
+                        .Append("/// <param name=").Append('\"').Append(parameter).Append('\"').Append('>')
+                        .Append("The").Append(' ').Append(parameter).Append('.').Append("</param>");
+                },
+                string.Empty);
+        }
+
+        if (!string.IsNullOrEmpty(returns))
+        {
+            stringBuilder.AppendLine()
+                .Append(indentation).Append("/// <returns>").AppendFormat(returns, element).Append('.').Append("</returns>");
+        }
+
+        return stringBuilder.AppendLine();
     }
 
     public static StringBuilder TryAppendConstraints(this StringBuilder stringBuilder, ValueArray<TypeParameter> typeParameters, string indentation)
