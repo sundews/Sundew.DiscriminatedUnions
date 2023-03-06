@@ -10,7 +10,6 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <summary>
         /// Factory method for the Error case.
         /// </summary>
-        /// <typeparam name="T">The type of the t.</typeparam>
         /// <param name="code">The code.</param>
         /// <returns>A new Error.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Error<>))]
@@ -19,7 +18,6 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <summary>
         /// Factory method for the FatalError case.
         /// </summary>
-        /// <typeparam name="T">The type of the t.</typeparam>
         /// <param name="code">The code.</param>
         /// <returns>A new FatalError.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.FatalError<>))]
