@@ -94,7 +94,7 @@ internal static class DiscriminatedUnionOutputProvider
         foreach (var discriminatedUnionOwnedCase in discriminatedUnion.Cases)
         {
             stringBuilder.AppendLine()
-                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.Type.Name, discriminatedUnionOwnedCase.Type.TypeMetadata.TypeParameters, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
+                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.Type.Name, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
                 .Append(SpaceIndentedBy8)
                 .Append('[')
                 .Append(SundewDiscriminatedUnionsCaseType)

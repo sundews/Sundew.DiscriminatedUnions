@@ -1,4 +1,4 @@
-name: .NET
+name: .CI
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: CI
+    name: .NET
     runs-on: ubuntu-latest
     env:
       solutionPath: ./Source/Sundew.DiscriminatedUnions.sln
