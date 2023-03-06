@@ -9,6 +9,7 @@
     <IsRoslynComponent>true</IsRoslynComponent>
     <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <RootNamespace>Sundew.DiscriminatedUnions.Generator</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Generator.Baseline {
+namespace Sundew.DiscriminatedUnions.Generator {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Sundew.DiscriminatedUnions.Generator.Baseline {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sundew.DiscriminatedUnions.Generator.Baseline.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sundew.DiscriminatedUnions.Generator.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

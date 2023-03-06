@@ -1,7 +1,6 @@
 ﻿//HintName: Sundew.Base.Collections.AllOrFailed.cs
 namespace Sundew.Base.Collections
 {
-<<<<<<< HEAD
 #pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "2.1.0.0")]
@@ -30,13 +29,6 @@ namespace Sundew.Base.Collections
         /// <typeparam name="TError">The type of the error.</typeparam>
         /// <param name="items">The items.</param>
         /// <returns>A new Failed.</returns>
-=======
-    partial class AllOrFailed<TItem, TResult, TError>
-    {
-        [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.Base.Collections.All<,,>))]
-        public static global::Sundew.Base.Collections.AllOrFailed<TItem, TResult, TError> All(TResult[] items) => new global::Sundew.Base.Collections.All<TItem, TResult, TError>(items);
-
->>>>>>> main
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.Base.Collections.Failed<,,>))]
         public static global::Sundew.Base.Collections.AllOrFailed<TItem, TResult, TError> Failed(global::System.Collections.Generic.IReadOnlyList<global::Sundew.Base.Collections.FailedItem<TItem, TError>> items) => new global::Sundew.Base.Collections.Failed<TItem, TResult, TError>(items);
     }
