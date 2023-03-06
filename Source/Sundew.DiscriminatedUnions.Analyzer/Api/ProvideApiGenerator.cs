@@ -26,7 +26,7 @@ public class ProvideApiGenerator : IIncrementalGenerator
     /// <param name="context">The context.</param>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterPostInitializationOutput(context =>
+        /*context.RegisterPostInitializationOutput(context =>
         {
             var interfaceResources = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x =>
                 x.StartsWith($"{typeof(ProvideApiGenerator).Namespace}"));
@@ -38,6 +38,6 @@ public class ProvideApiGenerator : IIncrementalGenerator
                 var filePath = $"{typeof(DiscriminatedUnion).Namespace}.";
                 context.AddSource(filePath + interfaceResource.Substring(typeof(ProvideApiGenerator).Namespace.Length + 1), fileContent.Replace(File, File + filePath));
             }
-        });
+        });*/
     }
 }

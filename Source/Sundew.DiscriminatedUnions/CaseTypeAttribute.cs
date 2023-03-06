@@ -14,7 +14,7 @@ namespace Sundew.DiscriminatedUnions
     /// </summary>
     [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false)]
 #pragma warning disable SA1649 // File header file name documentation should match file name
-    internal class CaseTypeAttribute : Attribute
+    public class CaseTypeAttribute : Attribute
 #pragma warning restore SA1649 // File header file name documentation should match file name
     {
         /// <summary>

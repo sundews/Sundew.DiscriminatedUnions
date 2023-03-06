@@ -14,7 +14,7 @@ namespace Sundew.DiscriminatedUnions
     /// </summary>
     [Flags]
 #pragma warning disable SA1649 // File header file name documentation should match file name
-    internal enum GeneratorFeatures
+    public enum GeneratorFeatures
 #pragma warning restore SA1649 // File header file name documentation should match file name
     {
         /// <summary>
