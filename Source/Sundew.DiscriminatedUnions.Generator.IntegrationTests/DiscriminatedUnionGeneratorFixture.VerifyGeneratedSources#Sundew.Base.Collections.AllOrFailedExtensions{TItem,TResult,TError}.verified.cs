@@ -6,7 +6,7 @@ namespace Sundew.Base.Collections
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.0.0.0")]
-    public static class AllOrFailedExtensions
+    public static partial class AllOrFailedExtensions
     {
         /// <summary>
         /// Segregates the items in the specified enumerable by type.

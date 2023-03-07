@@ -6,7 +6,7 @@ namespace Sundew.Base.Collections
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.0.0.0")]
-    public sealed class AllOrFailedSegregation<TItem, TResult, TError>
+    public sealed partial class AllOrFailedSegregation<TItem, TResult, TError>
         where TItem : class, global::System.IEquatable<TItem>
         where TResult : struct
         where TError : global::System.Exception, TItem

@@ -41,20 +41,21 @@ internal static class DiscriminatedUnionOutputProvider
             {
                 var discriminatedUnion = discriminatedUnionResult.DiscriminatedUnion;
                 var discriminatedUnionNamespace = discriminatedUnion.Type.Namespace;
+                var genericParametersForFileName = TryGetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters);
                 if (discriminatedUnion.IsPartial)
                 {
                     sourceProductionContext.AddSource(
-                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + GetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters),
+                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + genericParametersForFileName,
                         GetUnionSource(in discriminatedUnion, discriminatedUnionNamespace));
                 }
 
                 if (discriminatedUnion.GeneratorFeatures.HasFlag(GeneratorFeatures.Segregate))
                 {
                     var segregationTypeName = discriminatedUnion.Type.Name + Segregation;
-                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName + GetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters), GetUnionSegregationSource(in discriminatedUnion, segregationTypeName));
+                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName + genericParametersForFileName, GetUnionSegregationSource(in discriminatedUnion, segregationTypeName));
                     var extensionsTypeName = discriminatedUnion.Type.Name + Extensions;
                     sourceProductionContext.AddSource(
-                        discriminatedUnionNamespace + '.' + extensionsTypeName + GetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters),
+                        discriminatedUnionNamespace + '.' + extensionsTypeName + genericParametersForFileName,
                         GetUnionSegregateExtensionSource(in discriminatedUnion, extensionsTypeName, segregationTypeName));
                 }
             }
@@ -68,7 +69,7 @@ internal static class DiscriminatedUnionOutputProvider
         }
     }
 
-    private static string GetGenericParametersForFileName(ValueArray<TypeParameter> typeParameters)
+    private static string TryGetGenericParametersForFileName(ValueArray<TypeParameter> typeParameters)
     {
         if (typeParameters.IsDefault)
         {
@@ -185,6 +186,8 @@ internal static class DiscriminatedUnionOutputProvider
             .Append(' ')
             .Append(Sealed)
             .Append(' ')
+            .Append(Partial)
+            .Append(' ')
             .Append(Class)
             .Append(' ')
             .Append(segregationTypeName)
@@ -283,6 +286,8 @@ internal static class DiscriminatedUnionOutputProvider
             .AppendAccessibility(discriminatedUnion.Accessibility)
             .Append(' ')
             .Append(Static)
+            .Append(' ')
+            .Append(Partial)
             .Append(' ')
             .Append(Class)
             .Append(' ')
