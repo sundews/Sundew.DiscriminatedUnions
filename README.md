@@ -66,11 +66,11 @@ public sealed record DivisionExpression(IExpression Lhs, IExpression Rhs) : IAri
 public sealed record ValueExpression(int Value) : IExpression;
 ```
 
-### Generator features
+## Generator features
 As mentioned the source generator is automatically activated for generating Factory Methods by specifying the partial keyword.
 In addition, the DiscriminatedUnion attribute can specify a flags enum (GeneratorFeatures) to control additional code generation.
 
-#### Segregate - Generates an extension method for IEnumerable<Union> that segregates all items into buckets of the different result.
+* Segregate - Generates an extension method for IEnumerable<Union> that segregates all items into buckets of the different result.
 
 ## Supported diagnostics:
 | Diagnostic Id | Description                                                            | Code Fix  |
