@@ -24,12 +24,12 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
     {
         return syntaxProvider.CreateSyntaxProvider(
             static (syntaxNode, _) => IsDiscriminatedUnionCandidate(syntaxNode),
-            static (generatorContextSyntax, _) => TryGetDiscriminatedUnionCaseDeclaration(generatorContextSyntax)).Where(x => x != null).Select((x, y) => x.GetValueOrDefault());
+            static (generatorContextSyntax, _) => TryGetDiscriminatedUnionCaseDeclaration(generatorContextSyntax.Node, generatorContextSyntax.SemanticModel)).Where(x => x != null).Select((x, y) => x.GetValueOrDefault());
     }
 
-    private static DiscriminatedUnionCaseDeclaration? TryGetDiscriminatedUnionCaseDeclaration(GeneratorSyntaxContext generatorContextSyntax)
+    internal static DiscriminatedUnionCaseDeclaration? TryGetDiscriminatedUnionCaseDeclaration(SyntaxNode syntaxNode, SemanticModel semanticModel)
     {
-        var symbol = generatorContextSyntax.SemanticModel.GetDeclaredSymbol(generatorContextSyntax.Node);
+        var symbol = semanticModel.GetDeclaredSymbol(syntaxNode);
         if (symbol is INamedTypeSymbol namedTypeSymbol)
         {
             var owners = FindOwners(namedTypeSymbol).Select(x => x.GetSourceType());

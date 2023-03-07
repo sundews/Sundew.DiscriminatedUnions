@@ -28,13 +28,13 @@ internal static class DiscriminatedUnionDeclarationProvider
     {
         return syntaxProvider.CreateSyntaxProvider(
             static (syntaxNode, _) => IsDiscriminatedUnionCandidate(syntaxNode),
-            static (generatorContextSyntax, _) => GetDiscriminatedUnionDeclaration(generatorContextSyntax)).Where(x => x != null).Select((x, y) => x.GetValueOrDefault());
+            static (generatorContextSyntax, _) => TryGetDiscriminatedUnionDeclaration(generatorContextSyntax.Node, generatorContextSyntax.SemanticModel)).Where(x => x != null).Select((x, y) => x.GetValueOrDefault());
     }
 
-    private static DiscriminatedUnionDeclaration? GetDiscriminatedUnionDeclaration(GeneratorSyntaxContext generatorContextSyntax)
+    internal static DiscriminatedUnionDeclaration? TryGetDiscriminatedUnionDeclaration(SyntaxNode syntaxNode, SemanticModel semanticModel)
     {
-        var declaredSymbol = generatorContextSyntax.SemanticModel.GetDeclaredSymbol(generatorContextSyntax.Node);
-        if (generatorContextSyntax.Node is MemberDeclarationSyntax memberDeclarationSyntax && declaredSymbol is ITypeSymbol typeSymbol && TryGetUnionWithFeatures(typeSymbol, out var generatorFeatures) && TryGetSupportedAccessibility(typeSymbol, out var accessibility))
+        var declaredSymbol = semanticModel.GetDeclaredSymbol(syntaxNode);
+        if (syntaxNode is MemberDeclarationSyntax memberDeclarationSyntax && declaredSymbol is ITypeSymbol typeSymbol && TryGetUnionWithFeatures(typeSymbol, out var generatorFeatures) && TryGetSupportedAccessibility(typeSymbol, out var accessibility))
         {
             IEnumerable<INamedTypeSymbol> baseSymbol = typeSymbol.BaseType != null ? new[] { typeSymbol.BaseType } : Array.Empty<INamedTypeSymbol>();
             var isConstrainingUnion = baseSymbol.Concat(typeSymbol.Interfaces).Any(DiscriminatedUnionExtensions.IsDiscriminatedUnion);

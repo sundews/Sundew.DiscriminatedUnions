@@ -13,9 +13,7 @@ namespace Sundew.DiscriminatedUnions
     /// Enum for configuring the source generator.
     /// </summary>
     [Flags]
-#pragma warning disable SA1649 // File header file name documentation should match file name
     internal enum GeneratorFeatures
-#pragma warning restore SA1649 // File header file name documentation should match file name
     {
         /// <summary>
         /// Instructs the generator not to generate any sources.

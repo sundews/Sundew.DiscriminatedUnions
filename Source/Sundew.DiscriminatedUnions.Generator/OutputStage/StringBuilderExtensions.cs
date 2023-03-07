@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Sundew.Base;
+using Sundew.Base.Text;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using static GeneratorConstants;
@@ -27,6 +28,17 @@ internal static class StringBuilderExtensions
     private const string Warning = "warning";
     private const string Restore = "restore";
     private const string Disable = "disable";
+    private const string TypeparamStart = "/// <typeparam name=";
+    private const string TheTypeOfThe = "The type of the";
+    private const string TypeparamEnd = "</typeparam>";
+    private const string ParamEnd = "</param>";
+    private const string ParamStart = "/// <param name=";
+    private const string The = "The";
+    private const string ReturnsEnd = "</returns>";
+    private const string ReturnsStart = "/// <returns>";
+    private const string SummaryStart = "/// <summary>";
+    private const string SummaryEnd = "/// </summary>";
+    private const string Documentation = "/// ";
 
     public static StringBuilder AppendType(this StringBuilder stringBuilder, in FullType fullType, bool fullyQualify = true, bool omitTypeParameters = false)
     {
@@ -107,41 +119,40 @@ internal static class StringBuilderExtensions
     public static StringBuilder AppendDocumentation(this StringBuilder stringBuilder, string indentation, string summaryFormat, object element, ValueArray<TypeParameter> typeParameters = default, IEnumerable<string>? parameters = default, string? returns = null)
     {
         stringBuilder
-            .Append(indentation).Append("/// <summary>").AppendLine()
-            .Append(indentation).Append("/// ").AppendFormat(summaryFormat, element).Append('.').AppendLine()
-            .Append(indentation).Append("/// </summary>");
+            .Append(indentation).Append(SummaryStart).AppendLine()
+            .Append(indentation).Append(Documentation).AppendFormat(summaryFormat, element).Append('.').AppendLine()
+            .Append(indentation).Append(SummaryEnd);
 
         if (!typeParameters.IsDefault)
         {
-            typeParameters.JoinToStringBuilder(
-                stringBuilder,
+            stringBuilder.AppendItems(
+                typeParameters,
                 (builder, typeParameter) =>
                 {
                     builder
                         .AppendLine()
                         .Append(indentation)
-                        .Append("/// <typeparam name=").Append('\"')
-                        .Append(typeParameter.Name).Append('\"')
-                        .Append('>').Append("The type of the").Append(' ')
+                        .Append(TypeparamStart).Append('\"').Append(typeParameter.Name).Append('\"').Append('>')
+                        .Append(TheTypeOfThe).Append(' ')
                         .Append(typeParameter.Name.Length > 1
                             ? typeParameter.Name.Substring(1).ToLowerInvariant()
                             : typeParameter.Name.ToLowerInvariant())
-                        .Append('.').Append("</typeparam>");
+                        .Append('.').Append(TypeparamEnd);
                 },
                 string.Empty);
         }
 
         if (parameters != null)
         {
-            parameters.JoinToStringBuilder(
-                stringBuilder,
+            stringBuilder.AppendItems(
+                parameters,
                 (builder, parameter) =>
                 {
                     builder
                         .AppendLine()
                         .Append(indentation)
-                        .Append("/// <param name=").Append('\"').Append(parameter).Append('\"').Append('>')
-                        .Append("The").Append(' ').Append(parameter).Append('.').Append("</param>");
+                        .Append(ParamStart).Append('\"').Append(parameter).Append('\"').Append('>')
+                        .Append(The).Append(' ').Append(parameter).Append('.').Append(ParamEnd);
                 },
                 string.Empty);
         }
@@ -149,7 +160,7 @@ internal static class StringBuilderExtensions
         if (!string.IsNullOrEmpty(returns))
         {
             stringBuilder.AppendLine()
-                .Append(indentation).Append("/// <returns>").AppendFormat(returns, element).Append('.').Append("</returns>");
+                .Append(indentation).Append(ReturnsStart).AppendFormat(returns, element).Append('.').Append(ReturnsEnd);
         }
 
         return stringBuilder.AppendLine();
@@ -159,8 +170,8 @@ internal static class StringBuilderExtensions
     {
         if (typeParameters.Any(x => x.Constraints.Any()))
         {
-            return typeParameters.JoinToStringBuilder(
-                stringBuilder,
+            return stringBuilder.AppendItems(
+                typeParameters,
                 (builder, parameter) =>
                 {
                     builder
@@ -171,8 +182,8 @@ internal static class StringBuilderExtensions
                         .Append(' ')
                         .Append(':')
                         .Append(' ');
-                    parameter.Constraints.JoinToStringBuilder(
-                            stringBuilder,
+                    stringBuilder.AppendItems(
+                            parameter.Constraints,
                             (builder1, constraint) => builder1.Append(constraint),
                             ListSeparator)
                         .AppendLine();
@@ -201,24 +212,5 @@ internal static class StringBuilderExtensions
             .Append(']')
             .AppendLine();
         return stringBuilder;
-    }
-
-    private static StringBuilder AppendUnderlyingTypeConstraint(this StringBuilder stringBuilder, UnderlyingTypeConstraint underlyingTypeConstraint)
-    {
-        switch (underlyingTypeConstraint)
-        {
-            case UnderlyingTypeConstraint.None:
-                return stringBuilder;
-            case UnderlyingTypeConstraint.Class:
-                return stringBuilder.Append(Class).Append(' ');
-            case UnderlyingTypeConstraint.Struct:
-                return stringBuilder.Append(Struct).Append(' ');
-            case UnderlyingTypeConstraint.NotNull:
-                return stringBuilder.Append(Notnull).Append(' ');
-            case UnderlyingTypeConstraint.Unmanaged:
-                return stringBuilder.Append(Unmanaged).Append(' ');
-            default:
-                throw new ArgumentOutOfRangeException(nameof(underlyingTypeConstraint), underlyingTypeConstraint, null);
-        }
     }
 }

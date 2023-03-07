@@ -13,9 +13,7 @@ namespace Sundew.DiscriminatedUnions
     /// Exception used to silence CS8509 by throwing it in the default case of switch expression.
     /// </summary>
     /// <seealso cref="System.Exception" />
-#pragma warning disable SA1649 // File header file name documentation should match file name
     internal class UnreachableCaseException : Exception
-#pragma warning restore SA1649 // File header file name documentation should match file name
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UnreachableCaseException"/> class.

@@ -31,6 +31,7 @@ The idea is that this package can be deleted once unions are supported in C#, wi
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions\Sundew.DiscriminatedUnions.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator\Sundew.DiscriminatedUnions.Generator.csproj" />
@@ -45,6 +46,7 @@ The idea is that this package can be deleted once unions are supported in C#, wi
       <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.Analyzer.dll" PackagePath="analyzers/dotnet/cs" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
       <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.Generator.dll" PackagePath="analyzers/dotnet/cs" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.dll" PackagePath="lib/netstandard1.0" />
     </ItemGroup>
   </Target>
 
