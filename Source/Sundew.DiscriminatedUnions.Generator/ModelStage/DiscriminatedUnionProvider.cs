@@ -71,6 +71,17 @@ internal static class DiscriminatedUnionProvider
             }
         }
 
-        return discriminatedUnions.Values.ToImmutableArray();
+        return discriminatedUnions.Values.Select(x =>
+        {
+            if (x.IsSuccess)
+            {
+                return DiscriminatedUnionResult.Success(x.DiscriminatedUnion with
+                {
+                    Cases = x.DiscriminatedUnion.Cases.OrderBy(@case => @case.Type.Name).ToImmutableArray(),
+                });
+            }
+
+            return x;
+        }).ToImmutableArray();
     }
 }
