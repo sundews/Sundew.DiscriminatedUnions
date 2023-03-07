@@ -13,9 +13,7 @@ namespace Sundew.DiscriminatedUnions
     /// Indicates the case type constructed by a factory method.
     /// </summary>
     [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false)]
-#pragma warning disable SA1649 // File header file name documentation should match file name
-    public class CaseTypeAttribute : Attribute
-#pragma warning restore SA1649 // File header file name documentation should match file name
+    internal class CaseTypeAttribute : Attribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CaseTypeAttribute"/> class.

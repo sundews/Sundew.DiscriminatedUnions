@@ -1,9 +1,9 @@
-﻿//HintName: Sundew.Base.Collections.AllOrFailed.cs
+﻿//HintName: Sundew.Base.Collections.AllOrFailed{TItem,TResult,TError}.cs
 namespace Sundew.Base.Collections
 {
 #pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "2.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.0.0.0")]
     public partial class AllOrFailed<TItem, TResult, TError>
         where TItem : class, global::System.IEquatable<TItem>
         where TResult : struct
@@ -13,9 +13,6 @@ namespace Sundew.Base.Collections
         /// <summary>
         /// Factory method for the All case.
         /// </summary>
-        /// <typeparam name="TItem">The type of the item.</typeparam>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <typeparam name="TError">The type of the error.</typeparam>
         /// <param name="items">The items.</param>
         /// <returns>A new All.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.Base.Collections.All<,,>))]
@@ -24,9 +21,6 @@ namespace Sundew.Base.Collections
         /// <summary>
         /// Factory method for the Failed case.
         /// </summary>
-        /// <typeparam name="TItem">The type of the item.</typeparam>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <typeparam name="TError">The type of the error.</typeparam>
         /// <param name="items">The items.</param>
         /// <returns>A new Failed.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.Base.Collections.Failed<,,>))]

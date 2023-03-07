@@ -8,13 +8,13 @@
     <PackageId>Sundew.DiscriminatedUnion.Library</PackageId>
     <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <None Remove="stylecop.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include=".generated\*.g.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +26,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include=".generated\" />
   </ItemGroup>
 
 </Project>

@@ -14,9 +14,7 @@ namespace Sundew.DiscriminatedUnions
     /// </summary>
     /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-#pragma warning disable SA1649 // File header file name documentation should match file name
-    public class DiscriminatedUnion : Attribute
-#pragma warning restore SA1649 // File header file name documentation should match file name
+    internal class DiscriminatedUnion : Attribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscriminatedUnion"/> class.

@@ -3,7 +3,7 @@ namespace Sundew.DiscriminatedUnions.Tester
 {
 #pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "2.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.0.0.0")]
     public partial record DefiniteType
 #pragma warning restore SA1601
     {
@@ -15,7 +15,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="assemblyName">The assemblyName.</param>
         /// <returns>A new NamedType.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.NamedType))]
-        public static global::Sundew.DiscriminatedUnions.Tester.DefiniteType NamedType(global::System.String name, global::System.String @namespace, global::System.String assemblyName) => new global::Sundew.DiscriminatedUnions.Tester.NamedType(name, @namespace, assemblyName);
+        public static global::Sundew.DiscriminatedUnions.Tester.DefiniteType NamedType(string name, string @namespace, string assemblyName) => new global::Sundew.DiscriminatedUnions.Tester.NamedType(name, @namespace, assemblyName);
 
         /// <summary>
         /// Factory method for the DefiniteArrayType case.

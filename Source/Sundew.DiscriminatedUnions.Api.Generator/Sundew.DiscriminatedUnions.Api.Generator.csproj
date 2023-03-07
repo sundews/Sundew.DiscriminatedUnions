@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
+    <IsPackable>false</IsPackable>
+    <RuntimeIdentifiers>win10-x64;osx.10.12-x64;debian.8-x64</RuntimeIdentifiers>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="Models/*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <AdditionalFiles Include="stylecop.json" />
+    <GeneratorSetup Include="Quantities.gs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </GeneratorSetup>
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <Folder Include="Properties/" />
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <PackageReference Include="Sundew.Generator.Code" Version="3.1.14" />
+  </ItemGroup>
+
+</Project>

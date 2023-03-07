@@ -5,7 +5,7 @@ namespace Sundew.DiscriminatedUnions.Tester
     /// Contains individual lists of the different cases of the discriminated union DefiniteType.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "2.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.0.0.0")]
     public sealed class DefiniteTypeSegregation
     {
         internal DefiniteTypeSegregation(System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.NamedType> namedTypes, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType> definiteArrayTypes)

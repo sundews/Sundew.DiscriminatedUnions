@@ -7,15 +7,15 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="FactoryMethod\**" />
+    <EmbeddedResource Remove="FactoryMethod\**" />
+    <None Remove="FactoryMethod\**" />
+  </ItemGroup>
   
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
-    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\CaseTypeAttribute.cs" />
-    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\DiscriminatedUnion.cs" />
-    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\UnreachableCaseException.cs" />
-    <SundewDiscriminatedUnions Include="..\Sundew.DiscriminatedUnions\GeneratorFeatures.cs" />
-    <EmbeddedResource Include="@(SundewDiscriminatedUnions)" LinkBase="Api" />
-    <Compile Include="@(SundewDiscriminatedUnions)" LinkBase="Api" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,8 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\" />
-    <Folder Include="FactoryMethod\" />
     <InternalsVisibleTo Include="Sundew.DiscriminatedUnions.Generator" />
   </ItemGroup>
 

@@ -12,7 +12,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Sundew.Base;
+using Sundew.Base.Text;
 using Sundew.DiscriminatedUnions.Generator;
+using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Extensions;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Sundew.DiscriminatedUnions.Generator.ModelStage;
@@ -21,7 +23,6 @@ using static GeneratorConstants;
 
 internal static class DiscriminatedUnionOutputProvider
 {
-    private const string Cs1591 = "CS1591";
     private const string Sa1601 = "SA1601";
     private const string GetPropertyDescription = "Gets the {0}";
     private const string ReturnsDescription = "The {0}";
@@ -43,17 +44,17 @@ internal static class DiscriminatedUnionOutputProvider
                 if (discriminatedUnion.IsPartial)
                 {
                     sourceProductionContext.AddSource(
-                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name,
+                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + GetGenericParameters(discriminatedUnion.Type.TypeMetadata.TypeParameters),
                         GetUnionSource(in discriminatedUnion, discriminatedUnionNamespace));
                 }
 
                 if (discriminatedUnion.GeneratorFeatures.HasFlag(GeneratorFeatures.Segregate))
                 {
                     var segregationTypeName = discriminatedUnion.Type.Name + Segregation;
-                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName, GetUnionSegregationSource(in discriminatedUnion, segregationTypeName));
+                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName + GetGenericParameters(discriminatedUnion.Type.TypeMetadata.TypeParameters), GetUnionSegregationSource(in discriminatedUnion, segregationTypeName));
                     var extensionsTypeName = discriminatedUnion.Type.Name + Extensions;
                     sourceProductionContext.AddSource(
-                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + Extensions,
+                        discriminatedUnionNamespace + '.' + extensionsTypeName + GetGenericParameters(discriminatedUnion.Type.TypeMetadata.TypeParameters),
                         GetUnionSegregateExtensionSource(in discriminatedUnion, extensionsTypeName, segregationTypeName));
                 }
             }
@@ -65,6 +66,22 @@ internal static class DiscriminatedUnionOutputProvider
                 }
             }
         }
+    }
+
+    private static string GetGenericParameters(ValueArray<TypeParameter> typeParameters)
+    {
+        if (typeParameters.IsDefault)
+        {
+            return string.Empty;
+        }
+
+        return new StringBuilder()
+            .AppendItems(
+                typeParameters,
+                (sb, item) => sb.Append('{').Append(item.Name),
+                (sb, item) => sb.Append(item.Name),
+                sb => sb.Append('}'),
+                ',').ToString();
     }
 
     private static string GetUnionSource(in DiscriminatedUnion discriminatedUnion, string discriminatedUnionNamespace)
@@ -94,7 +111,7 @@ internal static class DiscriminatedUnionOutputProvider
         foreach (var discriminatedUnionOwnedCase in discriminatedUnion.Cases)
         {
             stringBuilder.AppendLine()
-                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.Type.Name, discriminatedUnionOwnedCase.Type.TypeMetadata.TypeParameters, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
+                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.Type.Name, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
                 .Append(SpaceIndentedBy8)
                 .Append('[')
                 .Append(SundewDiscriminatedUnionsCaseType)
@@ -122,13 +139,13 @@ internal static class DiscriminatedUnionOutputProvider
                 .Append(discriminatedUnionOwnedCase.Type.Name)
                 .Append('(');
 
-            discriminatedUnionOwnedCase.Parameters.JoinToStringBuilder(
-                stringBuilder,
-                (stringBuilder, parameter) =>
+            stringBuilder.AppendItems(
+                discriminatedUnionOwnedCase.Parameters,
+                (sb, parameter) =>
                 {
-                    stringBuilder.AppendType(parameter.Type);
-                    stringBuilder.Append(' ');
-                    stringBuilder.Append(parameter.Name);
+                    sb.AppendType(parameter.Type)
+                    .Append(' ')
+                    .Append(parameter.Name);
                 },
                 ListSeparator);
 
@@ -141,7 +158,7 @@ internal static class DiscriminatedUnionOutputProvider
                 .AppendType(discriminatedUnionOwnedCase.Type)
                 .Append('(');
 
-            discriminatedUnionOwnedCase.Parameters.JoinToStringBuilder(stringBuilder, (stringBuilder, parameter) => stringBuilder.Append(parameter.Name), ListSeparator);
+            stringBuilder.AppendItems(discriminatedUnionOwnedCase.Parameters, (sb, parameter) => sb.Append(parameter.Name), ListSeparator);
 
             stringBuilder.Append(')')
                 .Append(';');
@@ -189,8 +206,8 @@ internal static class DiscriminatedUnionOutputProvider
             .Append(segregationTypeName)
             .Append('(');
         var caseData = discriminatedUnion.Cases.Select(x => (Case: x, PropertyName: x.Type.Name.Pluralize())).Select(x => (x.Case, x.PropertyName, ParameterName: x.PropertyName.Uncapitalize().AvoidKeywordCollision())).ToArray();
-        caseData.JoinToStringBuilder(
-            stringBuilder,
+        stringBuilder.AppendItems(
+            caseData,
             (stringBuilder, caseItem) =>
             {
                 stringBuilder.Append(SystemCollectionsGenericIReadonlyList)
@@ -228,8 +245,8 @@ internal static class DiscriminatedUnionOutputProvider
             .AppendLine()
             .AppendLine();
 
-        caseData.JoinToStringBuilder(
-            stringBuilder,
+        stringBuilder.AppendItems(
+            caseData,
             (stringBuilder, caseItem) =>
             {
                 stringBuilder
@@ -410,7 +427,7 @@ internal static class DiscriminatedUnionOutputProvider
             .TryAppendGenericQualifier(discriminatedUnion.Type)
             .Append('(');
 
-        caseData.JoinToStringBuilder(stringBuilder, (stringBuilder, caseItem) => stringBuilder.Append(caseItem.ListVariableName), ListSeparator);
+        stringBuilder.AppendItems(caseData, (stringBuilder, caseItem) => stringBuilder.Append(caseItem.ListVariableName), ListSeparator);
 
         stringBuilder.Append(')')
             .Append(';')

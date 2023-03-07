@@ -19,6 +19,21 @@ using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class CodeAnalysisHelper
 {
+    private const string Bool = "bool";
+    private const string Char = "char";
+    private const string SByte = "sbyte";
+    private const string Byte = "byte";
+    private const string Short = "short";
+    private const string Ushort = "ushort";
+    private const string Int = "int";
+    private const string Uint = "uint";
+    private const string Long = "long";
+    private const string Ulong = "ulong";
+    private const string Decimal = "decimal";
+    private const string Float = "float";
+    private const string Double = "double";
+    private const string String = "string";
+
     private static readonly HashSet<string> Keywords = new HashSet<string>
     {
         "abstract",
@@ -121,20 +136,22 @@ internal static class CodeAnalysisHelper
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
+                var (name, isPrimitive) = GetName(namedTypeSymbol);
                 var @namespace = namedTypeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat);
                 return new Type(
-                        namedTypeSymbol.Name,
-                        @namespace,
-                        GlobalAssemblyAlias,
-                        namedTypeSymbol.TypeParameters.Length,
-                        false);
+                    name,
+                    isPrimitive ? string.Empty : @namespace,
+                    isPrimitive ? string.Empty : GlobalAssemblyAlias,
+                    namedTypeSymbol.TypeParameters.Length,
+                    false);
             case IArrayTypeSymbol arrayTypeSymbol:
+                var (elementName, elementIsPrimitive) = GetName(arrayTypeSymbol.ElementType);
                 return new Type(
-                        arrayTypeSymbol.ElementType.Name,
-                        arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat),
-                        GlobalAssemblyAlias,
-                        0,
-                        true);
+                    elementName,
+                    elementIsPrimitive || arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat),
+                    elementIsPrimitive ? string.Empty : GlobalAssemblyAlias,
+                    0,
+                    true);
             case ITypeParameterSymbol typeParameterSymbol:
                 return new Type(typeParameterSymbol.MetadataName, string.Empty, GlobalAssemblyAlias, 0, false);
             default:
@@ -147,11 +164,12 @@ internal static class CodeAnalysisHelper
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
+                var (name, isPrimitive) = GetName(namedTypeSymbol);
                 var @namespace = namedTypeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat);
                 return new FullType(
-                    namedTypeSymbol.Name,
-                    @namespace,
-                    GlobalAssemblyAlias,
+                    name,
+                    isPrimitive ? string.Empty : @namespace,
+                    isPrimitive ? string.Empty : GlobalAssemblyAlias,
                     false,
                     new TypeMetadata(
                         namedTypeSymbol.IsGenericType
@@ -166,10 +184,11 @@ internal static class CodeAnalysisHelper
                                     x.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
                                 .Concat(GetNewConstraints(x)).ToImmutableArray())).ToImmutableArray()));
             case IArrayTypeSymbol arrayTypeSymbol:
+                var (elementName, elementIsPrimitive) = GetName(arrayTypeSymbol.ElementType);
                 return new FullType(
-                    arrayTypeSymbol.ElementType.Name,
-                    arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat),
-                    GlobalAssemblyAlias,
+                    elementName,
+                    elementIsPrimitive || arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat),
+                    elementIsPrimitive ? string.Empty : GlobalAssemblyAlias,
                     true,
                     new TypeMetadata(null, ImmutableArray<TypeParameter>.Empty));
             case ITypeParameterSymbol typeParameterSymbol:
@@ -204,5 +223,27 @@ internal static class CodeAnalysisHelper
                 yield return Struct;
                 break;
         }
+    }
+
+    private static (string Name, bool IsPrimitive) GetName(ITypeSymbol namedTypeSymbol)
+    {
+        return namedTypeSymbol.SpecialType switch
+        {
+            SpecialType.System_Boolean => (Bool, true),
+            SpecialType.System_Char => (Char, true),
+            SpecialType.System_SByte => (SByte, true),
+            SpecialType.System_Byte => (Byte, true),
+            SpecialType.System_Int16 => (Short, true),
+            SpecialType.System_UInt16 => (Ushort, true),
+            SpecialType.System_Int32 => (Int, true),
+            SpecialType.System_UInt32 => (Uint, true),
+            SpecialType.System_Int64 => (Long, true),
+            SpecialType.System_UInt64 => (Ulong, true),
+            SpecialType.System_Decimal => (Decimal, true),
+            SpecialType.System_Single => (Float, true),
+            SpecialType.System_Double => (Double, true),
+            SpecialType.System_String => (String, true),
+            _ => (namedTypeSymbol.Name, false),
+        };
     }
 }
