@@ -32,14 +32,14 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         var symbol = semanticModel.GetDeclaredSymbol(syntaxNode);
         if (symbol is INamedTypeSymbol namedTypeSymbol)
         {
-            var owners = FindOwners(namedTypeSymbol).Select(x => x.GetSourceType());
+            var owners = FindOwners(namedTypeSymbol).Where(x => !SymbolEqualityComparer.Default.Equals(x, namedTypeSymbol.ContainingType)).Select(x => x.GetSourceType()).ToImmutableArray();
             var parameters = TryGetParameters(namedTypeSymbol);
             if (parameters == null)
             {
                 return null;
             }
 
-            return new DiscriminatedUnionCaseDeclaration(namedTypeSymbol.GetFullType(), owners.ToImmutableArray(), parameters.ToImmutableArray());
+            return new DiscriminatedUnionCaseDeclaration(namedTypeSymbol.GetFullType(), owners, parameters.ToImmutableArray());
         }
 
         return null;
