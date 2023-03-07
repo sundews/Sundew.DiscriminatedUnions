@@ -14,10 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include=".generated\*.g.cs" />
+    <Folder Include=".generated\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Api.Generator\Sundew.DiscriminatedUnions.Api.Generator.csproj"
+    SkipGetTargetFrameworkProperties="true" ReferenceOutputAssembly="false" />
+
     <PackageReference Include="IsExternalInit" Version="1.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -28,8 +31,9 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include=".generated\" />
-  </ItemGroup>
-
+  <Target Name="IncludeGenerated" AfterTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <Compile Include=".generated\*.g.cs" />
+    </ItemGroup>
+  </Target>
 </Project>
