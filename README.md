@@ -44,7 +44,8 @@ var message = result switch
 ```
 
 ### Dimensional unions
-To support dimensional unions, unnested cases help because the cases are no longer defined inside a union. However, for this to work the unions are required to declare a factory method named exactly like the case type, that consists of a single return statement that creates the cases. The return type of a factory method should match the union in which it is declared. A code fix (PDU0001) is available to generate the factory methods. 
+To support dimensional unions, unnested cases help because the cases are no longer defined inside a union. However, for this to work the unions are required to declare a factory method named exactly like the case type and that has the CaseType attribute specifying the actual type. Since version 3, factory methods are generated when the union is declared partial. Alternatively, a code fix (PDU0001) is available to generate the factory methods. 
+
 ```csharp
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public partial interface IExpression;
@@ -67,7 +68,7 @@ public sealed record ValueExpression(int Value) : IExpression;
 ```
 
 ## Generator features
-As mentioned the source generator is automatically activated for generating Factory Methods by specifying the partial keyword.
+As mentioned a source generator is automatically activated for generating factory methods when the partial keyword is specified.
 In addition, the DiscriminatedUnion attribute can specify a flags enum (GeneratorFeatures) to control additional code generation.
 
 * Segregate - Generates an extension method for IEnumerable<Union> that segregates all items into buckets of the different result.
