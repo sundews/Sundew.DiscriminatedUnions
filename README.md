@@ -10,7 +10,7 @@ A dimensional union is a union where cases can be reused in any number of unions
 A Roslyn analyzer asserts and report errors in case switch statements or switch expression do not handle all cases.
 C# 8 and 9 already comes with great pattern matching support for evaluation.
 
-In order that the inheritance hierarchy remain closed (All cases in the same assembly), an analyzer ensure that unions are not derived from in referencing assemblies.
+In order that the inheritance hierarchy remain closed (All cases in the same assembly), an analyzer ensures that unions are not derived from in referencing assemblies.
 Similarly all case classes should be sealed.
 
 Create a union by inheriting from an abstract base (record) class (or interface) marked with the DiscriminatedUnion attribute to build various cases.
