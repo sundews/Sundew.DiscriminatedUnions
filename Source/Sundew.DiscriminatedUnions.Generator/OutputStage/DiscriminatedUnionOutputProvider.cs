@@ -44,17 +44,17 @@ internal static class DiscriminatedUnionOutputProvider
                 if (discriminatedUnion.IsPartial)
                 {
                     sourceProductionContext.AddSource(
-                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + GetGenericParameters(discriminatedUnion.Type.TypeMetadata.TypeParameters),
+                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + GetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters),
                         GetUnionSource(in discriminatedUnion, discriminatedUnionNamespace));
                 }
 
                 if (discriminatedUnion.GeneratorFeatures.HasFlag(GeneratorFeatures.Segregate))
                 {
                     var segregationTypeName = discriminatedUnion.Type.Name + Segregation;
-                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName + GetGenericParameters(discriminatedUnion.Type.TypeMetadata.TypeParameters), GetUnionSegregationSource(in discriminatedUnion, segregationTypeName));
+                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName + GetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters), GetUnionSegregationSource(in discriminatedUnion, segregationTypeName));
                     var extensionsTypeName = discriminatedUnion.Type.Name + Extensions;
                     sourceProductionContext.AddSource(
-                        discriminatedUnionNamespace + '.' + extensionsTypeName + GetGenericParameters(discriminatedUnion.Type.TypeMetadata.TypeParameters),
+                        discriminatedUnionNamespace + '.' + extensionsTypeName + GetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters),
                         GetUnionSegregateExtensionSource(in discriminatedUnion, extensionsTypeName, segregationTypeName));
                 }
             }
@@ -68,7 +68,7 @@ internal static class DiscriminatedUnionOutputProvider
         }
     }
 
-    private static string GetGenericParameters(ValueArray<TypeParameter> typeParameters)
+    private static string GetGenericParametersForFileName(ValueArray<TypeParameter> typeParameters)
     {
         if (typeParameters.IsDefault)
         {
@@ -137,9 +137,8 @@ internal static class DiscriminatedUnionOutputProvider
                 .AppendType(discriminatedUnion.Type)
                 .Append(' ')
                 .Append(discriminatedUnionOwnedCase.Type.Name)
-                .Append('(');
-
-            stringBuilder.AppendItems(
+                .Append('(')
+                .AppendItems(
                 discriminatedUnionOwnedCase.Parameters,
                 (sb, parameter) =>
                 {
@@ -147,20 +146,17 @@ internal static class DiscriminatedUnionOutputProvider
                     .Append(' ')
                     .Append(parameter.Name);
                 },
-                ListSeparator);
-
-            stringBuilder.Append(')')
+                ListSeparator)
+                .Append(')')
                 .Append(' ')
                 .Append(Lambda)
                 .Append(' ')
                 .Append(New)
                 .Append(' ')
                 .AppendType(discriminatedUnionOwnedCase.Type)
-                .Append('(');
-
-            stringBuilder.AppendItems(discriminatedUnionOwnedCase.Parameters, (sb, parameter) => sb.Append(parameter.Name), ListSeparator);
-
-            stringBuilder.Append(')')
+                .Append('(')
+                .AppendItems(discriminatedUnionOwnedCase.Parameters, (sb, parameter) => sb.Append(parameter.Name), ListSeparator)
+                .Append(')')
                 .Append(';');
             stringBuilder.AppendLine();
         }
@@ -208,18 +204,17 @@ internal static class DiscriminatedUnionOutputProvider
         var caseData = discriminatedUnion.Cases.Select(x => (Case: x, PropertyName: x.Type.Name.Pluralize())).Select(x => (x.Case, x.PropertyName, ParameterName: x.PropertyName.Uncapitalize().AvoidKeywordCollision())).ToArray();
         stringBuilder.AppendItems(
             caseData,
-            (stringBuilder, caseItem) =>
+            (sb, caseItem) =>
             {
-                stringBuilder.Append(SystemCollectionsGenericIReadonlyList)
+                sb.Append(SystemCollectionsGenericIReadonlyList)
                     .Append('<')
                     .AppendType(caseItem.Case.Type)
                     .Append('>')
                     .Append(' ')
                     .Append(caseItem.ParameterName);
             },
-            ListSeparator);
-
-        stringBuilder.Append(')')
+            ListSeparator)
+            .Append(')')
             .AppendLine()
             .Append(SpaceIndentedBy8)
             .Append('{')
@@ -243,13 +238,12 @@ internal static class DiscriminatedUnionOutputProvider
             .Append(SpaceIndentedBy8)
             .Append('}')
             .AppendLine()
-            .AppendLine();
-
-        stringBuilder.AppendItems(
+            .AppendLine()
+            .AppendItems(
             caseData,
-            (stringBuilder, caseItem) =>
+            (sb, caseItem) =>
             {
-                stringBuilder
+                sb
                     .AppendDocumentation(SpaceIndentedBy8, GetPropertyDescription, caseItem.PropertyName, default, default, ReturnsDescription)
                     .Append(SpaceIndentedBy8)
                     .Append(Public)
@@ -263,9 +257,8 @@ internal static class DiscriminatedUnionOutputProvider
                     .Append(' ')
                     .Append(Get);
             },
-            NewLine + NewLine);
-
-        stringBuilder.AppendLine()
+            NewLine + NewLine)
+            .AppendLine()
             .Append(SpaceIndentedBy4)
             .Append('}')
             .AppendLine()
@@ -425,11 +418,9 @@ internal static class DiscriminatedUnionOutputProvider
             .Append('.')
             .Append(segregationTypeName)
             .TryAppendGenericQualifier(discriminatedUnion.Type)
-            .Append('(');
-
-        stringBuilder.AppendItems(caseData, (stringBuilder, caseItem) => stringBuilder.Append(caseItem.ListVariableName), ListSeparator);
-
-        stringBuilder.Append(')')
+            .Append('(')
+            .AppendItems(caseData, (sb, caseItem) => sb.Append(caseItem.ListVariableName), ListSeparator)
+            .Append(')')
             .Append(';')
 
             .AppendLine()

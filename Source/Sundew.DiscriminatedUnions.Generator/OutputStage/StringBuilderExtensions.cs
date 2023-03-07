@@ -28,11 +28,11 @@ internal static class StringBuilderExtensions
     private const string Warning = "warning";
     private const string Restore = "restore";
     private const string Disable = "disable";
-    private const string TypeparamName = "/// <typeparam name=";
+    private const string TypeparamStart = "/// <typeparam name=";
     private const string TheTypeOfThe = "The type of the";
-    private const string Typeparam = "</typeparam>";
-    private const string Param = "</param>";
-    private const string ParamName = "/// <param name=";
+    private const string TypeparamEnd = "</typeparam>";
+    private const string ParamEnd = "</param>";
+    private const string ParamStart = "/// <param name=";
     private const string The = "The";
     private const string ReturnsEnd = "</returns>";
     private const string ReturnsStart = "/// <returns>";
@@ -132,12 +132,12 @@ internal static class StringBuilderExtensions
                     builder
                         .AppendLine()
                         .Append(indentation)
-                        .Append(TypeparamName).Append('\"').Append(typeParameter.Name).Append('\"').Append('>')
+                        .Append(TypeparamStart).Append('\"').Append(typeParameter.Name).Append('\"').Append('>')
                         .Append(TheTypeOfThe).Append(' ')
                         .Append(typeParameter.Name.Length > 1
                             ? typeParameter.Name.Substring(1).ToLowerInvariant()
                             : typeParameter.Name.ToLowerInvariant())
-                        .Append('.').Append(Typeparam);
+                        .Append('.').Append(TypeparamEnd);
                 },
                 string.Empty);
         }
@@ -151,8 +151,8 @@ internal static class StringBuilderExtensions
                     builder
                         .AppendLine()
                         .Append(indentation)
-                        .Append(ParamName).Append('\"').Append(parameter).Append('\"').Append('>')
-                        .Append(The).Append(' ').Append(parameter).Append('.').Append(Param);
+                        .Append(ParamStart).Append('\"').Append(parameter).Append('\"').Append('>')
+                        .Append(The).Append(' ').Append(parameter).Append('.').Append(ParamEnd);
                 },
                 string.Empty);
         }
@@ -212,24 +212,5 @@ internal static class StringBuilderExtensions
             .Append(']')
             .AppendLine();
         return stringBuilder;
-    }
-
-    private static StringBuilder AppendUnderlyingTypeConstraint(this StringBuilder stringBuilder, UnderlyingTypeConstraint underlyingTypeConstraint)
-    {
-        switch (underlyingTypeConstraint)
-        {
-            case UnderlyingTypeConstraint.None:
-                return stringBuilder;
-            case UnderlyingTypeConstraint.Class:
-                return stringBuilder.Append(Class).Append(' ');
-            case UnderlyingTypeConstraint.Struct:
-                return stringBuilder.Append(Struct).Append(' ');
-            case UnderlyingTypeConstraint.NotNull:
-                return stringBuilder.Append(Notnull).Append(' ');
-            case UnderlyingTypeConstraint.Unmanaged:
-                return stringBuilder.Append(Unmanaged).Append(' ');
-            default:
-                throw new ArgumentOutOfRangeException(nameof(underlyingTypeConstraint), underlyingTypeConstraint, null);
-        }
     }
 }
