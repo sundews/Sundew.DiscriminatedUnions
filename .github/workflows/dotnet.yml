@@ -38,7 +38,7 @@ jobs:
       run: >
         dotnet tool update Sundew.Packaging.Tool -g --version 7.8.*
 
-        dotnet tool update CommandlineBatcher -g --version 7.4.*
+        dotnet tool update CommandlineBatcher -g --version 7.5.*
 
         git rev-parse --short=10 HEAD | cb -c ">> $GITHUB_OUTPUT|git-hash={0}{NL}" --batches-stdin
     - name: Stage Build
@@ -59,7 +59,7 @@ jobs:
         ">|symbolsApiKey={SymbolsApiKey}{NL}"
         --output-file $GITHUB_OUTPUT
 
-        cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true" -i "${{ github.ref }}" -a $GITHUB_OUTPUT
+        cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true" -i "${{ github.ref }}" $GITHUB_OUTPUT
     - name: Restore
       run: dotnet restore ${{ env.solutionPath }} --verbosity normal -s ${{ env.source }}${{ steps.stage-build.outputs.dev-package-source-if-set }}
     - name: Build
