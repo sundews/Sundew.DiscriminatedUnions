@@ -9,6 +9,7 @@ namespace Sundew.DiscriminatedUnions.Tester;
 
 using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using TestData;
 
 public static class Program

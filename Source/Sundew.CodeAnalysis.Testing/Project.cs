@@ -18,17 +18,18 @@ using Microsoft.CodeAnalysis.Text;
 public class Project
 {
     private readonly string projectName;
-    private readonly string basePath;
     private readonly Paths additionalPaths;
     private readonly string[] excludePaths;
 
     public Project(string basePath, Paths additionalPaths, params string[] excludePaths)
     {
-        this.basePath = Path.GetFullPath(basePath);
+        this.ProjectDirectory = Path.GetFullPath(basePath);
         this.additionalPaths = additionalPaths;
         this.projectName = Path.GetFileName(basePath);
         this.excludePaths = Array.ConvertAll(excludePaths, input => Path.GetFullPath(Path.Combine(basePath, input))).Concat(additionalPaths.FileSystemPaths.SelectMany(s => excludePaths, (s, s1) => Path.GetFullPath(Path.Combine(s, s1)))).ToArray();
     }
+
+    public string ProjectDirectory { get; }
 
     public CSharpCompilation Compile()
     {
@@ -39,9 +40,14 @@ public class Project
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
-    private IEnumerable<string> GetFiles()
+    public IEnumerable<string> GetFiles()
     {
-        return Directory.EnumerateFiles(this.basePath, "*.cs", SearchOption.AllDirectories).Concat(this.additionalPaths.FileSystemPaths.SelectMany(x => Directory.EnumerateFiles(x, "*.cs", SearchOption.AllDirectories))).Where(this.IsNotExcluded);
+        return Directory.EnumerateFiles(this.ProjectDirectory, "*.cs", SearchOption.AllDirectories).Concat(this.additionalPaths.FileSystemPaths.SelectMany(x => Directory.EnumerateFiles(x, "*.cs", SearchOption.AllDirectories))).Where(this.IsNotExcluded).OrderBy(x => x);
+    }
+
+    public IEnumerable<string> GetFilesRelativeToProject()
+    {
+        return this.GetFiles().Select(x => x.Substring(this.ProjectDirectory.Length + 1));
     }
 
     private bool IsNotExcluded(string path)

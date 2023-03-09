@@ -19,21 +19,6 @@ using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class CodeAnalysisHelper
 {
-    private const string Bool = "bool";
-    private const string Char = "char";
-    private const string SByte = "sbyte";
-    private const string Byte = "byte";
-    private const string Short = "short";
-    private const string Ushort = "ushort";
-    private const string Int = "int";
-    private const string Uint = "uint";
-    private const string Long = "long";
-    private const string Ulong = "ulong";
-    private const string Decimal = "decimal";
-    private const string Float = "float";
-    private const string Double = "double";
-    private const string String = "string";
-
     private static readonly HashSet<string> Keywords = new HashSet<string>
     {
         "abstract",
@@ -115,11 +100,36 @@ internal static class CodeAnalysisHelper
         "while",
     };
 
+    public static SymbolDisplayFormat FullyQualifiedDisplayFormat { get; } = new SymbolDisplayFormat(
+        globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+        typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+        genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers | SymbolDisplayMiscellaneousOptions.UseSpecialTypes | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+
     public static SymbolDisplayFormat NamespaceQualifiedDisplayFormat { get; } = new SymbolDisplayFormat(
         globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Omitted,
         typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
         genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
-        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers | SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers | SymbolDisplayMiscellaneousOptions.UseSpecialTypes | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier | SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers);
+
+    public static SymbolDisplayFormat FullyQualifiedParameterTypeFormat { get; } =
+        new SymbolDisplayFormat(
+            globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+            memberOptions: SymbolDisplayMemberOptions.IncludeParameters | SymbolDisplayMemberOptions.IncludeType | SymbolDisplayMemberOptions.IncludeRef | SymbolDisplayMemberOptions.IncludeContainingType,
+            kindOptions: SymbolDisplayKindOptions.IncludeMemberKeyword,
+            parameterOptions: SymbolDisplayParameterOptions.IncludeType | SymbolDisplayParameterOptions.IncludeParamsRefOut | SymbolDisplayParameterOptions.IncludeDefaultValue,
+            localOptions: SymbolDisplayLocalOptions.IncludeType,
+            miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers | SymbolDisplayMiscellaneousOptions.UseSpecialTypes | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+
+    public static SymbolDisplayFormat NameQualifiedTypeFormat { get; } =
+        new SymbolDisplayFormat(
+            globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypes,
+            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+            localOptions: SymbolDisplayLocalOptions.IncludeType,
+            miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers | SymbolDisplayMiscellaneousOptions.UseSpecialTypes | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
 
     public static string AvoidKeywordCollision(this string value)
     {
@@ -136,24 +146,23 @@ internal static class CodeAnalysisHelper
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
-                var (name, isPrimitive) = GetName(namedTypeSymbol);
-                var @namespace = namedTypeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat);
+                var (name, @namespace, isShortNameAlias) = GetName(namedTypeSymbol);
                 return new Type(
                     name,
-                    isPrimitive ? string.Empty : @namespace,
-                    isPrimitive ? string.Empty : GlobalAssemblyAlias,
+                    isShortNameAlias ? string.Empty : @namespace,
+                    isShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     namedTypeSymbol.TypeParameters.Length,
                     false);
             case IArrayTypeSymbol arrayTypeSymbol:
-                var (elementName, elementIsPrimitive) = GetName(arrayTypeSymbol.ElementType);
+                var (elementName, @elementNamespace, elementIsShortNameAlias) = GetName(arrayTypeSymbol.ElementType);
                 return new Type(
                     elementName,
-                    elementIsPrimitive || arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat),
-                    elementIsPrimitive ? string.Empty : GlobalAssemblyAlias,
+                    elementIsShortNameAlias || arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : @elementNamespace,
+                    elementIsShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     0,
                     true);
             case ITypeParameterSymbol typeParameterSymbol:
-                return new Type(typeParameterSymbol.MetadataName, string.Empty, GlobalAssemblyAlias, 0, false);
+                return new Type(typeParameterSymbol.MetadataName, string.Empty, string.Empty, 0, false);
             default:
                 throw new ArgumentOutOfRangeException(nameof(typeSymbol));
         }
@@ -164,35 +173,33 @@ internal static class CodeAnalysisHelper
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
-                var (name, isPrimitive) = GetName(namedTypeSymbol);
-                var @namespace = namedTypeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat);
+                var (name, @namespace, isShortNameAlias) = GetName(namedTypeSymbol);
                 return new FullType(
                     name,
-                    isPrimitive ? string.Empty : @namespace,
-                    isPrimitive ? string.Empty : GlobalAssemblyAlias,
+                    isShortNameAlias ? string.Empty : @namespace,
+                    isShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     false,
                     new TypeMetadata(
-                        namedTypeSymbol.IsGenericType
-                            ? namedTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
-                                .Substring(GlobalAssemblyAlias.Length + @namespace.Length +
-                                           namedTypeSymbol.Name.Length + 3)
+                        !isShortNameAlias && namedTypeSymbol.IsGenericType
+                            ? namedTypeSymbol.ToDisplayString(NameQualifiedTypeFormat)
+                                .Substring(namedTypeSymbol.Name.Length)
                             : null,
                         namedTypeSymbol.TypeParameters.Select(x => new TypeParameter(
                             x.Name,
                             GetUnderlyingTypeConstraint(x)
                                 .Concat(x.ConstraintTypes.Select(x =>
-                                    x.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
+                                    x.ToDisplayString(FullyQualifiedDisplayFormat)))
                                 .Concat(GetNewConstraints(x)).ToImmutableArray())).ToImmutableArray()));
             case IArrayTypeSymbol arrayTypeSymbol:
-                var (elementName, elementIsPrimitive) = GetName(arrayTypeSymbol.ElementType);
+                var (elementName, elementNamespace, elementIsShortNameAlias) = GetName(arrayTypeSymbol.ElementType);
                 return new FullType(
                     elementName,
-                    elementIsPrimitive || arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : arrayTypeSymbol.ElementType.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat),
-                    elementIsPrimitive ? string.Empty : GlobalAssemblyAlias,
+                    elementIsShortNameAlias || arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : elementNamespace,
+                    elementIsShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     true,
                     new TypeMetadata(null, ImmutableArray<TypeParameter>.Empty));
             case ITypeParameterSymbol typeParameterSymbol:
-                return new FullType(typeParameterSymbol.MetadataName, string.Empty, GlobalAssemblyAlias, false, new TypeMetadata(null, ImmutableArray<TypeParameter>.Empty));
+                return new FullType(typeParameterSymbol.MetadataName, string.Empty, string.Empty, false, new TypeMetadata(null, ImmutableArray<TypeParameter>.Empty));
             default:
                 throw new ArgumentOutOfRangeException(nameof(typeSymbol));
         }
@@ -225,25 +232,32 @@ internal static class CodeAnalysisHelper
         }
     }
 
-    private static (string Name, bool IsPrimitive) GetName(ITypeSymbol namedTypeSymbol)
+    private static (string Name, string Namespace, bool IsShortNameAlias) GetName(ITypeSymbol typeSymbol)
     {
-        return namedTypeSymbol.SpecialType switch
+        switch (typeSymbol.SpecialType)
         {
-            SpecialType.System_Boolean => (Bool, true),
-            SpecialType.System_Char => (Char, true),
-            SpecialType.System_SByte => (SByte, true),
-            SpecialType.System_Byte => (Byte, true),
-            SpecialType.System_Int16 => (Short, true),
-            SpecialType.System_UInt16 => (Ushort, true),
-            SpecialType.System_Int32 => (Int, true),
-            SpecialType.System_UInt32 => (Uint, true),
-            SpecialType.System_Int64 => (Long, true),
-            SpecialType.System_UInt64 => (Ulong, true),
-            SpecialType.System_Decimal => (Decimal, true),
-            SpecialType.System_Single => (Float, true),
-            SpecialType.System_Double => (Double, true),
-            SpecialType.System_String => (String, true),
-            _ => (namedTypeSymbol.Name, false),
-        };
+            case SpecialType.System_Boolean:
+            case SpecialType.System_Char:
+            case SpecialType.System_SByte:
+            case SpecialType.System_Byte:
+            case SpecialType.System_Int16:
+            case SpecialType.System_UInt16:
+            case SpecialType.System_Int32:
+            case SpecialType.System_UInt32:
+            case SpecialType.System_Int64:
+            case SpecialType.System_UInt64:
+            case SpecialType.System_Decimal:
+            case SpecialType.System_Single:
+            case SpecialType.System_Double:
+            case SpecialType.System_String:
+                return (typeSymbol.ToDisplayString(NameQualifiedTypeFormat), string.Empty, true);
+            default:
+                if (typeSymbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+                {
+                    return (typeSymbol.ToDisplayString(NameQualifiedTypeFormat), string.Empty, true);
+                }
+
+                return (typeSymbol.Name, typeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat), false);
+        }
     }
 }
