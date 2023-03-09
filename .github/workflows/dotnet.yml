@@ -61,10 +61,7 @@ jobs:
 
         cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true" -i "${{ github.ref }}" $GITHUB_OUTPUT
 
-        echo '"${{ github.base_ref }}"'
-        echo '"${{ github.ref }}"'
-
-        cb match -p "^(?!(?:^main$)).*$ => test-filter-if-set= --filter TestCategory!~MainBranchBuilds" -i "${{ github.base_ref }}" $GITHUB_OUTPUT
+        cb match -p "^(?!(?:^main$)).*$ => test-filter-if-set= --filter TestCategory!~MainBranchBuilds" -i '"${{ github.base_ref }}"' $GITHUB_OUTPUT
     - name: Restore
       run: dotnet restore ${{ env.solutionPath }} --verbosity normal -s ${{ env.source }}${{ steps.stage-build.outputs.dev-package-source-if-set }}
     - name: Build
