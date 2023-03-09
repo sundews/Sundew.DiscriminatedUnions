@@ -7,6 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -15,6 +16,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Sundew.DiscriminatedUnions.Generator;
 using Sundew.DiscriminatedUnions.Generator.Model;
+using Sundew.DiscriminatedUnions.Generator.OutputStage;
 using Sundew.DiscriminatedUnions.Shared;
 using Sundew.DiscriminatedUnions.Text;
 
@@ -54,7 +56,11 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         }
 
         return selectedConstructor.Parameters.Select(x =>
-            new Parameter(x.Type.GetFullType(), x.Name.Uncapitalize().AvoidKeywordCollision()));
+        {
+            var typeName = x.ToDisplayString(CodeAnalysisHelper.FullyQualifiedParameterTypeFormat);
+            var defaultValue = x.HasExplicitDefaultValue ? x.ExplicitDefaultValue?.ToString() ?? GeneratorConstants.Null : null;
+            return new Parameter(typeName, x.Name.Uncapitalize().AvoidKeywordCollision(), defaultValue);
+        });
     }
 
     private static IEnumerable<INamedTypeSymbol> FindOwners(ITypeSymbol typeSymbol)
@@ -80,7 +86,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
     {
         static bool HasBaseListAndIsNotAbstract(TypeDeclarationSyntax typeDeclarationSyntax)
         {
-            return typeDeclarationSyntax.BaseList != null && !typeDeclarationSyntax.Modifiers.Any(SyntaxKind.AbstractKeyword);
+            return typeDeclarationSyntax.BaseList != null && typeDeclarationSyntax.Modifiers.Any(SyntaxKind.SealedKeyword);
         }
 
         return syntaxNode switch

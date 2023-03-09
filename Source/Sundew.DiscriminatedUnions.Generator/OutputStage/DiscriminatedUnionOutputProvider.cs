@@ -143,9 +143,16 @@ internal static class DiscriminatedUnionOutputProvider
                 discriminatedUnionOwnedCase.Parameters,
                 (sb, parameter) =>
                 {
-                    sb.AppendType(parameter.Type)
+                    sb.Append(parameter.TypeName)
                     .Append(' ')
                     .Append(parameter.Name);
+                    if (!string.IsNullOrEmpty(parameter.DefaultValue))
+                    {
+                        sb.Append(' ')
+                        .Append('=')
+                        .Append(' ')
+                        .Append(parameter.DefaultValue);
+                    }
                 },
                 ListSeparator)
                 .Append(')')

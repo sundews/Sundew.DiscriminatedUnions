@@ -10,7 +10,7 @@ namespace Sundew.DiscriminatedUnions.Tester;
 [Sundew.DiscriminatedUnions.DiscriminatedUnion(GeneratorFeatures.Segregate)]
 public abstract partial record Result<T>;
 
-public sealed record Success<T>(T Value) : Result<T>;
+public sealed record Success<T>(T Value, T? Optional) : Result<T>;
 
 public sealed record Warning<T>(string Message) : Result<T>;
 

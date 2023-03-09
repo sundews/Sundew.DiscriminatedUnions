@@ -27,9 +27,10 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// Factory method for the Success case.
         /// </summary>
         /// <param name="value">The value.</param>
+        /// <param name="optional">The optional.</param>
         /// <returns>A new Success.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Success<>))]
-        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> Success(T value) => new global::Sundew.DiscriminatedUnions.Tester.Success<T>(value);
+        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> Success(T value, T? optional) => new global::Sundew.DiscriminatedUnions.Tester.Success<T>(value, optional);
 
         /// <summary>
         /// Factory method for the Warning case.
