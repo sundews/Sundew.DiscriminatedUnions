@@ -16,7 +16,7 @@ public interface IExpression
     public static IExpression ValueExpression(int value) => new ValueExpression(value);
 }
 
-[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+[DiscriminatedUnion]
 public interface IArithmeticExpression : IExpression
 {
     IExpression Lhs { get; init; }

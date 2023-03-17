@@ -8,10 +8,6 @@
     <WarningsAsErrors>;NU1605</WarningsAsErrors>
     <NoWarn>1701;1702;SA0001</NoWarn>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <None Remove="stylecop.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
