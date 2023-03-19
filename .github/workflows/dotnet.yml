@@ -42,7 +42,9 @@ jobs:
 
         git rev-parse --short=10 HEAD | cb -c ">> $GITHUB_OUTPUT|git-hash={0}{NL}" --batches-stdin
 
-        cb match -p "(?<Input>^(?!refs/pull.*).+) => git-branch-name={Input}" -i "${{ github.event.pull_request.base.ref }}" "${{ github.ref }}" -of $GITHUB_OUTPUT
+        more $GITHUB_EVENT_PATH
+
+        cb match -p "(?<Input>^(?!refs/pull.*).+) => git-branch-name={Input}" -i "${{ github.base_ref }}" "${{ github.ref }}" -of $GITHUB_OUTPUT
     - name: Stage Build
       id: stage-build
       run: >
