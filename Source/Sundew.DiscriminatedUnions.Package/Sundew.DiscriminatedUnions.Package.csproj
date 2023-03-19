@@ -25,7 +25,7 @@ The idea is that this package can be deleted once unions are supported in C#, wi
 
   <ItemGroup>
     <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)" />
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\docs" />
   </ItemGroup>
 
   <ItemGroup>
