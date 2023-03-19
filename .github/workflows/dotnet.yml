@@ -42,7 +42,7 @@ jobs:
 
         git rev-parse --short=10 HEAD | cb -c ">> $GITHUB_OUTPUT|git-hash={0}{NL}" --batches-stdin
 
-        cb match -p "(?<Input>^(?!refs/pull.*).+) => git-branch-name={Input}" -i "${{ github.event.pull_request.base.ref }}" "${{ github.ref }}" -of $GITHUB_OUTPUT
+        cb match -p "(?<Input>^(?!(refs/pull.*|refs/heads/$)).+) => git-branch-name={Input}" -i "refs/heads/${{ github.base_ref }}" "${{ github.ref }}" -of $GITHUB_OUTPUT
     - name: Stage Build
       id: stage-build
       run: >
@@ -63,7 +63,7 @@ jobs:
 
         cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true" -i "${{ github.ref }}" -of $GITHUB_OUTPUT
 
-        cb match -p "^(?!^(main)$).*$ => test-filter-if-set= --filter TestCategory!~MainBranchBuilds" -i "${{ steps.build-setup.outputs.git-branch-name }}" -of $GITHUB_OUTPUT
+        cb match -p "^(?!^(refs/heads/main)$).*$ => test-filter-if-set= --filter TestCategory!~MainBranchBuilds" -i "${{ steps.build-setup.outputs.git-branch-name }}" -of $GITHUB_OUTPUT
     - name: Restore
       run: dotnet restore ${{ env.solutionPath }} --verbosity normal -s ${{ env.source }}${{ steps.stage-build.outputs.dev-package-source-if-set }}
     - name: Build
