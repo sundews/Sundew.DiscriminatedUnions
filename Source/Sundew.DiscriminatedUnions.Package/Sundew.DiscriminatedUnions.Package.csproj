@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <PackageId>Sundew.DiscriminatedUnions</PackageId>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReadmeFile>docs/README.md</PackageReadmeFile>
     <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>Sundew.DiscriminatedUnions, analyzers</PackageTags>
