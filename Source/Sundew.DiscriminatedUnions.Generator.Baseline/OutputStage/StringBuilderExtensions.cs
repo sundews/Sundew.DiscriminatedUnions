@@ -148,11 +148,12 @@ internal static class StringBuilderExtensions
                 parameters,
                 (builder, parameter) =>
                 {
+                    var parameterName = parameter[0] == '@' ? parameter.Substring(1) : parameter;
                     builder
                         .AppendLine()
                         .Append(indentation)
-                        .Append(ParamStart).Append('\"').Append(parameter).Append('\"').Append('>')
-                        .Append(The).Append(' ').Append(parameter).Append('.').Append(ParamEnd);
+                        .Append(ParamStart).Append('\"').Append(parameterName).Append('\"').Append('>')
+                        .Append(The).Append(' ').Append(parameterName).Append('.').Append(ParamEnd);
                 },
                 string.Empty);
         }

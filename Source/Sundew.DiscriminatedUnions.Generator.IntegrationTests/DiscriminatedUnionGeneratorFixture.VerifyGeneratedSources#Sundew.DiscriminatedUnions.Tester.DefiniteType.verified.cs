@@ -19,7 +19,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// Factory method for the NamedType case.
         /// </summary>
         /// <param name="name">The name.</param>
-        /// <param name="@namespace">The @namespace.</param>
+        /// <param name="namespace">The namespace.</param>
         /// <param name="assemblyName">The assemblyName.</param>
         /// <returns>A new NamedType.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.NamedType))]
