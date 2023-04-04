@@ -49,7 +49,10 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
 
     private static IEnumerable<Parameter>? TryGetParameters(INamedTypeSymbol namedTypeSymbol)
     {
-        var selectedConstructor = namedTypeSymbol.Constructors.OrderByDescending(x => x.Parameters.Length).FirstOrDefault();
+        var selectedConstructor = namedTypeSymbol.Constructors.SkipWhile(x =>
+                x.ContainingType.IsRecord &&
+                SymbolEqualityComparer.Default.Equals(x.Parameters.FirstOrDefault()?.Type, x.ContainingType))
+            .FirstOrDefault();
         if (selectedConstructor == null)
         {
             return null;

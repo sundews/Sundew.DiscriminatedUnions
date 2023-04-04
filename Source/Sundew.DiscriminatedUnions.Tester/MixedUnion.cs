@@ -9,3 +9,5 @@ public abstract partial record MixedUnion
 }
 
 public sealed record Case2(int? Info = 4, List<string?>? OptionalList = null, List<int?>? OptionalInts = null) : MixedUnion;
+
+public sealed record Case3 : MixedUnion;
