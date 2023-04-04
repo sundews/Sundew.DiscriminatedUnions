@@ -77,7 +77,7 @@ internal static class DiscriminatedUnionProvider
             {
                 return DiscriminatedUnionResult.Success(x.DiscriminatedUnion with
                 {
-                    Cases = x.DiscriminatedUnion.Cases.OrderBy(@case => @case.Type.Name).ToImmutableArray(),
+                    Cases = x.DiscriminatedUnion.Cases.Distinct().OrderBy(@case => @case.Type.Name).ToImmutableArray(),
                 });
             }
 
