@@ -42,7 +42,7 @@ internal static class DiscriminatedUnionOutputProvider
                 var discriminatedUnion = discriminatedUnionResult.DiscriminatedUnion;
                 var discriminatedUnionNamespace = discriminatedUnion.Type.Namespace;
                 var genericParametersForFileName = TryGetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters);
-                if (discriminatedUnion.IsPartial)
+                if (discriminatedUnion.IsPartial && discriminatedUnion.Cases.Any(x => x.GenerateFactoryMethodWithName != null))
                 {
                     sourceProductionContext.AddSource(
                         discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + genericParametersForFileName,
