@@ -18,9 +18,9 @@ namespace Sundew.DiscriminatedUnions.Tester
         public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case2(int? info = 4, global::System.Collections.Generic.List<string?>? optionalList = null, global::System.Collections.Generic.List<int?>? optionalInts = null) => new global::Sundew.DiscriminatedUnions.Tester.Case2(info, optionalList, optionalInts);
 
         /// <summary>
-        /// Factory method for the Case3 case.
+        /// Gets the Case3 case.
         /// </summary>
-        /// <returns>A new Case3.</returns>
+        /// <returns>The Case3.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Case3))]
         public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case3 { get; } = new global::Sundew.DiscriminatedUnions.Tester.Case3();
     }

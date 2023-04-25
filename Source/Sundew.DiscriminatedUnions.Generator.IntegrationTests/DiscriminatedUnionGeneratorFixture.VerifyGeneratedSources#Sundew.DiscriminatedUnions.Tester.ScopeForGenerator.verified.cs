@@ -8,9 +8,9 @@ namespace Sundew.DiscriminatedUnions.Tester
 #pragma warning restore SA1601
     {
         /// <summary>
-        /// Factory method for the AutoScopeForGenerator case.
+        /// Gets the AutoScopeForGenerator case.
         /// </summary>
-        /// <returns>A new AutoScopeForGenerator.</returns>
+        /// <returns>The AutoScopeForGenerator.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.ScopeForGenerator.AutoScopeForGenerator))]
         public static global::Sundew.DiscriminatedUnions.Tester.ScopeForGenerator Auto { get; } = new global::Sundew.DiscriminatedUnions.Tester.ScopeForGenerator.AutoScopeForGenerator();
 

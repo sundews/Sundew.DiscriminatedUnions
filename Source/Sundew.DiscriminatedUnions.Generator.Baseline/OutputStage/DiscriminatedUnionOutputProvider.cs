@@ -30,7 +30,9 @@ internal static class DiscriminatedUnionOutputProvider
     private const string SegregateMethodDescription = "Segregates the items in the specified enumerable by type";
     private const string SegregateMethodReturnsDescription = "A new {0}Segregation";
     private const string FactoryMethodDescription = "Factory method for the {0} case";
+    private const string FactoryPropertyDescription = "Gets the {0} case";
     private const string FactoryMethodReturnsDescription = "A new {0}";
+    private const string FactoryPropertyReturnsDescription = "The {0}";
 
     public static void Generate(SourceProductionContext sourceProductionContext, ImmutableArray<DiscriminatedUnionResult> discriminatedUnionResults)
     {
@@ -116,8 +118,9 @@ internal static class DiscriminatedUnionOutputProvider
                 continue;
             }
 
+            var implementAsMethod = discriminatedUnionOwnedCase.Parameters.Any();
             stringBuilder.AppendLine()
-                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.Type.Name, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
+                .AppendDocumentation(SpaceIndentedBy8, implementAsMethod ? FactoryMethodDescription : FactoryPropertyDescription, discriminatedUnionOwnedCase.Type.Name, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), implementAsMethod ? FactoryMethodReturnsDescription : FactoryPropertyReturnsDescription)
                 .Append(SpaceIndentedBy8)
                 .Append('[')
                 .Append(SundewDiscriminatedUnionsCaseType)
@@ -143,7 +146,7 @@ internal static class DiscriminatedUnionOutputProvider
                 .AppendType(discriminatedUnion.Type)
                 .Append(' ')
                 .Append(discriminatedUnionOwnedCase.GenerateFactoryMethodWithName);
-            if (discriminatedUnionOwnedCase.Parameters.Any())
+            if (implementAsMethod)
             {
                 stringBuilder.Append('(')
                     .AppendItems(
