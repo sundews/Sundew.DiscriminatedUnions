@@ -49,9 +49,16 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
 
     private static string? GetGenerateFactoryMethodName(INamedTypeSymbol discriminatedUnionNameTypeSymbol, INamedTypeSymbol caseNamedTypeSymbol)
     {
-        if (SymbolEqualityComparer.Default.Equals(discriminatedUnionNameTypeSymbol, caseNamedTypeSymbol.ContainingType))
+        var members = discriminatedUnionNameTypeSymbol.GetMembers();
+        if (members.Any(x => x.Name == caseNamedTypeSymbol.Name))
         {
-            return caseNamedTypeSymbol.Name.EndsWith(discriminatedUnionNameTypeSymbol.Name) ? caseNamedTypeSymbol.Name.Substring(0, caseNamedTypeSymbol.Name.Length - discriminatedUnionNameTypeSymbol.Name.Length) : null;
+            var suggestedName = caseNamedTypeSymbol.Name.EndsWith(discriminatedUnionNameTypeSymbol.Name) ? caseNamedTypeSymbol.Name.Substring(0, caseNamedTypeSymbol.Name.Length - discriminatedUnionNameTypeSymbol.Name.Length) : null;
+            if (suggestedName == null || members.Any(x => suggestedName == x.Name))
+            {
+                return null;
+            }
+
+            return suggestedName;
         }
 
         return caseNamedTypeSymbol.Name;

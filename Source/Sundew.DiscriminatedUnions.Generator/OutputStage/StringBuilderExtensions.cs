@@ -51,6 +51,7 @@ internal static class StringBuilderExtensions
                 .Append('.');
         }
 
+        stringBuilder.Append(fullType.NestedTypeQualifier);
         stringBuilder.Append(fullType.Name);
         stringBuilder.TryAppendGenericQualifier(fullType, omitTypeParameters);
         if (fullType.IsArray)

@@ -11,7 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 using Microsoft.CodeAnalysis;
+using Sundew.Base;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using static Sundew.DiscriminatedUnions.Generator.OutputStage.GeneratorConstants;
@@ -146,23 +148,25 @@ internal static class CodeAnalysisHelper
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
-                var (name, @namespace, isShortNameAlias) = GetName(namedTypeSymbol);
+                var (name, nestedTypeQualifier, @namespace, isShortNameAlias) = GetName(namedTypeSymbol);
                 return new Type(
                     name,
                     isShortNameAlias ? string.Empty : @namespace,
+                    nestedTypeQualifier,
                     isShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     namedTypeSymbol.TypeParameters.Length,
                     false);
             case IArrayTypeSymbol arrayTypeSymbol:
-                var (elementName, @elementNamespace, elementIsShortNameAlias) = GetName(arrayTypeSymbol.ElementType);
+                var (elementName, elementNestedTypeQualifier, @elementNamespace, elementIsShortNameAlias) = GetName(arrayTypeSymbol.ElementType);
                 return new Type(
                     elementName,
                     elementIsShortNameAlias || arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : @elementNamespace,
+                    elementNestedTypeQualifier,
                     elementIsShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     0,
                     true);
             case ITypeParameterSymbol typeParameterSymbol:
-                return new Type(typeParameterSymbol.MetadataName, string.Empty, string.Empty, 0, false);
+                return new Type(typeParameterSymbol.MetadataName, string.Empty, string.Empty, string.Empty, 0, false);
             default:
                 throw new ArgumentOutOfRangeException(nameof(typeSymbol));
         }
@@ -173,10 +177,11 @@ internal static class CodeAnalysisHelper
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
-                var (name, @namespace, isShortNameAlias) = GetName(namedTypeSymbol);
+                var (name, nestedTypeQualifier, @namespace, isShortNameAlias) = GetName(namedTypeSymbol);
                 return new FullType(
                     name,
                     isShortNameAlias ? string.Empty : @namespace,
+                    nestedTypeQualifier,
                     isShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     false,
                     new TypeMetadata(
@@ -191,15 +196,16 @@ internal static class CodeAnalysisHelper
                                     x.ToDisplayString(FullyQualifiedDisplayFormat)))
                                 .Concat(GetNewConstraints(x)).ToImmutableArray())).ToImmutableArray()));
             case IArrayTypeSymbol arrayTypeSymbol:
-                var (elementName, elementNamespace, elementIsShortNameAlias) = GetName(arrayTypeSymbol.ElementType);
+                var (elementName, elementNestedTypeQualifier, elementNamespace, elementIsShortNameAlias) = GetName(arrayTypeSymbol.ElementType);
                 return new FullType(
                     elementName,
+                    elementNestedTypeQualifier,
                     elementIsShortNameAlias || arrayTypeSymbol.ElementType is ITypeParameterSymbol ? string.Empty : elementNamespace,
                     elementIsShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     true,
                     new TypeMetadata(null, ImmutableArray<TypeParameter>.Empty));
             case ITypeParameterSymbol typeParameterSymbol:
-                return new FullType(typeParameterSymbol.MetadataName, string.Empty, string.Empty, false, new TypeMetadata(null, ImmutableArray<TypeParameter>.Empty));
+                return new FullType(typeParameterSymbol.MetadataName, string.Empty, string.Empty, string.Empty, false, new TypeMetadata(null, ImmutableArray<TypeParameter>.Empty));
             default:
                 throw new ArgumentOutOfRangeException(nameof(typeSymbol));
         }
@@ -232,7 +238,7 @@ internal static class CodeAnalysisHelper
         }
     }
 
-    private static (string Name, string Namespace, bool IsShortNameAlias) GetName(ITypeSymbol typeSymbol)
+    private static (string Name, string NestedTypeQualifier, string Namespace, bool IsShortNameAlias) GetName(ITypeSymbol typeSymbol)
     {
         switch (typeSymbol.SpecialType)
         {
@@ -250,14 +256,27 @@ internal static class CodeAnalysisHelper
             case SpecialType.System_Single:
             case SpecialType.System_Double:
             case SpecialType.System_String:
-                return (typeSymbol.ToDisplayString(NameQualifiedTypeFormat), string.Empty, true);
+                return (typeSymbol.ToDisplayString(NameQualifiedTypeFormat), string.Empty, string.Empty, true);
             default:
                 if (typeSymbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
                 {
-                    return (typeSymbol.ToDisplayString(NameQualifiedTypeFormat), string.Empty, true);
+                    return (typeSymbol.ToDisplayString(NameQualifiedTypeFormat), string.Empty, string.Empty, true);
                 }
 
-                return (typeSymbol.Name, typeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat), false);
+                return (typeSymbol.Name, GetNestedName(typeSymbol), typeSymbol.ContainingNamespace.ToDisplayString(NamespaceQualifiedDisplayFormat), false);
         }
+    }
+
+    private static string GetNestedName(ITypeSymbol typeSymbol)
+    {
+        var stringBuilder = new StringBuilder();
+        var containingType = typeSymbol.ContainingType;
+        while (containingType != null)
+        {
+            stringBuilder.Append(containingType.Name).Append('.');
+            containingType = containingType.ContainingType;
+        }
+
+        return stringBuilder.ToString();
     }
 }

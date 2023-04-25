@@ -117,7 +117,7 @@ internal static class DiscriminatedUnionOutputProvider
             }
 
             stringBuilder.AppendLine()
-                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.GenerateFactoryMethodWithName, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
+                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.Type.Name, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
                 .Append(SpaceIndentedBy8)
                 .Append('[')
                 .Append(SundewDiscriminatedUnionsCaseType)
@@ -142,7 +142,7 @@ internal static class DiscriminatedUnionOutputProvider
                 .Append(' ')
                 .AppendType(discriminatedUnion.Type)
                 .Append(' ')
-                .Append(discriminatedUnionOwnedCase.Type.Name);
+                .Append(discriminatedUnionOwnedCase.GenerateFactoryMethodWithName);
             if (discriminatedUnionOwnedCase.Parameters.Any())
             {
                 stringBuilder.Append('(')

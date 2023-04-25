@@ -157,7 +157,7 @@ internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : E
     }
 
     [TestMethod]
-    public async Task Given_PropertyFactoryMethod_Then_NoDiagnosticsAreReported22()
+    public async Task Given_PropertyFactoryMethod_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
