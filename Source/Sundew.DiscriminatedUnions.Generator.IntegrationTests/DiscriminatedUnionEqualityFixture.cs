@@ -74,4 +74,21 @@ public class DiscriminatedUnionEqualityFixture
 
         ((object)lhs).Should().NotBe(rhs);
     }
+
+    [Test]
+    public void GetDiscriminatedUnionResults_When__Then_ResultShouldNotBeEmpty()
+    {
+        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
+        var compilation = project.Compile();
+        var scope = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.Scope");
+        var autoScope = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.Scope+AutoScope");
+        var singleInstancePerFuncResultScope = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.Scope+SingleInstancePerFuncResultScope");
+        var scopeDeclaration = DiscriminatedUnionDeclarationProvider.TryGetDiscriminatedUnionDeclaration(scope.SyntaxNode, scope.SemanticModel).GetValueOrDefault();
+        var autoScopeCaseDeclaration = DiscriminatedUnionCaseDeclarationProvider.TryGetDiscriminatedUnionCaseDeclaration(autoScope.SyntaxNode, autoScope.SemanticModel).GetValueOrDefault();
+        var singleInstancePerFuncResultScopeDeclaration = DiscriminatedUnionCaseDeclarationProvider.TryGetDiscriminatedUnionCaseDeclaration(singleInstancePerFuncResultScope.SyntaxNode, singleInstancePerFuncResultScope.SemanticModel).GetValueOrDefault();
+
+        ValueArray<DiscriminatedUnionResult> result = DiscriminatedUnionProvider.GetDiscriminatedUnionResults(ImmutableArray.Create(scopeDeclaration), ImmutableArray.Create(autoScopeCaseDeclaration, singleInstancePerFuncResultScopeDeclaration), CancellationToken.None);
+
+        result.Should().NotBeEmpty();
+    }
 }

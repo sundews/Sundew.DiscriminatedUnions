@@ -8,6 +8,7 @@
 namespace Sundew.DiscriminatedUnions.Analyzer;
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
@@ -25,20 +26,8 @@ public static class UnionHelper
     public static IEnumerable<INamedTypeSymbol> GetKnownCaseTypes(ITypeSymbol unionType)
     {
         return GetFactoryMethodSymbols(unionType)
-            .Select(x =>
-            {
-                var caseTypeAttribute = x.GetAttributes().FirstOrDefault(x =>
-                    x.AttributeClass?.ToDisplayString() == typeof(CaseTypeAttribute).FullName);
-                if (caseTypeAttribute != null)
-                {
-                    var caseTypeSymbol = (INamedTypeSymbol?)caseTypeAttribute.ConstructorArguments.FirstOrDefault().Value ??
-                                         (INamedTypeSymbol?)caseTypeAttribute.NamedArguments.FirstOrDefault().Value.Value;
-
-                    return caseTypeSymbol;
-                }
-
-                return null;
-            }).Where(x => x != null).Select(x => x!)
+            .Select(x => TryGetCaseType(x.Attributes))
+            .Where(x => x != null).Select(x => x!)
             .Concat(
                 unionType.GetTypeMembers()
                     .Where(x =>
@@ -55,7 +44,28 @@ public static class UnionHelper
                         }
 
                         return false;
-                    }));
+                    })).Distinct(SymbolEqualityComparer.Default)
+            .Cast<INamedTypeSymbol>();
+    }
+
+    /// <summary>
+    /// Tries to get the case for the specified method symbol.
+    /// </summary>
+    /// <param name="attributes">The attributes.</param>
+    /// <returns>The case type.</returns>
+    public static INamedTypeSymbol? TryGetCaseType(ImmutableArray<AttributeData> attributes)
+    {
+        var caseTypeAttribute = attributes.FirstOrDefault(x =>
+            x.AttributeClass?.ToDisplayString() == typeof(CaseTypeAttribute).FullName);
+        if (caseTypeAttribute != null)
+        {
+            var caseTypeSymbol = (INamedTypeSymbol?)caseTypeAttribute.ConstructorArguments.FirstOrDefault().Value ??
+                                 (INamedTypeSymbol?)caseTypeAttribute.NamedArguments.FirstOrDefault().Value.Value;
+
+            return caseTypeSymbol;
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -63,12 +73,25 @@ public static class UnionHelper
     /// </summary>
     /// <param name="unionType">The union type.</param>
     /// <returns>The method symbols.</returns>
-    public static IEnumerable<IMethodSymbol> GetFactoryMethodSymbols(ITypeSymbol unionType)
+    public static IEnumerable<(string Name, ImmutableArray<AttributeData> Attributes, ITypeSymbol ResultType)> GetFactoryMethodSymbols(ITypeSymbol unionType)
     {
         return unionType.GetMembers()
-               .Where(x => x.Kind == SymbolKind.Method && x.IsStatic)
-               .OfType<IMethodSymbol>()
-               .Where(x => SymbolEqualityComparer.Default.Equals(x.ReturnType, unionType));
+            .Where(x => x.IsStatic)
+            .Select(x =>
+                {
+                    if (x is IPropertySymbol propertySymbol)
+                    {
+                        return (Name: propertySymbol.Name, Attributes: propertySymbol.GetAttributes(), ResultType: propertySymbol.Type);
+                    }
+
+                    if (x is IMethodSymbol methodSymbol)
+                    {
+                        return (Name: methodSymbol.Name, Attributes: methodSymbol.GetAttributes(), ResultType: methodSymbol.ReturnType);
+                    }
+
+                    return default;
+                })
+               .Where(x => x != default && SymbolEqualityComparer.Default.Equals(x.ResultType, unionType));
     }
 
     /// <summary>
@@ -83,8 +106,8 @@ public static class UnionHelper
             IBlockOperation? body,
             string name)
         {
-            var lastOperation = body?.Operations.LastOrDefault();
-            if (lastOperation is IReturnOperation
+            var operations = body?.Operations;
+            if (operations != null && operations.Value.Length == 1 && operations.Value.LastOrDefault() is IReturnOperation
                 {
                     ReturnedValue: IConversionOperation
                     {
@@ -95,10 +118,7 @@ public static class UnionHelper
                     }
                 })
             {
-                if (namedTypeSymbol.Name == name)
-                {
-                    return namedTypeSymbol;
-                }
+                return namedTypeSymbol;
             }
 
             return null;

@@ -3,7 +3,7 @@ namespace Sundew.DiscriminatedUnions.Tester
 {
 #pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.1.0.0")]
     public partial record MixedUnion
 #pragma warning restore SA1601
     {
@@ -22,6 +22,6 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// </summary>
         /// <returns>A new Case3.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Case3))]
-        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case3() => new global::Sundew.DiscriminatedUnions.Tester.Case3();
+        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case3 { get; } = new global::Sundew.DiscriminatedUnions.Tester.Case3();
     }
 }

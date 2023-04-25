@@ -111,8 +111,13 @@ internal static class DiscriminatedUnionOutputProvider
             .Append('{');
         foreach (var discriminatedUnionOwnedCase in discriminatedUnion.Cases)
         {
+            if (discriminatedUnionOwnedCase.GenerateFactoryMethodWithName == null)
+            {
+                continue;
+            }
+
             stringBuilder.AppendLine()
-                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.Type.Name, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
+                .AppendDocumentation(SpaceIndentedBy8, FactoryMethodDescription, discriminatedUnionOwnedCase.GenerateFactoryMethodWithName, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), FactoryMethodReturnsDescription)
                 .Append(SpaceIndentedBy8)
                 .Append('[')
                 .Append(SundewDiscriminatedUnionsCaseType)
@@ -137,28 +142,36 @@ internal static class DiscriminatedUnionOutputProvider
                 .Append(' ')
                 .AppendType(discriminatedUnion.Type)
                 .Append(' ')
-                .Append(discriminatedUnionOwnedCase.Type.Name)
-                .Append('(')
-                .AppendItems(
-                discriminatedUnionOwnedCase.Parameters,
-                (sb, parameter) =>
-                {
-                    sb.Append(parameter.TypeName)
+                .Append(discriminatedUnionOwnedCase.Type.Name);
+            if (discriminatedUnionOwnedCase.Parameters.Any())
+            {
+                stringBuilder.Append('(')
+                    .AppendItems(
+                        discriminatedUnionOwnedCase.Parameters,
+                        (sb, parameter) =>
+                        {
+                            sb.Append(parameter.TypeName)
+                                .Append(' ')
+                                .Append(parameter.Name);
+                            if (!string.IsNullOrEmpty(parameter.DefaultValue))
+                            {
+                                sb.Append(' ')
+                                    .Append('=')
+                                    .Append(' ')
+                                    .Append(parameter.DefaultValue);
+                            }
+                        },
+                        ListSeparator)
+                    .Append(')')
                     .Append(' ')
-                    .Append(parameter.Name);
-                    if (!string.IsNullOrEmpty(parameter.DefaultValue))
-                    {
-                        sb.Append(' ')
-                        .Append('=')
-                        .Append(' ')
-                        .Append(parameter.DefaultValue);
-                    }
-                },
-                ListSeparator)
-                .Append(')')
-                .Append(' ')
-                .Append(Lambda)
-                .Append(' ')
+                    .Append(Lambda);
+            }
+            else
+            {
+                stringBuilder.Append(' ').Append(Get).Append(' ').Append('=');
+            }
+
+            stringBuilder.Append(' ')
                 .Append(New)
                 .Append(' ')
                 .AppendType(discriminatedUnionOwnedCase.Type)

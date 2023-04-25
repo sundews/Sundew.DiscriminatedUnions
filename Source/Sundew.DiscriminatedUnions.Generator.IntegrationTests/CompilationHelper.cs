@@ -18,7 +18,7 @@ internal static class CompilationHelper
         var namedTypeSymbol = compilation.GetTypeByMetadataName(name);
         if (namedTypeSymbol == null)
         {
-            Assert.Fail($"The smybol was not found: {name}");
+            Assert.Fail($"The symbol was not found: {name}");
         }
 
         var syntaxReference = namedTypeSymbol!.DeclaringSyntaxReferences.First();

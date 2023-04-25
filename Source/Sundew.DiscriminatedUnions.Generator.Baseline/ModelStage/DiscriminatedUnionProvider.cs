@@ -36,22 +36,22 @@ internal static class DiscriminatedUnionProvider
             foreach (var owner in discriminatedUnionCase.Owners)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var discriminatedUnionDeclaration = declarations.FirstOrDefault(x => x.Type.Equals(owner));
+                var discriminatedUnionDeclaration = declarations.FirstOrDefault(x => x.Type.Equals(owner.Type));
                 var discriminatedUnionResult = discriminatedUnionDeclaration != null
                     ? DiscriminatedUnionResult.Success(new DiscriminatedUnion(
-                        new FullType(owner, discriminatedUnionDeclaration.Type.TypeMetadata),
+                        new FullType(owner.Type, discriminatedUnionDeclaration.Type.TypeMetadata),
                         discriminatedUnionDeclaration.UnderlyingType,
                         discriminatedUnionDeclaration.Accessibility,
                         discriminatedUnionDeclaration.IsPartial,
                         discriminatedUnionDeclaration.IsConstrainingUnion,
                         discriminatedUnionDeclaration.GeneratorFeatures,
                         ImmutableArray.Create((Type: discriminatedUnionCase.CaseType,
-                            discriminatedUnionCase.Parameters))))
+                            discriminatedUnionCase.Parameters, GenerateFactoryMethodWithName: owner.GenerateFactoryMethodWithName))))
                     : DiscriminatedUnionResult.Error(
-                        ImmutableArray.Create(new DeclarationNotFound(owner, discriminatedUnionCase)));
+                        ImmutableArray.Create(new DeclarationNotFound(owner.Type, discriminatedUnionCase)));
 
                 discriminatedUnions.AddOrUpdate(
-                    owner,
+                    owner.Type,
                     discriminatedUnionResult,
                     (type, result) =>
                     {
@@ -60,7 +60,7 @@ internal static class DiscriminatedUnionProvider
                             var discriminatedUnion = result.DiscriminatedUnion with
                             {
                                 Cases = result.DiscriminatedUnion.Cases.Add(
-                                    (Type: discriminatedUnionCase.CaseType, discriminatedUnionCase.Parameters)),
+                                    (Type: discriminatedUnionCase.CaseType, discriminatedUnionCase.Parameters, GenerateFactoryMethodWithName: owner.GenerateFactoryMethodWithName)),
                             };
                             return DiscriminatedUnionResult.Success(discriminatedUnion);
                         }

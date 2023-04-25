@@ -12,7 +12,7 @@ namespace Sundew.DiscriminatedUnions
     /// <summary>
     /// Indicates the case type constructed by a factory method.
     /// </summary>
-    [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false)]
+    [AttributeUsage(validOn: AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
     internal class CaseTypeAttribute : Attribute
     {
         /// <summary>

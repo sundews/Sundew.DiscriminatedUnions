@@ -27,7 +27,7 @@ namespace Sundew.DiscriminatedUnions
     {
     }
 
-    [System.AttributeUsage(System.AttributeTargets.Method)]
+    [System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Property)]
     internal class CaseTypeAttribute : System.Attribute
     {
         public CaseTypeAttribute(System.Type caseType)

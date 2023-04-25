@@ -24,21 +24,19 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
             {
                 if (baseType.IsDiscriminatedUnion())
                 {
+                    var caseNamedTypeSymbol = namedTypeSymbol;
                     isCase = true;
-                    if (namedTypeSymbol.ContainingType == null)
+                    if (caseNamedTypeSymbol.ContainingType == null)
                     {
-                        var factoryMethod = baseType.GetMembers()
-                            .OfType<IMethodSymbol>()
-                            .Where(x => x.IsStatic)
-                            .FirstOrDefault(x =>
-                                x.Name == namedTypeSymbol.Name &&
-                                SymbolEqualityComparer.Default.Equals(x.ReturnType, baseType));
-                        if (factoryMethod == null)
+                        var hasFactoryMethod = UnionHelper.GetFactoryMethodSymbols(baseType)
+                            .Any(x =>
+                                (x.Name == caseNamedTypeSymbol.Name || SymbolEqualityComparer.Default.Equals(UnionHelper.TryGetCaseType(x.Attributes), caseNamedTypeSymbol)));
+                        if (!hasFactoryMethod)
                         {
                             var propertyBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
-                            propertyBuilder.Add(DiagnosticPropertyNames.QualifiedCaseName, namedTypeSymbol.ToDisplayString());
-                            propertyBuilder.Add(DiagnosticPropertyNames.Name, namedTypeSymbol.Name);
-                            foreach (var syntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
+                            propertyBuilder.Add(DiagnosticPropertyNames.QualifiedCaseName, caseNamedTypeSymbol.ToDisplayString());
+                            propertyBuilder.Add(DiagnosticPropertyNames.Name, caseNamedTypeSymbol.Name);
+                            foreach (var syntaxReference in caseNamedTypeSymbol.DeclaringSyntaxReferences)
                             {
                                 reportDiagnostic(Diagnostic.Create(
                                     DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule,
@@ -46,20 +44,20 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
                                     DiagnosticSeverity.Error,
                                     baseType.DeclaringSyntaxReferences.Select(x => x.GetSyntax().GetLocation()),
                                     propertyBuilder.ToImmutable(),
-                                    namedTypeSymbol,
+                                    caseNamedTypeSymbol,
                                     baseType));
                             }
                         }
                     }
 
-                    if (!SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ContainingAssembly, baseType.ContainingAssembly))
+                    if (!SymbolEqualityComparer.Default.Equals(caseNamedTypeSymbol.ContainingAssembly, baseType.ContainingAssembly))
                     {
-                        foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
+                        foreach (var declaringSyntaxReference in caseNamedTypeSymbol.DeclaringSyntaxReferences)
                         {
                             reportDiagnostic(Diagnostic.Create(
                                 DiscriminatedUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule,
                                 declaringSyntaxReference.GetSyntax().GetLocation(),
-                                namedTypeSymbol,
+                                caseNamedTypeSymbol,
                                 baseType.ContainingAssembly.Name));
                         }
                     }

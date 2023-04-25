@@ -5,7 +5,7 @@ namespace Sundew.Base.Collections
     /// Contains individual lists of the different cases of the discriminated union AllOrFailed.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.1.0.0")]
     public sealed partial class AllOrFailedSegregation<TItem, TResult, TError>
         where TItem : class, global::System.IEquatable<TItem>
         where TResult : struct

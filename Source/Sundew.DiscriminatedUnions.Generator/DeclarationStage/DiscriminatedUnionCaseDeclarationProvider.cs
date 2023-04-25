@@ -25,26 +25,36 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
     public static IncrementalValuesProvider<DiscriminatedUnionCaseDeclaration> SetupDiscriminatedUnionCaseDeclarationStage(this SyntaxValueProvider syntaxProvider)
     {
         return syntaxProvider.CreateSyntaxProvider(
-            static (syntaxNode, _) => IsDiscriminatedUnionCandidate(syntaxNode),
+            static (syntaxNode, _) => IsDiscriminatedUnionCaseCandidate(syntaxNode),
             static (generatorContextSyntax, _) => TryGetDiscriminatedUnionCaseDeclaration(generatorContextSyntax.Node, generatorContextSyntax.SemanticModel)).Where(x => x != null).Select((x, y) => x.GetValueOrDefault());
     }
 
     internal static DiscriminatedUnionCaseDeclaration? TryGetDiscriminatedUnionCaseDeclaration(SyntaxNode syntaxNode, SemanticModel semanticModel)
     {
         var symbol = semanticModel.GetDeclaredSymbol(syntaxNode);
-        if (symbol is INamedTypeSymbol namedTypeSymbol)
+        if (symbol is INamedTypeSymbol caseNamedTypeSymbol)
         {
-            var owners = FindOwners(namedTypeSymbol).Where(x => !SymbolEqualityComparer.Default.Equals(x, namedTypeSymbol.ContainingType)).Select(x => x.GetSourceType()).ToImmutableArray();
-            var parameters = TryGetParameters(namedTypeSymbol);
+            var owners = FindOwners(caseNamedTypeSymbol).Select(x => (Type: x.GetSourceType(), GenerateFactoryMethodWithName: GetGenerateFactoryMethodName(x, caseNamedTypeSymbol))).ToImmutableArray();
+            var parameters = TryGetParameters(caseNamedTypeSymbol);
             if (parameters == null)
             {
                 return null;
             }
 
-            return new DiscriminatedUnionCaseDeclaration(namedTypeSymbol.GetFullType(), owners, parameters.ToImmutableArray());
+            return new DiscriminatedUnionCaseDeclaration(caseNamedTypeSymbol.GetFullType(), owners, parameters.ToImmutableArray());
         }
 
         return null;
+    }
+
+    private static string? GetGenerateFactoryMethodName(INamedTypeSymbol discriminatedUnionNameTypeSymbol, INamedTypeSymbol caseNamedTypeSymbol)
+    {
+        if (SymbolEqualityComparer.Default.Equals(discriminatedUnionNameTypeSymbol, caseNamedTypeSymbol.ContainingType))
+        {
+            return caseNamedTypeSymbol.Name.EndsWith(discriminatedUnionNameTypeSymbol.Name) ? caseNamedTypeSymbol.Name.Substring(0, caseNamedTypeSymbol.Name.Length - discriminatedUnionNameTypeSymbol.Name.Length) : null;
+        }
+
+        return caseNamedTypeSymbol.Name;
     }
 
     private static IEnumerable<Parameter>? TryGetParameters(INamedTypeSymbol namedTypeSymbol)
@@ -85,7 +95,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         }
     }
 
-    private static bool IsDiscriminatedUnionCandidate(SyntaxNode syntaxNode)
+    private static bool IsDiscriminatedUnionCaseCandidate(SyntaxNode syntaxNode)
     {
         static bool HasBaseListAndIsNotAbstract(TypeDeclarationSyntax typeDeclarationSyntax)
         {
