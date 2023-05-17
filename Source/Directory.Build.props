@@ -5,7 +5,7 @@
    <OutputPath>bin/$(Configuration)</OutputPath>
    <Nullable>enable</Nullable>
    <LangVersion>preview</LangVersion>
-   <Company>Hukano</Company>
+   <Company>Sundews</Company>
    <Authors>Kim Hugener-Ohlsen</Authors>
    <Copyright>Kim Hugener-Ohlsen</Copyright>
    <RepositoryUrl>https://github.com/sundews/Sundew.DiscriminatedUnions</RepositoryUrl>
