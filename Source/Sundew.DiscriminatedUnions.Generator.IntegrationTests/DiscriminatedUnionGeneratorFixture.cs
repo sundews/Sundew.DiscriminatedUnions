@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using NUnit.Framework;
-using Sundew.CodeAnalysis.Testing;
+using Sundew.Testing.CodeAnalysis;
+using Sundew.Testing.IO;
 using VerifyNUnit;
-using Project = Sundew.CodeAnalysis.Testing.Project;
 
 [TestFixture]
 public class DiscriminatedUnionGeneratorFixture
@@ -21,7 +21,7 @@ public class DiscriminatedUnionGeneratorFixture
     [Test]
     public Task VerifyGeneratedSources()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(), "bin", "obj");
+        var project = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Tester"), new Paths(), new Paths("bin", "obj"), null);
         var compilation = project.Compile();
         GeneratorDriver generatorDriver = CSharpGeneratorDriver.Create(new DiscriminatedUnionGenerator());
 

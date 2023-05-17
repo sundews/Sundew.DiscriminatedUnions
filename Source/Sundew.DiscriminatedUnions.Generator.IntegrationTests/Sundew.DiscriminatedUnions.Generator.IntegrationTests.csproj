@@ -35,13 +35,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Sundew.Testing.CodeAnalysis" Version="0.0.0-u20230517-201935-local" />
     <PackageReference Include="Verify" Version="19.11.1" />
     <PackageReference Include="Verify.NUnit" Version="19.11.1" />
     <PackageReference Include="Verify.SourceGenerators" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sundew.CodeAnalysis.Testing\Sundew.CodeAnalysis.Testing.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator\Sundew.DiscriminatedUnions.Generator.csproj" />

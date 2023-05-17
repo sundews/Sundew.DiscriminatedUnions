@@ -11,7 +11,8 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Sundew.CodeAnalysis.Testing;
+using Sundew.Testing.CodeAnalysis;
+using Sundew.Testing.IO;
 
 [TestFixture(Category = "MainBranchBuilds")]
 public class BaselineValidationFixture
@@ -19,14 +20,14 @@ public class BaselineValidationFixture
     [Test]
     public void VerifyWorkingCopyAndBaselineProjectsAreTheSame()
     {
-        var workingCopyProject = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Generator"), new Paths(), "bin", "obj");
+        var workingCopyProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator"), new Paths(), new Paths("bin", "obj"), null);
 
-        var baselineProject = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Generator.Baseline"), new Paths(), "bin", "obj");
+        var baselineProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator.Baseline"), new Paths(), new Paths("bin", "obj"), null);
 
         var workingCopyFiles = workingCopyProject.GetFiles().ToList();
         var baselineFiles = baselineProject.GetFiles().ToList();
 
-        workingCopyFiles.Select(x => x.Substring(workingCopyProject.ProjectDirectory.Length + 1)).Should().Equal(baselineFiles.Select(x => x.Substring(baselineProject.ProjectDirectory.Length + 1)));
+        workingCopyFiles.Select(x => x.Substring(workingCopyProject.Directory.Length + 1)).Should().Equal(baselineFiles.Select(x => x.Substring(baselineProject.Directory.Length + 1)));
         workingCopyFiles.Select(File.ReadAllText).Should().Equal(baselineFiles.Select(File.ReadAllText));
     }
 }

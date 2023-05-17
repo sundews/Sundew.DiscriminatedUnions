@@ -11,12 +11,15 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using FluentAssertions;
+using Microsoft.CodeAnalysis;
 using NUnit.Framework;
 using Sundew.Base;
-using Sundew.CodeAnalysis.Testing;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Sundew.DiscriminatedUnions.Generator.ModelStage;
+using Sundew.Testing.CodeAnalysis;
+using Sundew.Testing.IO;
+using Accessibility = Sundew.DiscriminatedUnions.Generator.Model.Accessibility;
 
 [TestFixture]
 public class DiscriminatedUnionEqualityFixture
@@ -24,8 +27,7 @@ public class DiscriminatedUnionEqualityFixture
     [Test]
     public void GetDiscriminatedUnionResults_Then_ResultShouldNotBeEmpty()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
         var definiteType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.DefiniteType");
         var namedType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.NamedType");
         var definiteArrayType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.DefiniteArrayType");
@@ -41,8 +43,7 @@ public class DiscriminatedUnionEqualityFixture
     [Test]
     public void Equals_Then_ResultShouldBeTrue()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
         var definiteType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.DefiniteType");
         var namedType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.NamedType");
         var definiteArrayType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.DefiniteArrayType");
@@ -59,8 +60,7 @@ public class DiscriminatedUnionEqualityFixture
     [Test]
     public void Equals_When_ValuesDiffer_Then_ResultShouldBeFalse()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
         var definiteType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.DefiniteType");
         var namedType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.NamedType");
         var definiteArrayType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.DefiniteArrayType");
@@ -78,8 +78,8 @@ public class DiscriminatedUnionEqualityFixture
     [Test]
     public void GetDiscriminatedUnionResults_When__Then_ResultShouldNotBeEmpty()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
+
         var scope = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.Scope");
         var autoScope = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.Scope+AutoScope");
         var singleInstancePerFuncResultScope = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.Scope+SingleInstancePerFuncResultScope");

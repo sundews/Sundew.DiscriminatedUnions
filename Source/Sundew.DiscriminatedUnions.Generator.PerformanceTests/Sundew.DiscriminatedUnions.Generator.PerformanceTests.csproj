@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+    <PackageReference Include="Sundew.Testing.CodeAnalysis" Version="0.0.0-u20230517-201935-local" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,7 +17,6 @@
       <Aliases>baseline</Aliases>
     </ProjectReference>
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator\Sundew.DiscriminatedUnions.Generator.csproj" />
-    <ProjectReference Include="..\Sundew.CodeAnalysis.Testing\Sundew.CodeAnalysis.Testing.csproj" />
   </ItemGroup>
 
 </Project>

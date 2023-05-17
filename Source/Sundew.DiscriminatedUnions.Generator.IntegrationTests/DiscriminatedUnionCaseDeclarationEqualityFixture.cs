@@ -8,9 +8,11 @@
 namespace Sundew.DiscriminatedUnions.Generator.IntegrationTests;
 
 using FluentAssertions;
+using Microsoft.CodeAnalysis;
 using NUnit.Framework;
-using Sundew.CodeAnalysis.Testing;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
+using Sundew.Testing.CodeAnalysis;
+using Sundew.Testing.IO;
 
 [TestFixture]
 public class DiscriminatedUnionCaseDeclarationEqualityFixture
@@ -18,8 +20,8 @@ public class DiscriminatedUnionCaseDeclarationEqualityFixture
     [Test]
     public void TryGetDiscriminatedUnionCaseDeclaration_Then_ResultShouldNotBeNull()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
+
         var namedType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.NamedType");
         var result = DiscriminatedUnionCaseDeclarationProvider.TryGetDiscriminatedUnionCaseDeclaration(namedType.SyntaxNode, namedType.SemanticModel);
 
@@ -29,8 +31,8 @@ public class DiscriminatedUnionCaseDeclarationEqualityFixture
     [Test]
     public void Equals_Then_ResultShouldBeTrue()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
+
         var namedType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.NamedType");
         var lhs = DiscriminatedUnionCaseDeclarationProvider.TryGetDiscriminatedUnionCaseDeclaration(namedType.SyntaxNode, namedType.SemanticModel);
         var rhs = DiscriminatedUnionCaseDeclarationProvider.TryGetDiscriminatedUnionCaseDeclaration(namedType.SyntaxNode, namedType.SemanticModel);
@@ -41,8 +43,8 @@ public class DiscriminatedUnionCaseDeclarationEqualityFixture
     [Test]
     public void Equals_When_ValuesDiffer_Then_ResultShouldBeFalse()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
+
         var namedType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.NamedType");
         var lhs = DiscriminatedUnionCaseDeclarationProvider.TryGetDiscriminatedUnionCaseDeclaration(namedType.SyntaxNode, namedType.SemanticModel);
         var rhs = DiscriminatedUnionCaseDeclarationProvider.TryGetDiscriminatedUnionCaseDeclaration(namedType.SyntaxNode, namedType.SemanticModel).GetValueOrDefault();

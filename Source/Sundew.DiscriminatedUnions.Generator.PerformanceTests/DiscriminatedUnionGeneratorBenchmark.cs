@@ -8,18 +8,19 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Sundew.CodeAnalysis.Testing;
+using Sundew.Testing.CodeAnalysis;
+using Sundew.Testing.IO;
 
 [MemoryDiagnoser]
 [SimpleJob(RuntimeMoniker.Net48, baseline: true)]
 [SimpleJob(RuntimeMoniker.Net70)]
 public class DiscriminatedUnionGeneratorBenchmark
 {
-    private readonly CSharpCompilation compilation;
+    private readonly Compilation compilation;
 
     public DiscriminatedUnionGeneratorBenchmark()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(), "bin", "obj");
+        var project = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Tester"), excludePaths: new Paths("bin", "obj"));
         this.compilation = project.Compile();
     }
 

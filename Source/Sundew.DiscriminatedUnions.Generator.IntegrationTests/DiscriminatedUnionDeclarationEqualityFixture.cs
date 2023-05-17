@@ -9,7 +9,6 @@ namespace Sundew.DiscriminatedUnions.Generator.IntegrationTests;
 
 using FluentAssertions;
 using NUnit.Framework;
-using Sundew.CodeAnalysis.Testing;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 
 [TestFixture]
@@ -18,8 +17,8 @@ public class DiscriminatedUnionDeclarationEqualityFixture
     [Test]
     public void TryGetDiscriminatedUnionDeclaration_Then_ResultShouldNotBeEmpty()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
+
         var definiteType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.DefiniteType");
         var result = DiscriminatedUnionDeclarationProvider.TryGetDiscriminatedUnionDeclaration(definiteType.SyntaxNode, definiteType.SemanticModel);
 
@@ -29,8 +28,8 @@ public class DiscriminatedUnionDeclarationEqualityFixture
     [Test]
     public void Equals_Then_ResultShouldBeTrue()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
+
         var definiteType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.DefiniteType");
         var lhs = DiscriminatedUnionDeclarationProvider.TryGetDiscriminatedUnionDeclaration(definiteType.SyntaxNode, definiteType.SemanticModel);
         var rhs = DiscriminatedUnionDeclarationProvider.TryGetDiscriminatedUnionDeclaration(definiteType.SyntaxNode, definiteType.SemanticModel);
@@ -41,8 +40,8 @@ public class DiscriminatedUnionDeclarationEqualityFixture
     [Test]
     public void Equals_When_ValuesDiffer_Then_ResultShouldBeFalse()
     {
-        var project = new Project(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions.Tester"), new Paths(DemoProjectInfo.GetPath("Sundew.DiscriminatedUnions")), "bin", "obj");
-        var compilation = project.Compile();
+        var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
+
         var definiteType = compilation.GetNamedTypeSymbolSemanticModelAndSyntaxNode("Sundew.DiscriminatedUnions.Tester.DefiniteType");
         var lhs = DiscriminatedUnionDeclarationProvider.TryGetDiscriminatedUnionDeclaration(definiteType.SyntaxNode, definiteType.SemanticModel);
         var rhs = DiscriminatedUnionDeclarationProvider.TryGetDiscriminatedUnionDeclaration(definiteType.SyntaxNode, definiteType.SemanticModel).GetValueOrDefault();
