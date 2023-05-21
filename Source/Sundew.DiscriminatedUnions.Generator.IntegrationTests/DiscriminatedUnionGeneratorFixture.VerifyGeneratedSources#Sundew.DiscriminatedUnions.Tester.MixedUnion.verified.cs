@@ -8,6 +8,13 @@ namespace Sundew.DiscriminatedUnions.Tester
 #pragma warning restore SA1601
     {
         /// <summary>
+        /// Gets the Case3 case.
+        /// </summary>
+        /// <returns>The Case3.</returns>
+        [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Case3))]
+        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case3 { get; } = new global::Sundew.DiscriminatedUnions.Tester.Case3();
+
+        /// <summary>
         /// Factory method for the Case1 case.
         /// </summary>
         /// <param name="info">The info.</param>
@@ -24,12 +31,5 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <returns>A new Case2.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Case2))]
         public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case2(int? info = 4, global::System.Collections.Generic.List<string?>? optionalList = null, global::System.Collections.Generic.List<int?>? optionalInts = null) => new global::Sundew.DiscriminatedUnions.Tester.Case2(info, optionalList, optionalInts);
-
-        /// <summary>
-        /// Gets the Case3 case.
-        /// </summary>
-        /// <returns>The Case3.</returns>
-        [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Case3))]
-        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case3 { get; } = new global::Sundew.DiscriminatedUnions.Tester.Case3();
     }
 }

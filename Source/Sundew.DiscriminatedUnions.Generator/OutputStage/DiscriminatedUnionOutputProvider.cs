@@ -111,7 +111,7 @@ internal static class DiscriminatedUnionOutputProvider
             .AppendPragmaWarning(true, Sa1601)
             .Append(SpaceIndentedBy4)
             .Append('{');
-        foreach (var discriminatedUnionOwnedCase in discriminatedUnion.Cases)
+        foreach (var discriminatedUnionOwnedCase in discriminatedUnion.Cases.OrderBy(x => x.Parameters.Any()).ThenBy(x => x.Type.Name))
         {
             var implementAsMethod = discriminatedUnionOwnedCase.Parameters.Any();
             stringBuilder.AppendLine()
