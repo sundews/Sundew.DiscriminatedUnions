@@ -34,7 +34,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         var symbol = semanticModel.GetDeclaredSymbol(syntaxNode);
         if (symbol is INamedTypeSymbol caseNamedTypeSymbol)
         {
-            var owners = FindOwners(caseNamedTypeSymbol).Select(x => (Type: x.GetSourceType(), GenerateFactoryMethodWithName: GetGenerateFactoryMethodName(x, caseNamedTypeSymbol))).ToImmutableArray();
+            var owners = FindOwners(caseNamedTypeSymbol).Select(x => (Type: x.GetSourceType(), HasConflictingName: HasConflictingName(x, caseNamedTypeSymbol))).ToImmutableArray();
             var parameters = TryGetParameters(caseNamedTypeSymbol);
             if (parameters == null)
             {
@@ -47,21 +47,10 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         return null;
     }
 
-    private static string? GetGenerateFactoryMethodName(INamedTypeSymbol discriminatedUnionNameTypeSymbol, INamedTypeSymbol caseNamedTypeSymbol)
+    private static bool HasConflictingName(INamedTypeSymbol discriminatedUnionNameTypeSymbol, INamedTypeSymbol caseNamedTypeSymbol)
     {
         var members = discriminatedUnionNameTypeSymbol.GetMembers();
-        if (members.Any(x => x.Name == caseNamedTypeSymbol.Name))
-        {
-            var suggestedName = caseNamedTypeSymbol.Name.EndsWith(discriminatedUnionNameTypeSymbol.Name) ? caseNamedTypeSymbol.Name.Substring(0, caseNamedTypeSymbol.Name.Length - discriminatedUnionNameTypeSymbol.Name.Length) : null;
-            if (suggestedName == null || members.Any(x => suggestedName == x.Name))
-            {
-                return null;
-            }
-
-            return suggestedName;
-        }
-
-        return caseNamedTypeSymbol.Name;
+        return members.Any(x => SymbolEqualityComparer.Default.Equals(x, caseNamedTypeSymbol));
     }
 
     private static IEnumerable<Parameter>? TryGetParameters(INamedTypeSymbol namedTypeSymbol)

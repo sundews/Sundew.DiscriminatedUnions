@@ -10,4 +10,4 @@ namespace Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.Base;
 using Sundew.DiscriminatedUnions.Generator.Model;
 
-internal readonly record struct DiscriminatedUnionCaseDeclaration(FullType CaseType, ValueArray<(Type Type, string? GenerateFactoryMethodWithName)> Owners, ValueArray<Parameter> Parameters);
+internal readonly record struct DiscriminatedUnionCaseDeclaration(FullType CaseType, ValueArray<(Type Type, bool HasConflictingName)> Owners, ValueArray<Parameter> Parameters);

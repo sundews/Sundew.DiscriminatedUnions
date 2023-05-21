@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
-    <PackageReference Include="Sundew.Testing.CodeAnalysis" Version="0.0.0-u20230517-201935-local" />
+    <PackageReference Include="Sundew.Testing.CodeAnalysis" Version="0.0.0-u20230521-002354-ci" />
   </ItemGroup>
 
   <ItemGroup>

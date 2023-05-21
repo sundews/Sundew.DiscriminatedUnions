@@ -16,4 +16,4 @@ internal readonly record struct DiscriminatedUnion(
     bool IsPartial,
     bool IsConstrainingUnion,
     GeneratorFeatures GeneratorFeatures,
-    ValueArray<(FullType Type, ValueArray<Parameter> Parameters, string? GenerateFactoryMethodWithName)> Cases);
+    ValueArray<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)> Cases);

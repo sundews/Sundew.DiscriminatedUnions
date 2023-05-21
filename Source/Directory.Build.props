@@ -1,7 +1,7 @@
 <Project>
  <PropertyGroup>
    <Deterministic>true</Deterministic>
-   <Version>3.1</Version>
+   <Version>4.0</Version>
    <OutputPath>bin/$(Configuration)</OutputPath>
    <Nullable>enable</Nullable>
    <LangVersion>preview</LangVersion>

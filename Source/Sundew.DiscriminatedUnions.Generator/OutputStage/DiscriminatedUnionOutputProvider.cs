@@ -44,7 +44,7 @@ internal static class DiscriminatedUnionOutputProvider
                 var discriminatedUnion = discriminatedUnionResult.DiscriminatedUnion;
                 var discriminatedUnionNamespace = discriminatedUnion.Type.Namespace;
                 var genericParametersForFileName = TryGetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters);
-                if (discriminatedUnion.IsPartial && discriminatedUnion.Cases.Any(x => x.GenerateFactoryMethodWithName != null))
+                if (discriminatedUnion.IsPartial)
                 {
                     sourceProductionContext.AddSource(
                         discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + genericParametersForFileName,
@@ -113,11 +113,6 @@ internal static class DiscriminatedUnionOutputProvider
             .Append('{');
         foreach (var discriminatedUnionOwnedCase in discriminatedUnion.Cases)
         {
-            if (discriminatedUnionOwnedCase.GenerateFactoryMethodWithName == null)
-            {
-                continue;
-            }
-
             var implementAsMethod = discriminatedUnionOwnedCase.Parameters.Any();
             stringBuilder.AppendLine()
                 .AppendDocumentation(SpaceIndentedBy8, implementAsMethod ? FactoryMethodDescription : FactoryPropertyDescription, discriminatedUnionOwnedCase.Type.Name, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), implementAsMethod ? FactoryMethodReturnsDescription : FactoryPropertyReturnsDescription)
@@ -141,11 +136,18 @@ internal static class DiscriminatedUnionOutputProvider
                     .Append(' ');
             }
 
+            const string Case = "Case";
+            var unionFactoryMethodName = discriminatedUnionOwnedCase.Type.Name;
+            if (discriminatedUnionOwnedCase.HasConflictingName)
+            {
+                unionFactoryMethodName += Case;
+            }
+
             stringBuilder.Append(Static)
                 .Append(' ')
                 .AppendType(discriminatedUnion.Type)
                 .Append(' ')
-                .Append(discriminatedUnionOwnedCase.GenerateFactoryMethodWithName);
+                .Append(unionFactoryMethodName);
             if (implementAsMethod)
             {
                 stringBuilder.Append('(')

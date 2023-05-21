@@ -3,7 +3,7 @@
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract partial record ScopeForGenerator
 {
-    internal sealed record AutoScopeForGenerator : ScopeForGenerator;
+    internal sealed record Auto : ScopeForGenerator;
 
-    internal sealed record SingleInstancePerFuncResultScopeForGenerator(string Method) : ScopeForGenerator;
+    internal sealed record SingleInstancePerFuncResult(string Method) : ScopeForGenerator;
 }

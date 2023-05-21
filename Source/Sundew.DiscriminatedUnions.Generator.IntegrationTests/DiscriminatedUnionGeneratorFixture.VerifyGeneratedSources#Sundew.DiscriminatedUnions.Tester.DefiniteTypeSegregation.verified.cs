@@ -5,25 +5,25 @@ namespace Sundew.DiscriminatedUnions.Tester
     /// Contains individual lists of the different cases of the discriminated union DefiniteType.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
     public sealed partial class DefiniteTypeSegregation
     {
-        internal DefiniteTypeSegregation(System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType> definiteArrayTypes, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.NamedType> namedTypes)
+        internal DefiniteTypeSegregation(System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.NamedType> namedTypes, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType> definiteArrayTypes)
         {
-            this.DefiniteArrayTypes = definiteArrayTypes;
             this.NamedTypes = namedTypes;
+            this.DefiniteArrayTypes = definiteArrayTypes;
         }
-
-        /// <summary>
-        /// Gets the DefiniteArrayTypes.
-        /// </summary>
-        /// <returns>The DefiniteArrayTypes.</returns>
-        public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType> DefiniteArrayTypes { get; }
 
         /// <summary>
         /// Gets the NamedTypes.
         /// </summary>
         /// <returns>The NamedTypes.</returns>
         public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.NamedType> NamedTypes { get; }
+
+        /// <summary>
+        /// Gets the DefiniteArrayTypes.
+        /// </summary>
+        /// <returns>The DefiniteArrayTypes.</returns>
+        public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType> DefiniteArrayTypes { get; }
     }
 }

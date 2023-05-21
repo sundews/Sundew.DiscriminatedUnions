@@ -3,7 +3,7 @@ namespace Sundew.Base.Collections
 {
 #pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
     public partial class AllOrFailed<TItem, TResult, TError>
         where TItem : class, global::System.IEquatable<TItem>
         where TResult : struct

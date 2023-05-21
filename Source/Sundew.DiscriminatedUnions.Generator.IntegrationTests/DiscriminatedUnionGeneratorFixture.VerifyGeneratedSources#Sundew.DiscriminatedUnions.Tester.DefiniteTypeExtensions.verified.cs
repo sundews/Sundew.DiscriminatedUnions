@@ -5,7 +5,7 @@ namespace Sundew.DiscriminatedUnions.Tester
     /// Segregation extension method for DefiniteType.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "3.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
     public static partial class DefiniteTypeExtensions
     {
         /// <summary>
@@ -15,23 +15,23 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <returns>A new DefiniteTypeSegregation.</returns>
         public static DefiniteTypeSegregation Segregate(this System.Collections.Generic.IEnumerable<global::Sundew.DiscriminatedUnions.Tester.DefiniteType> definiteTypes)
         {
-            var definiteArrayTypes = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType>();
             var namedTypes = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.NamedType>();
+            var definiteArrayTypes = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType>();
 
             foreach (var value in definiteTypes)
             {
                 switch (value)
                 {
-                    case global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType definiteArrayType:
-                        definiteArrayTypes.Add(definiteArrayType);
-                        break;
                     case global::Sundew.DiscriminatedUnions.Tester.NamedType namedType:
                         namedTypes.Add(namedType);
+                        break;
+                    case global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType definiteArrayType:
+                        definiteArrayTypes.Add(definiteArrayType);
                         break;
                 }
             }
 
-            return new global::Sundew.DiscriminatedUnions.Tester.DefiniteTypeSegregation(definiteArrayTypes, namedTypes);
+            return new global::Sundew.DiscriminatedUnions.Tester.DefiniteTypeSegregation(namedTypes, definiteArrayTypes);
         }
     }
 }

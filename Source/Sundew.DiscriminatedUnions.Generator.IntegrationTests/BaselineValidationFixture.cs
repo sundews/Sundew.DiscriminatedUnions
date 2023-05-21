@@ -20,14 +20,14 @@ public class BaselineValidationFixture
     [Test]
     public void VerifyWorkingCopyAndBaselineProjectsAreTheSame()
     {
-        var workingCopyProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator"), new Paths(), new Paths("bin", "obj"), null);
+        var workingCopyProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator"), new Paths(), new Paths("bin", "obj"));
 
         var baselineProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator.Baseline"), new Paths(), new Paths("bin", "obj"), null);
 
         var workingCopyFiles = workingCopyProject.GetFiles().ToList();
         var baselineFiles = baselineProject.GetFiles().ToList();
 
-        workingCopyFiles.Select(x => x.Substring(workingCopyProject.Directory.Length + 1)).Should().Equal(baselineFiles.Select(x => x.Substring(baselineProject.Directory.Length + 1)));
+        workingCopyFiles.Select(x => x.Substring(workingCopyProject.BasePath.Length + 1)).Should().Equal(baselineFiles.Select(x => x.Substring(baselineProject.BasePath.Length + 1)));
         workingCopyFiles.Select(File.ReadAllText).Should().Equal(baselineFiles.Select(File.ReadAllText));
     }
 }

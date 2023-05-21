@@ -8,10 +8,12 @@
 namespace Sundew.DiscriminatedUnions.Generator.ModelStage;
 
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
+using Sundew.Base;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
@@ -33,6 +35,7 @@ internal static class DiscriminatedUnionProvider
         var discriminatedUnions = new ConcurrentDictionary<Type, DiscriminatedUnionResult>();
         foreach (var discriminatedUnionCase in cases)
         {
+            var hasConflictingName = discriminatedUnionCase.Owners.Any(x => x.HasConflictingName);
             foreach (var owner in discriminatedUnionCase.Owners)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -46,7 +49,7 @@ internal static class DiscriminatedUnionProvider
                         discriminatedUnionDeclaration.IsConstrainingUnion,
                         discriminatedUnionDeclaration.GeneratorFeatures,
                         ImmutableArray.Create((Type: discriminatedUnionCase.CaseType,
-                            discriminatedUnionCase.Parameters, GenerateFactoryMethodWithName: owner.GenerateFactoryMethodWithName))))
+                            discriminatedUnionCase.Parameters, HasConflictingName: hasConflictingName))))
                     : DiscriminatedUnionResult.Error(
                         ImmutableArray.Create(new DeclarationNotFound(owner.Type, discriminatedUnionCase)));
 
@@ -60,7 +63,7 @@ internal static class DiscriminatedUnionProvider
                             var discriminatedUnion = result.DiscriminatedUnion with
                             {
                                 Cases = result.DiscriminatedUnion.Cases.Add(
-                                    (Type: discriminatedUnionCase.CaseType, discriminatedUnionCase.Parameters, GenerateFactoryMethodWithName: owner.GenerateFactoryMethodWithName)),
+                                    (Type: discriminatedUnionCase.CaseType, discriminatedUnionCase.Parameters, HasConflictingName: hasConflictingName)),
                             };
                             return DiscriminatedUnionResult.Success(discriminatedUnion);
                         }
@@ -77,11 +80,26 @@ internal static class DiscriminatedUnionProvider
             {
                 return DiscriminatedUnionResult.Success(x.DiscriminatedUnion with
                 {
-                    Cases = x.DiscriminatedUnion.Cases.Distinct().OrderBy(@case => @case.Type.Name).ToImmutableArray(),
+                    Cases = GetDistinctOrdered(x.DiscriminatedUnion.Cases).ToImmutableArray(),
                 });
             }
 
             return x;
         }).ToImmutableArray();
+    }
+
+    private static ImmutableArray<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)> GetDistinctOrdered(ValueArray<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)> cases)
+    {
+        var hashSet = new HashSet<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)>();
+        var immutableArrayBuilder = ImmutableArray.CreateBuilder<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)>();
+        foreach (var valueTuple in cases)
+        {
+            if (hashSet.Add(valueTuple))
+            {
+                immutableArrayBuilder.Add(valueTuple);
+            }
+        }
+
+        return immutableArrayBuilder.ToImmutable();
     }
 }
