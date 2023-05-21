@@ -30,7 +30,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Sundew.Testing.CodeAnalysis" Version="0.0.0-u20230521-002354-ci" />
+    <PackageReference Include="Sundew.Testing.CodeAnalysis" Version="0.0.0-u20230521-013600-ci" />
     <PackageReference Include="Verify" Version="20.0.0" />
     <PackageReference Include="Verify.NUnit" Version="20.0.0" />
     <PackageReference Include="Verify.SourceGenerators" Version="2.1.0" />
