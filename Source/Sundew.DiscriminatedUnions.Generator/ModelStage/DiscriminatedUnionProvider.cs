@@ -80,7 +80,7 @@ internal static class DiscriminatedUnionProvider
             {
                 return DiscriminatedUnionResult.Success(x.DiscriminatedUnion with
                 {
-                    Cases = GetDistinctOrdered(x.DiscriminatedUnion.Cases).ToImmutableArray(),
+                    Cases = GetDistinctOrdered(x.DiscriminatedUnion.Cases.OrderBy(x => x.Parameters.Any()).ThenBy(x => x.Type.Name)).ToImmutableArray(),
                 });
             }
 
@@ -88,7 +88,7 @@ internal static class DiscriminatedUnionProvider
         }).ToImmutableArray();
     }
 
-    private static ImmutableArray<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)> GetDistinctOrdered(ValueArray<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)> cases)
+    private static ImmutableArray<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)> GetDistinctOrdered(IEnumerable<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)> cases)
     {
         var hashSet = new HashSet<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)>();
         var immutableArrayBuilder = ImmutableArray.CreateBuilder<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)>();

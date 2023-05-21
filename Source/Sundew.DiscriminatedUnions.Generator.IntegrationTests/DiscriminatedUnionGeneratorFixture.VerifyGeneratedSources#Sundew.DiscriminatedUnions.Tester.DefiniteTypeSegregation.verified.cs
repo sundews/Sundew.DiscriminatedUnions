@@ -8,22 +8,22 @@ namespace Sundew.DiscriminatedUnions.Tester
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
     public sealed partial class DefiniteTypeSegregation
     {
-        internal DefiniteTypeSegregation(System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.NamedType> namedTypes, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType> definiteArrayTypes)
+        internal DefiniteTypeSegregation(System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType> definiteArrayTypes, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.NamedType> namedTypes)
         {
-            this.NamedTypes = namedTypes;
             this.DefiniteArrayTypes = definiteArrayTypes;
+            this.NamedTypes = namedTypes;
         }
-
-        /// <summary>
-        /// Gets the NamedTypes.
-        /// </summary>
-        /// <returns>The NamedTypes.</returns>
-        public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.NamedType> NamedTypes { get; }
 
         /// <summary>
         /// Gets the DefiniteArrayTypes.
         /// </summary>
         /// <returns>The DefiniteArrayTypes.</returns>
         public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType> DefiniteArrayTypes { get; }
+
+        /// <summary>
+        /// Gets the NamedTypes.
+        /// </summary>
+        /// <returns>The NamedTypes.</returns>
+        public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.NamedType> NamedTypes { get; }
     }
 }
