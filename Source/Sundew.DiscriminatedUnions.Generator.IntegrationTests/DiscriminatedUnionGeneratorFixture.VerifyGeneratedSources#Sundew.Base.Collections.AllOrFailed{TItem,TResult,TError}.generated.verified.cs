@@ -1,9 +1,11 @@
-﻿//HintName: Sundew.Base.Collections.AllOrFailed{TItem,TResult,TError}.cs
+﻿//HintName: Sundew.Base.Collections.AllOrFailed{TItem,TResult,TError}.generated.cs
+#nullable enable
+
 namespace Sundew.Base.Collections
 {
 #pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.0.0.0")]
     public partial class AllOrFailed<TItem, TResult, TError>
         where TItem : class, global::System.IEquatable<TItem>
         where TResult : struct

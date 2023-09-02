@@ -1,11 +1,13 @@
-﻿//HintName: Sundew.DiscriminatedUnions.Tester.DefiniteTypeSegregation.cs
+﻿//HintName: Sundew.DiscriminatedUnions.Tester.DefiniteTypeSegregation.generated.cs
+#nullable enable
+
 namespace Sundew.DiscriminatedUnions.Tester
 {
     /// <summary>
     /// Contains individual lists of the different cases of the discriminated union DefiniteType.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.0.0.0")]
     public sealed partial class DefiniteTypeSegregation
     {
         internal DefiniteTypeSegregation(System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType> definiteArrayTypes, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.NamedType> namedTypes)

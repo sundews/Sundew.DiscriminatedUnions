@@ -66,7 +66,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
 
         return selectedConstructor.Parameters.Select(x =>
         {
-            var typeName = x.ToDisplayString(CodeAnalysisHelper.FullyQualifiedParameterTypeFormat);
+            var typeName = x.Type.ToDisplayString(CodeAnalysisHelper.FullyQualifiedParameterTypeFormat);
             var defaultValue = x.HasExplicitDefaultValue ? x.ExplicitDefaultValue?.ToString() ?? GeneratorConstants.Null : null;
             return new Parameter(typeName, x.Name.Uncapitalize().AvoidKeywordCollision(), defaultValue);
         });

@@ -1,11 +1,13 @@
-﻿//HintName: Sundew.Base.Collections.AllOrFailedSegregation{TItem,TResult,TError}.cs
+﻿//HintName: Sundew.Base.Collections.AllOrFailedSegregation{TItem,TResult,TError}.generated.cs
+#nullable enable
+
 namespace Sundew.Base.Collections
 {
     /// <summary>
     /// Contains individual lists of the different cases of the discriminated union AllOrFailed.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.0.0.0")]
     public sealed partial class AllOrFailedSegregation<TItem, TResult, TError>
         where TItem : class, global::System.IEquatable<TItem>
         where TResult : struct

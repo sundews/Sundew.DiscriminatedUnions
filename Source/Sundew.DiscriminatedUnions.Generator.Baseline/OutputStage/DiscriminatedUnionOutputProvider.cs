@@ -33,6 +33,8 @@ internal static class DiscriminatedUnionOutputProvider
     private const string FactoryPropertyDescription = "Gets the {0} case";
     private const string FactoryMethodReturnsDescription = "A new {0}";
     private const string FactoryPropertyReturnsDescription = "The {0}";
+    private const string GeneratedSuffix = ".generated";
+    private const string NullableEnable = "#nullable enable";
 
     public static void Generate(SourceProductionContext sourceProductionContext, ImmutableArray<DiscriminatedUnionResult> discriminatedUnionResults)
     {
@@ -47,17 +49,17 @@ internal static class DiscriminatedUnionOutputProvider
                 if (discriminatedUnion.IsPartial)
                 {
                     sourceProductionContext.AddSource(
-                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + genericParametersForFileName,
+                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + genericParametersForFileName + GeneratedSuffix,
                         GetUnionSource(in discriminatedUnion, discriminatedUnionNamespace));
                 }
 
                 if (discriminatedUnion.GeneratorFeatures.HasFlag(GeneratorFeatures.Segregate))
                 {
                     var segregationTypeName = discriminatedUnion.Type.Name + Segregation;
-                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName + genericParametersForFileName, GetUnionSegregationSource(in discriminatedUnion, segregationTypeName));
+                    sourceProductionContext.AddSource(discriminatedUnionNamespace + '.' + segregationTypeName + genericParametersForFileName + GeneratedSuffix, GetUnionSegregationSource(in discriminatedUnion, segregationTypeName));
                     var extensionsTypeName = discriminatedUnion.Type.Name + Extensions;
                     sourceProductionContext.AddSource(
-                        discriminatedUnionNamespace + '.' + extensionsTypeName + genericParametersForFileName,
+                        discriminatedUnionNamespace + '.' + extensionsTypeName + genericParametersForFileName + GeneratedSuffix,
                         GetUnionSegregateExtensionSource(in discriminatedUnion, extensionsTypeName, segregationTypeName));
                 }
             }
@@ -90,7 +92,11 @@ internal static class DiscriminatedUnionOutputProvider
     private static string GetUnionSource(in DiscriminatedUnion discriminatedUnion, string discriminatedUnionNamespace)
     {
         var stringBuilder = new StringBuilder();
-        stringBuilder.Append(Namespace)
+        stringBuilder
+            .Append(NullableEnable)
+            .AppendLine()
+            .AppendLine()
+            .Append(Namespace)
             .Append(' ')
             .Append(discriminatedUnionNamespace)
             .AppendLine()
@@ -136,11 +142,11 @@ internal static class DiscriminatedUnionOutputProvider
                     .Append(' ');
             }
 
-            const string Case = "Case";
+            const string _Case = "_";
             var unionFactoryMethodName = discriminatedUnionOwnedCase.Type.Name;
             if (discriminatedUnionOwnedCase.HasConflictingName)
             {
-                unionFactoryMethodName += Case;
+                unionFactoryMethodName = _Case + unionFactoryMethodName;
             }
 
             stringBuilder.Append(Static)
@@ -198,7 +204,10 @@ internal static class DiscriminatedUnionOutputProvider
     private static string GetUnionSegregationSource(in DiscriminatedUnion discriminatedUnion, string segregationTypeName)
     {
         var stringBuilder = new StringBuilder();
-        stringBuilder.Append(Namespace)
+        stringBuilder.Append(NullableEnable)
+            .AppendLine()
+            .AppendLine()
+            .Append(Namespace)
             .Append(' ')
             .Append(discriminatedUnion.Type.Namespace)
             .AppendLine()
@@ -299,7 +308,10 @@ internal static class DiscriminatedUnionOutputProvider
         var unionParameterName = discriminatedUnion.Type.Name.Uncapitalize();
         var unionsParameterName = unionParameterName.Pluralize();
         var stringBuilder = new StringBuilder();
-        stringBuilder.Append(Namespace)
+        stringBuilder.Append(NullableEnable)
+            .AppendLine()
+            .AppendLine()
+            .Append(Namespace)
             .Append(' ')
             .Append(discriminatedUnion.Type.Namespace)
             .AppendLine()

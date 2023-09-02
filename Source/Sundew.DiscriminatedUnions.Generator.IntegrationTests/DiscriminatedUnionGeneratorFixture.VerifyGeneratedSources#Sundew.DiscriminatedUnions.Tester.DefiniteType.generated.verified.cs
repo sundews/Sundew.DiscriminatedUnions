@@ -1,9 +1,11 @@
-﻿//HintName: Sundew.DiscriminatedUnions.Tester.DefiniteType.cs
+﻿//HintName: Sundew.DiscriminatedUnions.Tester.DefiniteType.generated.cs
+#nullable enable
+
 namespace Sundew.DiscriminatedUnions.Tester
 {
 #pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.0.0.0")]
     public partial record DefiniteType
 #pragma warning restore SA1601
     {

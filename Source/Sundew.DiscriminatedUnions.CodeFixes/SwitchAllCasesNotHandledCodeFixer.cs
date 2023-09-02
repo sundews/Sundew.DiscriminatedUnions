@@ -246,8 +246,8 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         return (ExpressionSyntax)generator.ThrowExpression(generator.ObjectCreationExpression(SyntaxFactory.ParseTypeName(typeof(NotImplementedException).FullName)));
     }
 
-    private static SyntaxNode ThrowNotImplementExceptionStatement(SyntaxGenerator generator)
+    private static StatementSyntax ThrowNotImplementExceptionStatement(SyntaxGenerator generator)
     {
-        return generator.ThrowStatement(generator.ObjectCreationExpression(SyntaxFactory.ParseTypeName(typeof(NotImplementedException).FullName)));
+        return (StatementSyntax)generator.ThrowStatement(generator.ObjectCreationExpression(SyntaxFactory.ParseTypeName(typeof(NotImplementedException).FullName)));
     }
 }

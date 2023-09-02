@@ -1,11 +1,13 @@
-﻿//HintName: Sundew.DiscriminatedUnions.Tester.ResultExtensions{T}.cs
+﻿//HintName: Sundew.DiscriminatedUnions.Tester.ResultExtensions{T}.generated.cs
+#nullable enable
+
 namespace Sundew.DiscriminatedUnions.Tester
 {
     /// <summary>
     /// Segregation extension method for Result.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.0.0.0")]
     public static partial class ResultExtensions
     {
         /// <summary>

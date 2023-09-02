@@ -1,11 +1,13 @@
-﻿//HintName: Sundew.Base.Collections.AllOrFailedExtensions{TItem,TResult,TError}.cs
+﻿//HintName: Sundew.Base.Collections.AllOrFailedExtensions{TItem,TResult,TError}.generated.cs
+#nullable enable
+
 namespace Sundew.Base.Collections
 {
     /// <summary>
     /// Segregation extension method for AllOrFailed.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.0.0.0")]
     public static partial class AllOrFailedExtensions
     {
         /// <summary>
