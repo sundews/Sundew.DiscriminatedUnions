@@ -25,12 +25,12 @@ internal class UnionSwitchExpressionAnalyzer
 
         var unionTypeSymbol = switchExpressionOperation.Value.Type;
         var unionType = unionTypeSymbol as INamedTypeSymbol;
-        if (!unionType.IsDiscriminatedUnion())
+        if (!unionType.IsDiscriminatedUnionLike())
         {
             return;
         }
 
-        var unionTypeWithoutNull = unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
+        var nonNullableUnionType = UnionHelper.GetNonNullableUnionType(unionType);
         var nullCase = SwitchExpressionHelper.GetNullCase(switchExpressionOperation);
         var switchNullability = UnionHelper.EvaluateSwitchNullability(
             switchExpressionOperation.Value,
@@ -46,13 +46,13 @@ internal class UnionSwitchExpressionAnalyzer
                 unionType));
         }
 
-        var caseTypes = UnionHelper.GetKnownCaseTypes(unionTypeWithoutNull);
+        var caseTypes = UnionHelper.GetKnownCases(nonNullableUnionType);
         DiagnosticReporterHelper.ReportDiagnostics(
             caseTypes.ToList(),
-            SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).Where(x => x.HandlesCase).Select(x => x.Type),
+            SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).Where(x => x.HandlesCase).Select(x => x.Symbol),
             nullCase,
             switchNullability,
-            unionTypeWithoutNull,
+            unionType,
             switchExpressionOperation,
             operationAnalysisContext.ReportDiagnostic);
     }

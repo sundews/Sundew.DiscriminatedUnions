@@ -19,33 +19,25 @@ using Microsoft.CodeAnalysis.Operations;
 public static class UnionHelper
 {
     /// <summary>
+    /// Gets all cases (Unions and Enums).
+    /// </summary>
+    /// <param name="unionType">Type of the union.</param>
+    /// <returns>All case types within the discriminated unions.</returns>
+    public static IEnumerable<ISymbol> GetKnownCases(ITypeSymbol unionType)
+    {
+        return PrivateGetKnownCaseTypes(unionType)
+            .Concat(GetEnumMembers(unionType))
+            .Distinct(SymbolEqualityComparer.Default);
+    }
+
+    /// <summary>
     /// Gets all case types.
     /// </summary>
     /// <param name="unionType">Type of the union.</param>
     /// <returns>All case types within the discriminated unions.</returns>
     public static IEnumerable<INamedTypeSymbol> GetKnownCaseTypes(ITypeSymbol unionType)
     {
-        return GetFactoryMethodSymbols(unionType)
-            .Select(x => TryGetCaseType(x.Attributes))
-            .Where(x => x != null).Select(x => x!)
-            .Concat(
-                unionType.GetTypeMembers()
-                    .Where(x =>
-                    {
-                        var baseType = x.BaseType;
-                        while (baseType != null)
-                        {
-                            if (SymbolEqualityComparer.Default.Equals(baseType, unionType))
-                            {
-                                return true;
-                            }
-
-                            baseType = baseType.BaseType;
-                        }
-
-                        return false;
-                    })).Distinct(SymbolEqualityComparer.Default)
-            .Cast<INamedTypeSymbol>();
+        return PrivateGetKnownCaseTypes(unionType).Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default);
     }
 
     /// <summary>
@@ -149,6 +141,11 @@ public static class UnionHelper
             }).FirstOrDefault();
     }
 
+    internal static ITypeSymbol GetNonNullableUnionType(INamedTypeSymbol unionType)
+    {
+        return unionType.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T ? unionType.TypeArguments.Single() : unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
+    }
+
     internal static SwitchNullability EvaluateSwitchNullability(
         IOperation operation,
         SemanticModel semanticModel,
@@ -156,16 +153,19 @@ public static class UnionHelper
     {
         var unionTypeInfo = semanticModel.GetTypeInfo(operation.Syntax);
         var isNullableEnabled = IsNullableEnabled(semanticModel, operation);
+        var isValueType = (unionTypeInfo.ConvertedType?.IsValueType ?? false) && unionTypeInfo.ConvertedType?.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T;
         var isNullable = unionTypeInfo.ConvertedNullability.Annotation != NullableAnnotation.NotAnnotated;
         var maybeNull = unionTypeInfo.ConvertedNullability.FlowState != NullableFlowState.NotNull;
-        var nullableStates = (isNullableEnabled, isNullable, maybeNull, hasNullCase);
+        var nullableStates = (isNullableEnabled, isNullable, maybeNull, isValueType, hasNullCase);
         var switchNullability = nullableStates switch
         {
-            (true, false, _, true) => SwitchNullability.HasUnreachableNullCase,
-            (_, _, true, false) => SwitchNullability.IsMissingNullCase,
-            (_, _, false, true) => SwitchNullability.HasUnreachableNullCase,
-            (_, _, true, true) => SwitchNullability.None,
-            (_, _, false, false) => SwitchNullability.None,
+            (_, _, _, true, true) => SwitchNullability.HasUnreachableNullCase,
+            (_, _, _, true, false) => SwitchNullability.None,
+            (true, false, _, _, true) => SwitchNullability.HasUnreachableNullCase,
+            (_, _, true, _, false) => SwitchNullability.IsMissingNullCase,
+            (_, _, false, _,  true) => SwitchNullability.HasUnreachableNullCase,
+            (_, _, true, _, true) => SwitchNullability.None,
+            (_, _, false, _, false) => SwitchNullability.None,
         };
         return switchNullability;
     }
@@ -175,5 +175,40 @@ public static class UnionHelper
         return (semanticModel.GetNullableContext(operation.Syntax.GetLocation()
                    .SourceSpan.Start) & NullableContext.Enabled) == NullableContext.Enabled ||
                semanticModel.Compilation.Options.NullableContextOptions != NullableContextOptions.Disable;
+    }
+
+    private static IEnumerable<INamedTypeSymbol> PrivateGetKnownCaseTypes(ITypeSymbol unionType)
+    {
+        return GetFactoryMethodSymbols(unionType)
+            .Select(x => TryGetCaseType(x.Attributes))
+            .Where(x => x != null).Select(x => x!)
+            .Concat(
+                unionType.GetTypeMembers()
+                    .Where(x =>
+                    {
+                        var baseType = x.BaseType;
+                        while (baseType != null)
+                        {
+                            if (SymbolEqualityComparer.Default.Equals(baseType, unionType))
+                            {
+                                return true;
+                            }
+
+                            baseType = baseType.BaseType;
+                        }
+
+                        return false;
+                    }))
+            .Select(x => x.IsGenericType ? x.OriginalDefinition : x);
+    }
+
+    private static IEnumerable<ISymbol> GetEnumMembers(ITypeSymbol unionType)
+    {
+        if (unionType is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeKind == TypeKind.Enum)
+        {
+            return namedTypeSymbol.GetMembers().Where(x => x.Kind == SymbolKind.Field && x.IsStatic);
+        }
+
+        return Enumerable.Empty<ISymbol>();
     }
 }

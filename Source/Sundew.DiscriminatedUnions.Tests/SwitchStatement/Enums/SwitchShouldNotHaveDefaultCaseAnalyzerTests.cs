@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Tests.SwitchStatement;
+namespace Sundew.DiscriminatedUnions.Tests.SwitchStatement.Enums;
 
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,28 +29,28 @@ namespace Unions;
 
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{
-    public void Switch(Result result)
+    public void Switch(State state)
     {{
-        switch(result)
+        switch(state)
         {{
-            case Result.Success:
+            case State.None:
                 break;
-            case Result.Warning warning:
+            case State.Off:
                 break;
-            case Result.Error error:
+            case State.On:
                 break;
             default:
                 break;
         }}
     }}
 }}
-{TestData.ValidResultUnion}
+{TestData.ValidEnumUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsResult)
+                .WithArguments(TestData.UnionsState)
                 .WithSpan(26, 13, 27, 23));
     }
 
@@ -63,31 +63,31 @@ namespace Unions;
 
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{   
-    public void Switch(Result result)
+    public void Switch(State? state)
     {{
-        switch(result)
+        switch(state)
         {{
-            case Result.Success:
+            case State.None:
                 break;
-            case Result.Warning warning:
+            case State.Off:
                 break;
-            case Result.Error error:
+            case State.On:
                 break;
             default:
                 break;
         }}
     }}
 }}
-{TestData.ValidResultUnion}
+{TestData.ValidEnumUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsResult)
+                .WithArguments(TestData.UnionsState)
                 .WithSpan(25, 13, 26, 23),
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'null'", Resources.Case, TestData.UnionsResult, Resources.Is)
+                .WithArguments("'null'", Resources.Case, TestData.UnionsState + '?', Resources.Is)
                 .WithSpan(17, 9, 27, 10));
     }
 
@@ -101,27 +101,27 @@ namespace Unions;
 
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{   
-    public void Switch(Result result)
+    public void Switch(State state)
     {{
-        switch(result)
+        switch(state)
         {{
-            case Result.Success:
+            case State.None:
                 break;
             default:
                 break;
         }}
     }}
 }}
-{TestData.ValidResultUnion}
+{TestData.ValidEnumUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
+                .WithArguments("'On', 'Off'", Resources.Cases, TestData.UnionsState, Resources.Are)
                 .WithSpan(17, 9, 23, 10),
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsResult)
+                .WithArguments(TestData.UnionsState)
                 .WithSpan(21, 13, 22, 23));
     }
 }

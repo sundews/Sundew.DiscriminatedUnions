@@ -36,4 +36,26 @@ public static class DiscriminatedUnionExtensions
             return containingClass == typeof(Sundew.DiscriminatedUnions.DiscriminatedUnion).FullName;
         });
     }
+
+    /// <summary>
+    /// Determines whether [is discriminated union] [the specified union type].
+    /// </summary>
+    /// <param name="unionType">Type of the union.</param>
+    /// <returns>
+    ///   <c>true</c> if [is discriminated union] [the specified union type]; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool IsDiscriminatedUnionLike([NotNullWhen(true)] this INamedTypeSymbol? unionType)
+    {
+        if (unionType == null)
+        {
+            return false;
+        }
+
+        if (unionType.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+        {
+            return unionType.TypeArguments.Single().IsDiscriminatedUnion();
+        }
+
+        return unionType.IsDiscriminatedUnion();
+    }
 }

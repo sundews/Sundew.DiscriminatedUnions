@@ -5,11 +5,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test;
+namespace Sundew.DiscriminatedUnions.Tests;
 
 public static class TestData
 {
     public const string UnionsResult = "Unions.Result";
+    public const string UnionsState = "Unions.State";
     public const string UnionsOptionInt = "Unions.Option<int>";
 
     public const string Usings = @"
@@ -87,4 +88,15 @@ public sealed record AdditionExpression(Expression Lhs, Expression Rhs) : Arithm
 public sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : ArithmeticExpression;
 
 public sealed record ValueExpression(int Value) : Expression;";
+
+    public const string ValidEnumUnion = @"
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public enum State
+{ 
+    None,
+    
+    On,
+
+    Off
+}";
 }

@@ -13,7 +13,7 @@ namespace Sundew.DiscriminatedUnions
     /// Attribute for indicating a discriminated union.
     /// </summary>
     /// <seealso cref="System.Attribute" />
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Enum)]
     internal class DiscriminatedUnion : Attribute
     {
         /// <summary>

@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Tests.SwitchStatement;
+namespace Sundew.DiscriminatedUnions.Tests.SwitchStatement.Enums;
 
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,34 +19,25 @@ using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifie
 public class SwitchStatementNoDiagnosticsAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_EmptyCode_Then_NoDiagnosticsAreReported()
-    {
-        var test = string.Empty;
-
-        await VerifyCS.VerifyAnalyzerAsync(test);
-    }
-
-    [TestMethod]
     public async Task Given_NoDiscriminatedUnionSwitch_Then_NoDiagnosticsAreReported()
     {
         var test = $@"{TestData.Usings}
+using System.IO;
 
 namespace Unions;
 
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{   
-    public bool Switch(int value)
+    public bool Switch(SeekOrigin seekOrigin)
     {{
-        switch (value)
+        switch (seekOrigin)
         {{
-            case 0:
+            case SeekOrigin.Begin:
                 return true;
-            case 1:
+            case SeekOrigin.Current:
                 return false;
-            case 2:
+            case SeekOrigin.End:
                 return true;
-            case 3:
-                return false;
             default:
                 return false;
         }}
@@ -67,20 +58,20 @@ namespace Unions;
 
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{   
-    public void Switch(Result result)
+    public void Switch(State state)
     {{
-        switch(result)
+        switch(state)
         {{
-            case Result.Success:
+            case State.None:
                 break;
-            case Result.Warning warning:
+            case State.Off:
                 break;
-            case Result.Error error:
+            case State.On:
                 break;
         }}
     }}
 }}
-{TestData.ValidResultUnion}
+{TestData.ValidEnumUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(test);
@@ -95,22 +86,22 @@ namespace Unions;
 
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{   
-    public void Switch(Result result)
+    public void Switch(State? state)
     {{
-        switch(result)
+        switch(state)
         {{
-            case Result.Success:
+            case State.None:
                 break;
-            case Result.Warning warning:
+            case State.Off:
                 break;
-            case Result.Error error:
+            case State.On:
                 break;
             case null:
                 break;
         }}
     }}
 }}
-{TestData.ValidResultUnion}
+{TestData.ValidEnumUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(test);

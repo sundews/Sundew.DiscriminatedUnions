@@ -1,11 +1,11 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CasesMustBeDeclaredInUnionAssemblyAnalyzerTests.cs" company="Sundews">
+// <copyright file="SwitchShouldNotHaveDefaultCaseAnalyzerTests.cs" company="Sundews">
 // Copyright (c) Sundews. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Tests;
+namespace Sundew.DiscriminatedUnions.Tests.SwitchExpression.Enums;
 
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,25 +17,36 @@ using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifie
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class CasesMustBeDeclaredInUnionAssemblyAnalyzerTests
+public class SwitchShouldNotHaveDefaultCaseAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_Union_When_CaseIsDeclaredInDifferentAssembly_Then_CasesMustBeDeclaredInUnionAssemblyIsReported()
+    public async Task Given_SwitchExpression_When_DefaultCaseIsHandled_Then_SwitchShouldNotHaveDefaultCaseIsReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
+
 namespace Unions;
 
-public sealed record DoubleValueExpression(double Value) : IExpression;
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{
+    public bool Switch(State state)
+    {{
+        return state switch
+            {{
+                State.None => true,
+                State.Off => true,
+                State.On => false,
+                _ => false,
+            }};
+    }}
+}}
+{TestData.ValidEnumUnion}
 ";
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CasesMustBeDeclaredInUnionAssemblyRule)
-                .WithArguments("Unions.DoubleValueExpression", "Sundew.DiscriminatedUnions.TestData")
-                .WithSpan(13, 1, 13, 72),
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.UnnestedCasesShouldHaveFactoryMethodRule)
-                .WithArguments("Unions.DoubleValueExpression", "Sundew.DiscriminatedUnions.TestData.IExpression")
-                .WithSpan(13, 1, 13, 72));
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
+                .WithArguments(TestData.UnionsState)
+                .WithSpan(23, 17, 23, 27));
     }
 }

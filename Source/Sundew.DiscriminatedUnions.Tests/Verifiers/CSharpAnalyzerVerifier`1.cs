@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test;
+namespace Sundew.DiscriminatedUnions.Tests.Verifiers;
 
 using System.Threading;
 using System.Threading.Tasks;

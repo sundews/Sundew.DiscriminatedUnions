@@ -25,12 +25,12 @@ internal class UnionSwitchStatementAnalyzer
 
         var unionTypeSymbol = switchOperation.Value.Type;
         var unionType = unionTypeSymbol as INamedTypeSymbol;
-        if (!unionType.IsDiscriminatedUnion())
+        if (!unionType.IsDiscriminatedUnionLike())
         {
             return;
         }
 
-        var unionTypeWithoutNull = unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
+        var nonNullableUnionType = UnionHelper.GetNonNullableUnionType(unionType);
         var nullCase = SwitchStatementHelper.GetNullCase(switchOperation);
         var switchNullability = UnionHelper.EvaluateSwitchNullability(
             switchOperation.Value,
@@ -43,7 +43,7 @@ internal class UnionSwitchStatementAnalyzer
                 operationAnalysisContext.ReportDiagnostic(Diagnostic.Create(
                     DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
                     defaultSwitchCaseOperation.Syntax.GetLocation(),
-                    unionType));
+                    nonNullableUnionType));
             }
             else
             {
@@ -56,25 +56,25 @@ internal class UnionSwitchStatementAnalyzer
                         objectCreationOperation.Arguments.SingleOrDefault(
                             x =>
                                 x.Value is ITypeOfOperation typeOfOperation &&
-                                SymbolEqualityComparer.Default.Equals(typeOfOperation.TypeOperand, unionTypeWithoutNull)) != null) != null))
+                                SymbolEqualityComparer.Default.Equals(typeOfOperation.TypeOperand, nonNullableUnionType)) != null) != null))
                 {
                     operationAnalysisContext.ReportDiagnostic(Diagnostic.Create(
                         DiscriminatedUnionsAnalyzer.SwitchShouldThrowInDefaultCaseRule,
                         defaultSwitchCaseOperation.Syntax.GetLocation(),
-                        unionTypeWithoutNull));
+                        unionType));
                 }
             }
         }
 
-        var caseTypes = UnionHelper.GetKnownCaseTypes(unionTypeWithoutNull);
+        var caseTypes = UnionHelper.GetKnownCases(nonNullableUnionType);
         DiagnosticReporterHelper.ReportDiagnostics(
             caseTypes.ToList(),
             SwitchStatementHelper.GetHandledCaseTypes(switchOperation)
                 .Where(x => x.HandlesCase)
-                .Select(x => x.Type),
+                .Select(x => x.Symbol),
             nullCase,
             switchNullability,
-            unionTypeWithoutNull,
+            unionType,
             switchOperation,
             operationAnalysisContext.ReportDiagnostic);
     }

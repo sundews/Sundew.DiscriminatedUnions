@@ -94,7 +94,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
                 continue;
             }
 
-            handledCaseTypes.Insert(index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
+            handledCaseTypes.Insert(index, new CaseInfo { HandlesCase = true, Symbol = missingCaseType });
             arms = arms.Insert(
                 index,
                 SyntaxFactory.SwitchExpressionArm(
@@ -158,7 +158,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
                 continue;
             }
 
-            handledCaseTypes.Insert(index, new CaseInfo { HandlesCase = true, Type = missingCaseType });
+            handledCaseTypes.Insert(index, new CaseInfo { HandlesCase = true, Symbol = missingCaseType });
             sections = sections.Insert(
                 index,
                 SyntaxFactory.SwitchSection(
@@ -212,7 +212,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         var insertionIndex = 0;
         foreach (var pair in handledCases)
         {
-            var isMatch = SymbolEqualityComparer.Default.Equals(pair.Type, caseType);
+            var isMatch = SymbolEqualityComparer.Default.Equals(pair.Symbol, caseType);
             if (isMatch && pair.HandlesCase)
             {
                 return (-1, true);
@@ -235,7 +235,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         {
             return previousCaseType == null ?
                 (0, false) :
-                (handledCases.FindIndex((x) => SymbolEqualityComparer.Default.Equals(x.Type, previousCaseType)) + 1, false);
+                (handledCases.FindIndex((x) => SymbolEqualityComparer.Default.Equals(x.Symbol, previousCaseType)) + 1, false);
         }
 
         return (insertionIndex, false);

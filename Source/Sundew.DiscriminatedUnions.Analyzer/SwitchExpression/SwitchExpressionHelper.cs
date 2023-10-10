@@ -24,22 +24,32 @@ public static class SwitchExpressionHelper
     /// <returns>The handled case types.</returns>
     public static IEnumerable<CaseInfo> GetHandledCaseTypes(ISwitchExpressionOperation switchExpressionOperation)
     {
+        ISymbol? GetActualTypeSymbol(INamedTypeSymbol? namedTypeSymbol)
+        {
+            return namedTypeSymbol?.IsGenericType ?? false ? namedTypeSymbol.OriginalDefinition : namedTypeSymbol;
+        }
+
         return switchExpressionOperation.Arms.Select((switchExpressionArmOperation) =>
             {
                 if (switchExpressionArmOperation.Pattern is IDeclarationPatternOperation
                     declarationPatternSyntax)
                 {
-                    return (Type: declarationPatternSyntax.MatchedType as INamedTypeSymbol, HandlesCase: true);
+                    return (Type: GetActualTypeSymbol(declarationPatternSyntax.MatchedType as INamedTypeSymbol), HandlesCase: true);
                 }
 
                 if (switchExpressionArmOperation.Pattern is ITypePatternOperation typePatternOperation)
                 {
-                    return (Type: typePatternOperation.MatchedType as INamedTypeSymbol, HandlesCase: true);
+                    return (Type: GetActualTypeSymbol(typePatternOperation.MatchedType as INamedTypeSymbol), HandlesCase: true);
                 }
 
-                return (Type: switchExpressionArmOperation.Pattern.NarrowedType as INamedTypeSymbol, HandlesCase: false);
+                if (switchExpressionArmOperation.Pattern is IConstantPatternOperation { Value: IFieldReferenceOperation fieldReferenceOperation })
+                {
+                    return (Type: fieldReferenceOperation.Field, HandlesCase: true);
+                }
+
+                return (Type: GetActualTypeSymbol(switchExpressionArmOperation.Pattern.NarrowedType as INamedTypeSymbol), HandlesCase: false);
             }).Where(x => x.Type != null)
-            .Select(x => new CaseInfo { Type = x.Type!, HandlesCase = x.HandlesCase });
+            .Select(x => new CaseInfo { Symbol = x.Type!, HandlesCase = x.HandlesCase });
     }
 
     /// <summary>

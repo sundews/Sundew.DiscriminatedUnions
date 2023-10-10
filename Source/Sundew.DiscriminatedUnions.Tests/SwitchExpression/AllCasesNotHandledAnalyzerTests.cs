@@ -5,12 +5,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test.SwitchExpression;
+namespace Sundew.DiscriminatedUnions.Tests.SwitchExpression;
 
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
-using VerifyCS = Sundew.DiscriminatedUnions.Test.CSharpCodeFixVerifier<
+using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
@@ -105,7 +105,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyAnalyzerAsync(
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'null'", Resources.Case, TestData.UnionsResult, Resources.Is)
+                .WithArguments("'null'", Resources.Case, TestData.UnionsResult + '?', Resources.Is)
                 .WithSpan(18, 16, 24, 14));
     }
 
@@ -134,7 +134,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyAnalyzerAsync(
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
-                .WithArguments("'null'", Resources.Case, TestData.UnionsOptionInt, Resources.Is)
+                .WithArguments("'null'", Resources.Case, TestData.UnionsOptionInt + '?', Resources.Is)
                 .WithSpan(18, 16, 22, 14));
     }
 

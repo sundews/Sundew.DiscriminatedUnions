@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Test;
+namespace Sundew.DiscriminatedUnions.Tests.Verifiers;
 
 using System;
 using System.Collections.Immutable;
@@ -22,7 +22,7 @@ namespace System.Runtime.CompilerServices
 
 namespace Sundew.DiscriminatedUnions
 {
-    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Interface)]
+    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Interface | System.AttributeTargets.Enum)]
     internal class DiscriminatedUnion : System.Attribute
     {
     }
