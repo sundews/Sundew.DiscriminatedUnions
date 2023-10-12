@@ -7,7 +7,7 @@ namespace Sundew.Base.Collections
     /// Segregation extension method for AllOrFailed.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.1.0.0")]
     public static partial class AllOrFailedExtensions
     {
         /// <summary>

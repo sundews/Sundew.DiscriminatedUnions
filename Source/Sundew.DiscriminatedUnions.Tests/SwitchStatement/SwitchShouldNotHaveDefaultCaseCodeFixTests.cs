@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SwitchStatementHasUnreachableNullCaseCodeFixTests.cs" company="Sundews">
+// <copyright file="SwitchShouldNotHaveDefaultCaseCodeFixTests.cs" company="Sundews">
 // Copyright (c) Sundews. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,17 +10,16 @@ namespace Sundew.DiscriminatedUnions.Tests.SwitchStatement;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
-using Sundew.DiscriminatedUnions.Tests.Verifiers;
 using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class SwitchStatementHasUnreachableNullCaseCodeFixTests
+public class SwitchShouldNotHaveDefaultCaseCodeFixTests
 {
     [TestMethod]
-    public async Task Given_SwitchStatement_When_ValueCannotBeNullAndNullCaseIsHandled_Then_NullCaseShouldBeRemoved()
+    public async Task Given_SwitchStatement_When_DefaultCaseIsHandled_Then_DefaultCaseShouldBeRemoved()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
@@ -39,7 +38,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 throw new System.NotImplementedException();
             case Result.Error error:
                 break;
-            case null:
+            default:
                 break;
         }}
     }}
@@ -72,7 +71,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchHasUnreachableNullCaseRule)
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
                 .WithArguments(TestData.UnionsResult)
                 .WithSpan(26, 13, 27, 23),
         };

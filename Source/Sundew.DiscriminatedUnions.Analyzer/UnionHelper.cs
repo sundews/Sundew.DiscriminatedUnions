@@ -12,6 +12,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
+using Sundew.DiscriminatedUnions.Shared;
 
 /// <summary>
 /// Helpers for analyzing discriminated unions.
@@ -139,6 +140,24 @@ public static class UnionHelper
 
                 return null;
             }).FirstOrDefault();
+    }
+
+    internal static IEnumerable<(ISymbol? Symbol, bool HandlesCase)> GetHandledSymbols(INamedTypeSymbol? namedTypeSymbol, bool handlesCase)
+    {
+        if (namedTypeSymbol != null && namedTypeSymbol.IsDiscriminatedUnion())
+        {
+            foreach (var knownCase in UnionHelper.GetKnownCaseTypes(namedTypeSymbol))
+            {
+                yield return (knownCase, handlesCase);
+            }
+        }
+
+        yield return (namedTypeSymbol?.IsGenericType ?? false ? namedTypeSymbol.OriginalDefinition : namedTypeSymbol, handlesCase);
+    }
+
+    internal static IEnumerable<(ISymbol? Symbol, bool HandlesCase)> GetHandledFieldTypeSymbols(IFieldSymbol fieldSymbol)
+    {
+        yield return (fieldSymbol, true);
     }
 
     internal static ITypeSymbol GetNonNullableUnionType(INamedTypeSymbol unionType)

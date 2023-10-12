@@ -3,7 +3,7 @@
 Sundew.DiscriminatedUnions implement discriminated unions for C#, until a future version of C# provides it out of the box.
 The idea is that this package can be deleted once unions are supported in C#, without requiring changes to switch expressions and statements.
 
-In addition, the project tries to conceive object oriented unions, by supporting dimensional unions through default interface methods (traits).
+In addition, the project supports dimensional unions through default interface methods (traits).
 A dimensional union is a union where cases can be reused in any number of unions, by supporting interface unions through the possibility of implementing multiple interface and default interface members.
 
 ## How it works
@@ -65,6 +65,35 @@ public sealed record MultiplicationExpression(IExpression Lhs, IExpression Rhs) 
 public sealed record DivisionExpression(IExpression Lhs, IExpression Rhs) : IArithmeticExpression;
 
 public sealed record ValueExpression(int Value) : IExpression;
+```
+
+#### Evaluating dimensional unions
+With dimensional unions it is possible to handle all cases using a sub union.
+As seen in the example below, handling the ArithmeticExpression covers Addition-, Subtraction-, Multiplication- and DivisionExpression.
+Typically one would dispatch these to a method handling ArithmeticExpression and where handling all cases would be checked, but it is not required.
+This is a very convienient way handling various cases into separate pieces.
+
+```csharp
+public int Evaluate(Expression expression)
+{
+    return expression switch
+        {
+            ArithmeticExpression arithmeticExpression => Evaluate(arithmeticExpression),
+            ValueExpression valueExpression => valueExpression.Value,
+        };
+}
+
+public int Evaluate(ArithmeticExpression arithmeticExpression)
+{
+    return arithmeticExpression switch
+        {
+            AdditionExpression additionExpression => Evaluate(additionExpression.Lhs) + Evaluate(additionExpression.Rhs),
+            SubtractionExpression subtractionExpression => Evaluate(subtractionExpression.Lhs) - Evaluate(subtractionExpression.Rhs),
+            MultiplicationExpression multiplicationExpression => Evaluate(multiplicationExpression.Lhs) * Evaluate(multiplicationExpression.Rhs),
+            DivisionExpression divisionExpression => Evaluate(divisionExpression.Lhs) / Evaluate(divisionExpression.Rhs),
+            ValueExpression valueExpression => valueExpression.Value,
+        };
+}
 ```
 
 ## Generator features

@@ -5,7 +5,7 @@ namespace Sundew.Injection.Generator
 {
 #pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.1.0.0")]
     internal partial record CreationExpression
 #pragma warning restore SA1601
     {

@@ -5,7 +5,7 @@ namespace Sundew.DiscriminatedUnions.Tester
 {
 #pragma warning disable SA1601
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.1.0.0")]
     public partial record ScopeForGenerator
 #pragma warning restore SA1601
     {

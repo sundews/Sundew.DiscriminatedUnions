@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
+using Sundew.DiscriminatedUnions.Shared;
 
 /// <summary>
 /// Helpers for analyzing discriminated unions.
@@ -24,32 +25,27 @@ public static class SwitchExpressionHelper
     /// <returns>The handled case types.</returns>
     public static IEnumerable<CaseInfo> GetHandledCaseTypes(ISwitchExpressionOperation switchExpressionOperation)
     {
-        ISymbol? GetActualTypeSymbol(INamedTypeSymbol? namedTypeSymbol)
-        {
-            return namedTypeSymbol?.IsGenericType ?? false ? namedTypeSymbol.OriginalDefinition : namedTypeSymbol;
-        }
-
-        return switchExpressionOperation.Arms.Select((switchExpressionArmOperation) =>
+        return switchExpressionOperation.Arms.SelectMany((switchExpressionArmOperation) =>
             {
-                if (switchExpressionArmOperation.Pattern is IDeclarationPatternOperation
-                    declarationPatternSyntax)
+                if (switchExpressionArmOperation.Pattern is IDeclarationPatternOperation declarationPatternSyntax)
                 {
-                    return (Type: GetActualTypeSymbol(declarationPatternSyntax.MatchedType as INamedTypeSymbol), HandlesCase: true);
+                    return UnionHelper.GetHandledSymbols(declarationPatternSyntax.MatchedType as INamedTypeSymbol, true);
                 }
 
                 if (switchExpressionArmOperation.Pattern is ITypePatternOperation typePatternOperation)
                 {
-                    return (Type: GetActualTypeSymbol(typePatternOperation.MatchedType as INamedTypeSymbol), HandlesCase: true);
+                    return UnionHelper.GetHandledSymbols(typePatternOperation.MatchedType as INamedTypeSymbol, true);
                 }
 
                 if (switchExpressionArmOperation.Pattern is IConstantPatternOperation { Value: IFieldReferenceOperation fieldReferenceOperation })
                 {
-                    return (Type: fieldReferenceOperation.Field, HandlesCase: true);
+                    return UnionHelper.GetHandledFieldTypeSymbols(fieldReferenceOperation.Field);
                 }
 
-                return (Type: GetActualTypeSymbol(switchExpressionArmOperation.Pattern.NarrowedType as INamedTypeSymbol), HandlesCase: false);
-            }).Where(x => x.Type != null)
-            .Select(x => new CaseInfo { Symbol = x.Type!, HandlesCase = x.HandlesCase });
+                return UnionHelper.GetHandledSymbols(switchExpressionArmOperation.Pattern.NarrowedType as INamedTypeSymbol, false);
+            })
+            .Where(x => x.Symbol != null)
+            .Select(x => new CaseInfo { Symbol = x.Symbol!, HandlesCase = x.HandlesCase });
     }
 
     /// <summary>

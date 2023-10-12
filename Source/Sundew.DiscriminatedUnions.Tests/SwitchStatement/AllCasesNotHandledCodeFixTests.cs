@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SwitchStatementAllCasesNotHandledCodeFixTests.cs" company="Sundews">
+// <copyright file="AllCasesNotHandledCodeFixTests.cs" company="Sundews">
 // Copyright (c) Sundews. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -17,7 +17,7 @@ using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifie
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
 [TestClass]
-public class SwitchStatementAllCasesNotHandledCodeFixTests
+public class AllCasesNotHandledCodeFixTests
 {
     [TestMethod]
     public async Task Given_SwitchStatement_When_NullableContextIsEnabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithoutNullShouldBeHandled()

@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Tests.SwitchExpression;
+namespace Sundew.DiscriminatedUnions.Tests.SwitchStatement;
 
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,7 +19,7 @@ using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifie
 public class WithSubUnionsNoDiagnosticsAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_SwitchExpression_When_AllCasesAreHandled_Then_NoDiagnosticsAreReported()
+    public async Task Given_SwitchStatement_When_AllCasesAreHandled_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
@@ -27,14 +27,17 @@ namespace Unions;
 
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{   
-    public int Evaluate(Expression expression)
+    public void Evaluate(Expression expression)
     {{
-        return expression switch
-            {{
-                AdditionExpression additionExpression => Evaluate(additionExpression.Lhs) + Evaluate(additionExpression.Rhs),
-                SubtractionExpression subtractionExpression => Evaluate(subtractionExpression.Lhs) - Evaluate(subtractionExpression.Rhs),
-                ValueExpression valueExpression => valueExpression.Value,
-            }};
+        switch (expression)
+        {{
+            case AdditionExpression additionExpression:
+                break;
+            case SubtractionExpression subtractionExpression:
+                break;
+            case ValueExpression valueExpression:
+                break;
+        }};
     }}
 }}
 
@@ -44,7 +47,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
     }
 
     [TestMethod]
-    public async Task Given_SwitchExpressionOnSubUnion_When_AllCasesAreHandled_Then_NoDiagnosticsAreReported()
+    public async Task Given_SwitchStatementOnSubUnion_When_AllCasesAreHandled_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
@@ -54,11 +57,15 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 {{ 
     public string GetOperator(ArithmeticExpression expression)
     {{
-        return expression switch
-            {{
-                AdditionExpression additionExpression => ""+"",
-                SubtractionExpression subtractionExpression => ""-"",
-            }};
+        switch (expression)
+        {{
+            case AdditionExpression additionExpression:
+                return ""+"";
+            case SubtractionExpression subtractionExpression:
+                return ""-"";
+            default:
+                throw new UnreachableCaseException(typeof(ArithmeticExpression));
+        }};
     }}
 }}
 
@@ -68,7 +75,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
     }
 
     [TestMethod]
-    public async Task Given_SwitchExpression_When_AllCasesAreHandledThroughSubUnion_Then_NoDiagnosticsAreReported()
+    public async Task Given_SwitchStatement_When_AllCasesAreHandledThroughSubUnion_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
@@ -76,13 +83,15 @@ namespace Unions;
 
 public class DiscriminatedUnionSymbolAnalyzerTests
 {{   
-    public int Evaluate(Expression expression)
+    public void Evaluate(Expression expression)
     {{
-        return expression switch
-            {{
-                ArithmeticExpression arithmeticExpression => arithmeticExpression.ToString().Length,
-                ValueExpression valueExpression => valueExpression.Value,
-            }};
+        switch (expression)
+        {{
+            case ArithmeticExpression arithmeticExpression:
+                break;
+            case ValueExpression valueExpression:
+                break;
+        }};
     }}
 }}
 
