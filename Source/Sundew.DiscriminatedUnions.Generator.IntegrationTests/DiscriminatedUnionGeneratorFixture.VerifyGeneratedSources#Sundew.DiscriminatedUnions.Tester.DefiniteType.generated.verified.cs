@@ -15,7 +15,8 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="elementType">The elementType.</param>
         /// <returns>A new DefiniteArrayType.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType))]
-        public static global::Sundew.DiscriminatedUnions.Tester.DefiniteType DefiniteArrayType(global::Sundew.DiscriminatedUnions.Tester.DefiniteType elementType) => new global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType(elementType);
+        public static global::Sundew.DiscriminatedUnions.Tester.DefiniteType DefiniteArrayType(global::Sundew.DiscriminatedUnions.Tester.DefiniteType elementType)
+            => new global::Sundew.DiscriminatedUnions.Tester.DefiniteArrayType(elementType);
 
         /// <summary>
         /// Factory method for the NamedType case.
@@ -25,6 +26,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="assemblyName">The assemblyName.</param>
         /// <returns>A new NamedType.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.NamedType))]
-        public static global::Sundew.DiscriminatedUnions.Tester.DefiniteType NamedType(string name, string @namespace, string? assemblyName) => new global::Sundew.DiscriminatedUnions.Tester.NamedType(name, @namespace, assemblyName);
+        public static global::Sundew.DiscriminatedUnions.Tester.DefiniteType NamedType(string name, string @namespace, string? assemblyName)
+            => new global::Sundew.DiscriminatedUnions.Tester.NamedType(name, @namespace, assemblyName);
     }
 }

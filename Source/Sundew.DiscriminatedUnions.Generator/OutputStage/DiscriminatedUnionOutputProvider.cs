@@ -149,14 +149,16 @@ internal static class DiscriminatedUnionOutputProvider
                 unionFactoryMethodName = _Case + unionFactoryMethodName;
             }
 
-            stringBuilder.Append(Static)
+            stringBuilder
+                .Append(Static)
                 .Append(' ')
                 .AppendType(discriminatedUnion.Type)
                 .Append(' ')
                 .Append(unionFactoryMethodName);
             if (implementAsMethod)
             {
-                stringBuilder.Append('(')
+                stringBuilder
+                    .Append('(')
                     .AppendItems(
                         discriminatedUnionOwnedCase.Parameters,
                         (sb, parameter) =>
@@ -174,15 +176,17 @@ internal static class DiscriminatedUnionOutputProvider
                         },
                         ListSeparator)
                     .Append(')')
-                    .Append(' ')
+                    .AppendLine()
+                    .Append(SpaceIndentedBy12)
                     .Append(Lambda);
             }
             else
             {
-                stringBuilder.Append(' ').Append(Get).Append(' ').Append('=');
+                stringBuilder.Append(' ').Append(Get).AppendLine().Append(SpaceIndentedBy12).Append('=');
             }
 
-            stringBuilder.Append(' ')
+            stringBuilder
+                .Append(' ')
                 .Append(New)
                 .Append(' ')
                 .AppendType(discriminatedUnionOwnedCase.Type)

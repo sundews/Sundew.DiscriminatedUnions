@@ -14,7 +14,8 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// </summary>
         /// <returns>The AutoScope.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Scope.AutoScope))]
-        public static global::Sundew.DiscriminatedUnions.Tester.Scope _AutoScope { get; } = new global::Sundew.DiscriminatedUnions.Tester.Scope.AutoScope();
+        public static global::Sundew.DiscriminatedUnions.Tester.Scope _AutoScope { get; }
+            = new global::Sundew.DiscriminatedUnions.Tester.Scope.AutoScope();
 
         /// <summary>
         /// Factory method for the SingleInstancePerFuncResultScope case.
@@ -22,6 +23,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="method">The method.</param>
         /// <returns>A new SingleInstancePerFuncResultScope.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Scope.SingleInstancePerFuncResultScope))]
-        public static global::Sundew.DiscriminatedUnions.Tester.Scope _SingleInstancePerFuncResultScope(string method) => new global::Sundew.DiscriminatedUnions.Tester.Scope.SingleInstancePerFuncResultScope(method);
+        public static global::Sundew.DiscriminatedUnions.Tester.Scope _SingleInstancePerFuncResultScope(string method)
+            => new global::Sundew.DiscriminatedUnions.Tester.Scope.SingleInstancePerFuncResultScope(method);
     }
 }

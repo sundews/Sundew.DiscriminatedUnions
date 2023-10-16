@@ -15,7 +15,8 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="code">The code.</param>
         /// <returns>A new Error.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Error<>))]
-        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> Error(int code) => new global::Sundew.DiscriminatedUnions.Tester.Error<T>(code);
+        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> Error(int code)
+            => new global::Sundew.DiscriminatedUnions.Tester.Error<T>(code);
 
         /// <summary>
         /// Factory method for the FatalError case.
@@ -23,7 +24,8 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="code">The code.</param>
         /// <returns>A new FatalError.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.FatalError<>))]
-        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> FatalError(int code) => new global::Sundew.DiscriminatedUnions.Tester.FatalError<T>(code);
+        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> FatalError(int code)
+            => new global::Sundew.DiscriminatedUnions.Tester.FatalError<T>(code);
 
         /// <summary>
         /// Factory method for the Success case.
@@ -32,7 +34,8 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="optional">The optional.</param>
         /// <returns>A new Success.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Success<>))]
-        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> Success(T value, T? optional) => new global::Sundew.DiscriminatedUnions.Tester.Success<T>(value, optional);
+        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> Success(T value, T? optional)
+            => new global::Sundew.DiscriminatedUnions.Tester.Success<T>(value, optional);
 
         /// <summary>
         /// Factory method for the Warning case.
@@ -40,6 +43,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="message">The message.</param>
         /// <returns>A new Warning.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Warning<>))]
-        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> Warning(string message) => new global::Sundew.DiscriminatedUnions.Tester.Warning<T>(message);
+        public static global::Sundew.DiscriminatedUnions.Tester.Result<T> Warning(string message)
+            => new global::Sundew.DiscriminatedUnions.Tester.Warning<T>(message);
     }
 }

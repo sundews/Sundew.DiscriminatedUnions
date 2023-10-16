@@ -16,7 +16,8 @@ namespace Sundew.Injection.Generator
         /// <param name="arguments">The arguments.</param>
         /// <returns>A new ArrayCreationExpression.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.Injection.Generator.CreationExpression.ArrayCreationExpression))]
-        public static global::Sundew.Injection.Generator.InvocationExpressionBase _ArrayCreationExpression(string arrayCreation, global::System.Collections.Generic.IReadOnlyList<global::System.Linq.Expressions.Expression> arguments) => new global::Sundew.Injection.Generator.CreationExpression.ArrayCreationExpression(arrayCreation, arguments);
+        public static global::Sundew.Injection.Generator.InvocationExpressionBase _ArrayCreationExpression(string arrayCreation, global::System.Collections.Generic.IReadOnlyList<global::System.Linq.Expressions.Expression> arguments)
+            => new global::Sundew.Injection.Generator.CreationExpression.ArrayCreationExpression(arrayCreation, arguments);
 
         /// <summary>
         /// Factory method for the InvocationExpression case.
@@ -25,6 +26,7 @@ namespace Sundew.Injection.Generator
         /// <param name="arguments">The arguments.</param>
         /// <returns>A new InvocationExpression.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.Injection.Generator.InvocationExpression))]
-        public static global::Sundew.Injection.Generator.InvocationExpressionBase InvocationExpression(global::System.Linq.Expressions.Expression expression, global::System.Collections.Generic.IReadOnlyList<global::System.Linq.Expressions.Expression> arguments) => new global::Sundew.Injection.Generator.InvocationExpression(expression, arguments);
+        public static global::Sundew.Injection.Generator.InvocationExpressionBase InvocationExpression(global::System.Linq.Expressions.Expression expression, global::System.Collections.Generic.IReadOnlyList<global::System.Linq.Expressions.Expression> arguments)
+            => new global::Sundew.Injection.Generator.InvocationExpression(expression, arguments);
     }
 }

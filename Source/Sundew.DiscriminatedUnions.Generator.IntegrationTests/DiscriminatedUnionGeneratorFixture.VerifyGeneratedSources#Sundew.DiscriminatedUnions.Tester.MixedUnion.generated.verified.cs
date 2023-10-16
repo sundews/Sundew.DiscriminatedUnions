@@ -14,7 +14,8 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// </summary>
         /// <returns>The Case3.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Case3))]
-        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case3 { get; } = new global::Sundew.DiscriminatedUnions.Tester.Case3();
+        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case3 { get; }
+            = new global::Sundew.DiscriminatedUnions.Tester.Case3();
 
         /// <summary>
         /// Factory method for the Case1 case.
@@ -22,7 +23,8 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="info">The info.</param>
         /// <returns>A new Case1.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.MixedUnion.Case1))]
-        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion _Case1(string info) => new global::Sundew.DiscriminatedUnions.Tester.MixedUnion.Case1(info);
+        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion _Case1(string info)
+            => new global::Sundew.DiscriminatedUnions.Tester.MixedUnion.Case1(info);
 
         /// <summary>
         /// Factory method for the Case2 case.
@@ -32,6 +34,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="optionalInts">The optionalInts.</param>
         /// <returns>A new Case2.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Case2))]
-        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case2(int? info = 4, global::System.Collections.Generic.List<string?>? optionalList = null, global::System.Collections.Generic.List<int?>? optionalInts = null) => new global::Sundew.DiscriminatedUnions.Tester.Case2(info, optionalList, optionalInts);
+        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case2(int? info = 4, global::System.Collections.Generic.List<string?>? optionalList = null, global::System.Collections.Generic.List<int?>? optionalInts = null)
+            => new global::Sundew.DiscriminatedUnions.Tester.Case2(info, optionalList, optionalInts);
     }
 }

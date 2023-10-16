@@ -15,7 +15,8 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="code">The code.</param>
         /// <returns>A new Error.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Error<>))]
-        public new static global::Sundew.DiscriminatedUnions.Tester.ErrorResult<T> Error(int code) => new global::Sundew.DiscriminatedUnions.Tester.Error<T>(code);
+        public new static global::Sundew.DiscriminatedUnions.Tester.ErrorResult<T> Error(int code)
+            => new global::Sundew.DiscriminatedUnions.Tester.Error<T>(code);
 
         /// <summary>
         /// Factory method for the FatalError case.
@@ -23,6 +24,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="code">The code.</param>
         /// <returns>A new FatalError.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.FatalError<>))]
-        public new static global::Sundew.DiscriminatedUnions.Tester.ErrorResult<T> FatalError(int code) => new global::Sundew.DiscriminatedUnions.Tester.FatalError<T>(code);
+        public new static global::Sundew.DiscriminatedUnions.Tester.ErrorResult<T> FatalError(int code)
+            => new global::Sundew.DiscriminatedUnions.Tester.FatalError<T>(code);
     }
 }

@@ -16,6 +16,7 @@ namespace Sundew.Injection.Generator
         /// <param name="arguments">The arguments.</param>
         /// <returns>A new ArrayCreationExpression.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.Injection.Generator.CreationExpression.ArrayCreationExpression))]
-        public new static global::Sundew.Injection.Generator.CreationExpression _ArrayCreationExpression(string arrayCreation, global::System.Collections.Generic.IReadOnlyList<global::System.Linq.Expressions.Expression> arguments) => new global::Sundew.Injection.Generator.CreationExpression.ArrayCreationExpression(arrayCreation, arguments);
+        public new static global::Sundew.Injection.Generator.CreationExpression _ArrayCreationExpression(string arrayCreation, global::System.Collections.Generic.IReadOnlyList<global::System.Linq.Expressions.Expression> arguments)
+            => new global::Sundew.Injection.Generator.CreationExpression.ArrayCreationExpression(arrayCreation, arguments);
     }
 }
