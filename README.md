@@ -44,7 +44,8 @@ var message = result switch
 ```
 
 ### Dimensional unions
-To support dimensional unions, unnested cases help because the cases are no longer defined inside a union. However, for this to work the unions are required to declare a factory method named exactly like the case type and that has the CaseType attribute specifying the actual type. Since version 3, factory methods are generated when the union is declared partial. Alternatively, a code fix (PDU0001) is available to generate the factory methods. 
+To support dimensional unions, unnested cases help because the cases are no longer defined inside a union. However, for this to work the unions are required to declare a factory method named exactly like the case type and that has the CaseType attribute specifying the actual type.
+Since version 3, factory methods are generated when the union is declared partial. Alternatively, a code fix (PDU0001) is available to generate the factory methods. 
 
 ```csharp
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
@@ -71,7 +72,7 @@ public sealed record ValueExpression(int Value) : IExpression;
 With dimensional unions it is possible to handle all cases using a sub union.
 As seen in the example below, handling the ArithmeticExpression covers Addition-, Subtraction-, Multiplication- and DivisionExpression.
 Typically one would dispatch these to a method handling ArithmeticExpression and where handling all cases would be checked, but it is not required.
-This is a very convienient way handling various cases into separate pieces.
+This makes it convienient to separate handling logic in smaller chucks of code.
 
 ```csharp
 public int Evaluate(Expression expression)
@@ -91,16 +92,18 @@ public int Evaluate(ArithmeticExpression arithmeticExpression)
             SubtractionExpression subtractionExpression => Evaluate(subtractionExpression.Lhs) - Evaluate(subtractionExpression.Rhs),
             MultiplicationExpression multiplicationExpression => Evaluate(multiplicationExpression.Lhs) * Evaluate(multiplicationExpression.Rhs),
             DivisionExpression divisionExpression => Evaluate(divisionExpression.Lhs) / Evaluate(divisionExpression.Rhs),
-            ValueExpression valueExpression => valueExpression.Value,
         };
 }
 ```
+
+#### Enum evaluation
+As of version 5.1, regular enums can also use the DiscriminatedUnion attribute causing the analyzer to exhaustively check switch statements and expressions.
 
 ## Generator features
 As mentioned a source generator is automatically activated for generating factory methods when the partial keyword is specified.
 In addition, the DiscriminatedUnion attribute can specify a flags enum (GeneratorFeatures) to control additional code generation.
 
-* Segregate - Generates an extension method for IEnumerable<Union> that segregates all items into buckets of the different result.
+* Segregate - Generates an extension method for IEnumerable<TUnion> that segregates all items into buckets of the different result.
 
 ## Supported diagnostics:
 | Diagnostic Id | Description                                                            | Code Fix  |
