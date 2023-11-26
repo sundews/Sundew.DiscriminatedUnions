@@ -11,7 +11,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Sundew.Base;
+using Sundew.Base.Collections.Immutable;
 using Sundew.Base.Text;
 using Sundew.DiscriminatedUnions.Generator;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;

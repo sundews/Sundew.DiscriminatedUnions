@@ -13,7 +13,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
-using Sundew.Base;
+using Sundew.Base.Collections.Immutable;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;

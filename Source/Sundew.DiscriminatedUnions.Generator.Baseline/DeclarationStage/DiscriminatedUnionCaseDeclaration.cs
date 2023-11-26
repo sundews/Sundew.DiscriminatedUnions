@@ -7,7 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 
-using Sundew.Base;
+using Sundew.Base.Collections.Immutable;
 using Sundew.DiscriminatedUnions.Generator.Model;
 
 internal readonly record struct DiscriminatedUnionCaseDeclaration(FullType CaseType, ValueArray<(Type Type, bool HasConflictingName)> Owners, ValueArray<Parameter> Parameters);

@@ -7,7 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.Model;
 
-using Sundew.Base;
+using Sundew.Base.Collections.Immutable;
 
 internal readonly record struct DiscriminatedUnion(
     FullType Type,

@@ -7,7 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.Model;
 
-using Sundew.Base;
+using Sundew.Base.Collections.Immutable;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 
 internal readonly record struct TypeMetadata(string? GenericQualifier, ValueArray<TypeParameter> TypeParameters);

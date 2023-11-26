@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>11</LangVersion>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <IsRoslynComponent>true</IsRoslynComponent>
     <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+	<DefineConstants>$(DefineConstants);Analyzer</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +17,19 @@
     <SundewDiscriminatedUnionsShared Remove="..\Sundew.DiscriminatedUnions.Shared\obj\**\*.cs" />
     <Compile Remove="..\Sundew.DiscriminatedUnions.Shared\UnionHelper.cs" />
     <Compile Include="@(SundewDiscriminatedUnionsShared)" LinkBase="Shared"></Compile>
+
+    <SundewBaseEqualityCompile Include="..\Sundew.Base\Source\Sundew.Base.Equality\Equality.cs" />
+    <Compile Include="@(SundewBaseEqualityCompile)" LinkBase="Shared\Sundew.Base.Equality" />
+    <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\EnumExtensions.cs" />
+    <Compile Include="@(SundewBasePrimitivesCompile)" LinkBase="Shared\Sundew.Base.Primitives" />
+    <SundewBaseCollectionsCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections\Immutable\ValueArray{TItem}.cs" />
+    <Compile Include="@(SundewBaseCollectionsCompile)" LinkBase="Shared\Sundew.Base.Collections" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.AppendItems.cs" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.cs" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\FromEnd.cs" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\Alignment.cs" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\Limit.cs" />
+    <Compile Include="@(SundewBaseTextCompile)" LinkBase="Shared\Sundew.Base.Text" />
   </ItemGroup>
 
   <ItemGroup>

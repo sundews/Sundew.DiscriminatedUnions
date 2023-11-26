@@ -11,14 +11,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using FluentAssertions;
-using Microsoft.CodeAnalysis;
 using NUnit.Framework;
-using Sundew.Base;
+using Sundew.Base.Collections.Immutable;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
-using Sundew.DiscriminatedUnions.Generator.Model;
 using Sundew.DiscriminatedUnions.Generator.ModelStage;
-using Sundew.Testing.CodeAnalysis;
-using Sundew.Testing.IO;
 using Accessibility = Sundew.DiscriminatedUnions.Generator.Model.Accessibility;
 
 [TestFixture]

@@ -7,7 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.ModelStage;
 
-using Sundew.Base;
+using Sundew.Base.Collections.Immutable;
 using Sundew.DiscriminatedUnions.Generator.Model;
 
 internal readonly record struct DiscriminatedUnionResult(DiscriminatedUnion DiscriminatedUnion, ValueArray<DeclarationNotFound> Errors)
