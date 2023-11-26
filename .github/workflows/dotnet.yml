@@ -8,6 +8,9 @@ on:
       - "release*"
   pull_request:
 
+concurrency:
+  group: ${{ github.ref == 'refs/tags/release' && github.ref || github.run_id }}
+
 jobs:
   build:
     name: .NET
@@ -23,22 +26,18 @@ jobs:
       packages-to-push: 'logs/packages.push'
       source-packages-to-push: './Source/logs/packages.push'
     steps:
-    - name: 'Await other builds'
-      uses: softprops/turnstyle@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Checkout
-      uses: actions/checkout@v2
-    - name: Setup .NET 7
-      uses: actions/setup-dotnet@v1
+      uses: actions/checkout@v4
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.x.x
+        dotnet-version: 8.x.x
     - name: Build setup
       id: build-setup
       run: >
-        dotnet tool update Sundew.Packaging.Tool -g --version 7.8.*
+        dotnet tool update Sundew.Packaging.Tool -g --version 8.8.*
 
-        dotnet tool update CommandlineBatcher -g --version 7.6.*
+        dotnet tool update CommandlineBatcher -g --version 8.6.*
 
         git rev-parse --short=10 HEAD | cb -c ">> $GITHUB_OUTPUT|git-hash={0}{NL}" --batches-stdin
 

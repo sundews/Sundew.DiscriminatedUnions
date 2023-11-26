@@ -1,0 +1,3 @@
+[submodule "Source/Sundew.Base"]
+	path = Source/Sundew.Base
+	url = https://github.com/sundews/Sundew.Base.git
