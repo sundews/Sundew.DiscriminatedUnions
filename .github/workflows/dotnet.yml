@@ -37,13 +37,15 @@ jobs:
     - name: Build setup
       id: build-setup
       run: >
-        dotnet tool update Sundew.Packaging.Tool -g --version 8.8.*
+        dotnet tool update Sundew.Packaging.Tool -g --version 8.10.*
 
         dotnet tool update CommandlineBatcher -g --version 8.6.*
 
         git rev-parse --short=10 HEAD | cb -c ">> $GITHUB_OUTPUT|git-hash={0}{NL}" --batches-stdin
 
         cb match -p "(?<Input>^(?!(refs/pull.*|refs/heads/$)).+) => git-branch-name={Input}" -i "refs/heads/${{ github.base_ref }}" "${{ github.ref }}" -of $GITHUB_OUTPUT
+
+        git log -1 --pretty=%B > git_commit_message.txt
     - name: Stage Build
       id: stage-build
       run: >
@@ -53,21 +55,21 @@ jobs:
         --development "refs/heads/(?:develop.*|feature/(?<Postfix>.+)|bugfix/(?<Postfix>.+)) => ${{ secrets.SPP_DEVELOPMENT_API_KEY }}@${{ env.dev-source }} {${{ env.dev-source-latest-version }}}|${{ secrets.SPP_DEVELOPMENT_API_KEY }}@${{ env.dev-symbols-source }}||Configuration=Debug|DevFeedSource= -s ${{ env.dev-source-latest-version }}"
         --no-stage "Configuration=Release"
         --stage "${{ github.ref }}"
+        --build-promotion-input "< git_commit_message.txt"
+        --build-promotion-regex "=>\s*release"
         --prerelease-format "u{DateTime}-{Stage}-{Postfix}"
         --metadata ${{ steps.build-setup.outputs.git-hash }}
         --force-version '"${{ secrets.SPP_FORCE_VERSION_IF_SET }}"'
         --output-formats "Selected stage: {Stage}, {FullVersion}, {Configuration}" ">|stage={Stage}{NL}" ">|version={Version}{NL}" ">|buildConfiguration={Configuration}{NL}"
         ">|nuGetPackagesPath={WorkingDirectory}/NuGet{NL}" ">|dev-package-source-if-set={DevFeedSource}{NL}" ">|feedSource={FeedSource}{NL}"
         ">|pushSource={PushSource}{NL}" ">|apiKey={ApiKey}{NL}" ">|fullVersion={FullVersion}{NL}" ">|symbolsPushSource={SymbolsPushSource}{NL}"
-        ">|symbolsApiKey={SymbolsApiKey}{NL}"
+        ">|symbolsApiKey={SymbolsApiKey}{NL}" ">|buildPromotion={BuildPromotion}"
         --output-file $GITHUB_OUTPUT
-
-        cb match -p "^refs/tags/release[^/]*$ => isReleaseCommand=true" -i "${{ github.ref }}" -of $GITHUB_OUTPUT
 
         cb match -p "^(?!^(refs/heads/main|refs/tags/release)$).*$ => test-filter-if-set= --filter TestCategory!~MainBranchBuilds" -i "${{ steps.build-setup.outputs.git-branch-name }}" -of $GITHUB_OUTPUT
     - name: 'Remove release tag'
-      if: ${{ steps.stage-build.outputs.stage == 'production' }}
-      run: cb --if "${{ steps.stage-build.outputs.isReleaseCommand }} == true" -c "git|push --delete ${{ env.repository }} ${{ github.ref }}"
+      if: ${{ steps.stage-build.outputs.stage == 'production' && steps.stage-build.outputs.buildPromotion != 'promoted' }}
+      run: git push --delete ${{ env.repository }} ${{ github.ref }}
     - name: Restore
       run: dotnet restore ${{ env.solutionPath }} --verbosity normal -s ${{ env.source }}${{ steps.stage-build.outputs.dev-package-source-if-set }}
     - name: Build
