@@ -48,7 +48,7 @@ internal static class DiscriminatedUnionProvider
                         discriminatedUnionDeclaration.IsPartial,
                         discriminatedUnionDeclaration.IsConstrainingUnion,
                         discriminatedUnionDeclaration.GeneratorFeatures,
-                        ImmutableArray.Create((Type: discriminatedUnionCase.CaseType,
+                        ImmutableArray.Create((Type: discriminatedUnionCase.CaseType, owner.ReturnType,
                             discriminatedUnionCase.Parameters, HasConflictingName: hasConflictingName))))
                     : DiscriminatedUnionResult.Error(
                         ImmutableArray.Create(new DeclarationNotFound(owner.Type, discriminatedUnionCase)));
@@ -63,7 +63,7 @@ internal static class DiscriminatedUnionProvider
                             var discriminatedUnion = result.DiscriminatedUnion with
                             {
                                 Cases = result.DiscriminatedUnion.Cases.Add(
-                                    (Type: discriminatedUnionCase.CaseType, discriminatedUnionCase.Parameters, HasConflictingName: hasConflictingName)),
+                                    (Type: discriminatedUnionCase.CaseType, owner.ReturnType, discriminatedUnionCase.Parameters, HasConflictingName: hasConflictingName)),
                             };
                             return DiscriminatedUnionResult.Success(discriminatedUnion);
                         }
@@ -88,10 +88,10 @@ internal static class DiscriminatedUnionProvider
         }).ToImmutableArray();
     }
 
-    private static ImmutableArray<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)> GetDistinctOrdered(IEnumerable<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)> cases)
+    private static ImmutableArray<(FullType Type, FullType ReturnType, ValueArray<Parameter> Parameters, bool HasConflictingName)> GetDistinctOrdered(IEnumerable<(FullType Type, FullType ReturnType, ValueArray<Parameter> Parameters, bool HasConflictingName)> cases)
     {
-        var hashSet = new HashSet<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)>();
-        var immutableArrayBuilder = ImmutableArray.CreateBuilder<(FullType Type, ValueArray<Parameter> Parameters, bool HasConflictingName)>();
+        var hashSet = new HashSet<(FullType Type, FullType ReturnType, ValueArray<Parameter> Parameters, bool HasConflictingName)>();
+        var immutableArrayBuilder = ImmutableArray.CreateBuilder<(FullType Type, FullType ReturnType, ValueArray<Parameter> Parameters, bool HasConflictingName)>();
         foreach (var valueTuple in cases)
         {
             if (hashSet.Add(valueTuple))

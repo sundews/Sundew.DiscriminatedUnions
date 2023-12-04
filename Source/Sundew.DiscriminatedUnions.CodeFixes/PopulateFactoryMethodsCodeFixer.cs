@@ -59,9 +59,9 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         }
 
         var factoryMethods = GetCaseTypesWithMissingFactoryMethods(unionType, semanticModel.Compilation)
-            .Select((caseType, index) =>
+            .Select((@case, index) =>
             {
-                var constructor = caseType.Constructors.OrderByDescending(x => x.Parameters.Length).SkipWhile(x =>
+                var constructor = @case.CaseType.Constructors.OrderByDescending(x => x.Parameters.Length).SkipWhile(x =>
                         x.ContainingType.IsRecord &&
                         SymbolEqualityComparer.Default.Equals(x.Parameters.FirstOrDefault()?.Type, x.ContainingType))
                     .FirstOrDefault();
@@ -80,9 +80,10 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
                 return GetFactoryMethodSyntaxNodes(
                         semanticModel,
                         unionType,
-                        caseType.Name,
+                        @case.CaseType.Name,
                         constructor,
-                        caseType,
+                        @case.CaseType,
+                        @case.ReturnType,
                         constructor.Parameters.Select(x => x.Type).ToArray(),
                         parameters,
                         generator,
@@ -121,22 +122,32 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         return document.WithSyntaxRoot(newRoot);
     }
 
-    private static IEnumerable<INamedTypeSymbol> GetCaseTypesWithMissingFactoryMethods(
+    private static IEnumerable<(INamedTypeSymbol CaseType, INamedTypeSymbol ReturnType)> GetCaseTypesWithMissingFactoryMethods(
         INamedTypeSymbol unionType,
         Compilation compilation)
     {
-        var allCaseTypes = GetDerivedTypes(compilation, unionType);
+        var allCaseTypes = GetDerivedTypes(compilation, unionType).Select(x => (CaseType: x, ReturnType: GetReturnType(x, unionType)));
         var knownCaseTypes = UnionHelper.GetKnownCaseTypes(unionType).ToList();
 
         return allCaseTypes.Where(x =>
         {
-            GetEquatableType(ref x);
+            GetEquatableType(ref x.CaseType);
             return !knownCaseTypes.Any(knownType =>
             {
                 GetEquatableType(ref knownType);
-                return SymbolEqualityComparer.Default.Equals(x, knownType);
+                return SymbolEqualityComparer.Default.Equals(x.CaseType, knownType);
             });
         });
+    }
+
+    private static INamedTypeSymbol GetReturnType(INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol unionType)
+    {
+        return namedTypeSymbol.EnumerateBaseTypes().Concat(namedTypeSymbol.AllInterfaces)
+            .FirstOrDefault(x =>
+            {
+                GetEquatableType(ref x);
+                return SymbolEqualityComparer.Default.Equals(x, unionType);
+            }) ?? unionType;
     }
 
     private static SyntaxNode GetFactoryMethodSyntaxNodes(
@@ -145,6 +156,7 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         string name,
         IMethodSymbol constructor,
         INamedTypeSymbol caseType,
+        INamedTypeSymbol returnType,
         IReadOnlyCollection<ITypeSymbol> parameterTypes,
         List<(SyntaxNode Parameter, string Name)> parameters,
         SyntaxGenerator generator,
@@ -173,7 +185,7 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
                             SyntaxFactory.AttributeArgument(SyntaxFactory.TypeOfExpression(SyntaxFactory.ParseTypeName(
                                 attributeCaseType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat))))))))))),
                 tokenList,
-                SyntaxFactory.ParseTypeName(unionType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)),
+                SyntaxFactory.ParseTypeName(returnType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)),
                 null,
                 SyntaxFactory.Identifier(name),
                 null,
@@ -197,7 +209,8 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
                             SyntaxFactory.SeparatedList(
                                 parameters.Select(x =>
                                     SyntaxFactory.Argument(SyntaxFactory.IdentifierName(x.Name))))),
-                        null)),
+                        null))
+                    .WithLeadingTrivia(SyntaxFactory.Space, SyntaxFactory.Space, SyntaxFactory.Space, SyntaxFactory.Space, SyntaxFactory.Space, SyntaxFactory.Space, SyntaxFactory.Space, SyntaxFactory.Space, SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.CarriageReturnLineFeed),
                 SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
             if (addAdditionalNewLine)

@@ -22,7 +22,7 @@ public class PopulateFactoryMethodsCodeFixerTests
 {
     [TestMethod]
     public async Task
-       Given_DiscriminatedUnionWithUnnestedCases_When_ValueAndSubtractExpressionCaseHasNoFactoryMethod_Then_FactoryMethodsAreImplemented()
+        Given_DiscriminatedUnionWithUnnestedCases_When_ValueAndSubtractExpressionCaseHasNoFactoryMethod_Then_FactoryMethodsAreImplemented()
     {
         var test = $@"{TestData.Usings}
 
@@ -277,7 +277,7 @@ public sealed record ValueExpression(int Value) : Expression;
 
     [TestMethod]
     public async Task
-    Given_MultiDiscriminatedUnionWithUnnestedCases_When_UnionIsInterfaceAndFactoryMethodIsMissing_Then_FactoryMethodsAreImplemented()
+        Given_MultiDiscriminatedUnionWithUnnestedCases_When_UnionIsInterfaceAndFactoryMethodIsMissing_Then_FactoryMethodsAreImplemented()
     {
         var test = $@"{TestData.Usings}
 
@@ -422,7 +422,8 @@ public sealed record ValueExpression(int Value) : Expression;
     }
 
     [TestMethod]
-    public async Task Given_MultiDiscriminatedUnionWithUnnestedCases_When_MultipleCasesInDerivedTypeHaveNoFactoryMethod_Then_FactoryMethodsAreImplemented()
+    public async Task
+        Given_MultiDiscriminatedUnionWithUnnestedCases_When_MultipleCasesInDerivedTypeHaveNoFactoryMethod_Then_FactoryMethodsAreImplemented()
     {
         var test = $@"{TestData.Usings}
 
@@ -601,6 +602,55 @@ public sealed record Empty<TItem>() : SingleOrMultiple<TItem>;
                 .WithArguments("Unions.SingleOrMultiple<TItem>")
                 .WithSpan(14, 24, 14, 40),
         };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
+    }
+
+    [TestMethod]
+    public async Task
+        Given_DiscriminatedUnionWithUnnestedCases_When_UnionIsGenericAndCaseSpecifyTypeArgument_Then_FactoryMethodsAreImplementedWithTypeArgument()
+    {
+        var test = $@"{TestData.Usings}
+
+namespace Unions;
+
+[DiscriminatedUnion]
+public abstract partial record Input<TValue>()
+{{
+}}
+
+public sealed record IntInput(int Value) : Input<int>;
+
+public sealed record DoubleInput(double Value) : Input<double>;
+";
+
+        var fixtest = $@"{TestData.Usings}
+
+namespace Unions;
+
+[DiscriminatedUnion]
+public abstract partial record Input<TValue>()
+{{
+
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(IntInput))]
+    public static Input<int> IntInput(int value) => new IntInput(value);
+
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(DoubleInput))]
+    public static Input<double> DoubleInput(double value) => new DoubleInput(value);
+}}
+
+public sealed record IntInput(int Value) : Input<int>;
+
+public sealed record DoubleInput(double Value) : Input<double>;
+";
+
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+                .WithSeverity(DiagnosticSeverity.Info)
+                .WithArguments("Unions.Input<TValue>")
+                .WithSpan(14, 32, 14, 37),
+        };
+
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
     }
 }

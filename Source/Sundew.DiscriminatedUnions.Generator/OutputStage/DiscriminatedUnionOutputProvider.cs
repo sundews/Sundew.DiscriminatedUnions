@@ -152,7 +152,7 @@ internal static class DiscriminatedUnionOutputProvider
             stringBuilder
                 .Append(Static)
                 .Append(' ')
-                .AppendType(discriminatedUnion.Type)
+                .AppendType(discriminatedUnionOwnedCase.ReturnType)
                 .Append(' ')
                 .Append(unionFactoryMethodName);
             if (implementAsMethod)

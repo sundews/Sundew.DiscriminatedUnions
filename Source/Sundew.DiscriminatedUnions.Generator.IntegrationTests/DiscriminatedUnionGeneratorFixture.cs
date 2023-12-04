@@ -10,16 +10,16 @@ namespace Sundew.DiscriminatedUnions.Generator.IntegrationTests;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using NUnit.Framework;
 using Sundew.Testing.CodeAnalysis;
 using Sundew.Testing.IO;
-using VerifyNUnit;
 using VerifyTests;
+using VerifyXunit;
+using Xunit;
 
-[TestFixture]
+[UsesVerify]
 public class DiscriminatedUnionGeneratorFixture
 {
-    [Test]
+    [Fact]
     public Task VerifyGeneratedSources()
     {
         var project = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Tester"), new Paths(), new Paths("bin", "obj"));

@@ -13,11 +13,12 @@ using FluentAssertions;
 using NUnit.Framework;
 using Sundew.Testing.CodeAnalysis;
 using Sundew.Testing.IO;
+using Xunit;
 
-[TestFixture(Category = "MainBranchBuilds")]
+[Trait("Category", "MainBranchBuilds")]
 public class BaselineValidationFixture
 {
-    [Test]
+    [Fact]
     public void VerifyWorkingCopyAndBaselineProjectsAreTheSame()
     {
         var workingCopyProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator"), new Paths(), new Paths("bin", "obj"));

@@ -8,13 +8,12 @@
 namespace Sundew.DiscriminatedUnions.Generator.IntegrationTests;
 
 using FluentAssertions;
-using NUnit.Framework;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
+using Xunit;
 
-[TestFixture]
 public class DiscriminatedUnionDeclarationEqualityFixture
 {
-    [Test]
+    [Fact]
     public void TryGetDiscriminatedUnionDeclaration_Then_ResultShouldNotBeEmpty()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
@@ -25,7 +24,7 @@ public class DiscriminatedUnionDeclarationEqualityFixture
         result.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void Equals_Then_ResultShouldBeTrue()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
@@ -37,7 +36,7 @@ public class DiscriminatedUnionDeclarationEqualityFixture
         lhs.Should().Be(rhs);
     }
 
-    [Test]
+    [Fact]
     public void Equals_When_ValuesDiffer_Then_ResultShouldBeFalse()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;

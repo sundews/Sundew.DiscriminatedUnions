@@ -11,16 +11,15 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using FluentAssertions;
-using NUnit.Framework;
 using Sundew.Base.Collections.Immutable;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.ModelStage;
+using Xunit;
 using Accessibility = Sundew.DiscriminatedUnions.Generator.Model.Accessibility;
 
-[TestFixture]
 public class DiscriminatedUnionEqualityFixture
 {
-    [Test]
+    [Fact]
     public void GetDiscriminatedUnionResults_Then_ResultShouldNotBeEmpty()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
@@ -36,7 +35,7 @@ public class DiscriminatedUnionEqualityFixture
         result.Should().NotBeEmpty();
     }
 
-    [Test]
+    [Fact]
     public void Equals_Then_ResultShouldBeTrue()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
@@ -53,7 +52,7 @@ public class DiscriminatedUnionEqualityFixture
         ((object)lhs).Should().Be(rhs);
     }
 
-    [Test]
+    [Fact]
     public void Equals_When_ValuesDiffer_Then_ResultShouldBeFalse()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
@@ -71,7 +70,7 @@ public class DiscriminatedUnionEqualityFixture
         ((object)lhs).Should().NotBe(rhs);
     }
 
-    [Test]
+    [Fact]
     public void GetDiscriminatedUnionResults_When__Then_ResultShouldNotBeEmpty()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;

@@ -13,6 +13,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Sundew.Base;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
@@ -172,8 +173,20 @@ internal static class CodeAnalysisHelper
         }
     }
 
-    public static FullType GetFullType(this ITypeSymbol typeSymbol)
+    public static FullType GetFullType(this ITypeSymbol typeSymbol, bool useFullyQualifiedFormat = false)
     {
+        string? GetGenericQualifier(INamedTypeSymbol namedTypeSymbol)
+        {
+            var name = namedTypeSymbol.ToDisplayString(useFullyQualifiedFormat ? FullyQualifiedDisplayFormat : NameQualifiedTypeFormat);
+            var index = name.IndexOf('<');
+            if (index > -1)
+            {
+                return name.Substring(index);
+            }
+
+            return null;
+        }
+
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
@@ -186,8 +199,7 @@ internal static class CodeAnalysisHelper
                     false,
                     new TypeMetadata(
                         !isShortNameAlias && namedTypeSymbol.IsGenericType
-                            ? namedTypeSymbol.ToDisplayString(NameQualifiedTypeFormat)
-                                .Substring(namedTypeSymbol.Name.Length)
+                            ? GetGenericQualifier(namedTypeSymbol)
                             : null,
                         namedTypeSymbol.TypeParameters.Select(x => new TypeParameter(
                             x.Name,
