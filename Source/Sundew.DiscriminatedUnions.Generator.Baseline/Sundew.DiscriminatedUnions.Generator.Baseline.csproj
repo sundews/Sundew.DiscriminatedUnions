@@ -13,28 +13,31 @@
 		<RootNamespace>Sundew.DiscriminatedUnions.Generator</RootNamespace>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<AdditionalFiles Include="stylecop.json" />
-		<SundewDiscriminatedUnionsShared Include="..\Sundew.DiscriminatedUnions.Shared\**\*.cs" />
-		<SundewDiscriminatedUnionsShared Remove="..\Sundew.DiscriminatedUnions.Shared\obj\**\*.cs" />
-		<Compile Remove="..\Sundew.DiscriminatedUnions.Shared\UnionHelper.cs" />
-		<Compile Include="@(SundewDiscriminatedUnionsShared)" LinkBase="Shared"></Compile>
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+    <SundewDiscriminatedUnionsShared Include="..\Sundew.DiscriminatedUnions.Shared\**\*.cs" />
+    <SundewDiscriminatedUnionsShared Remove="..\Sundew.DiscriminatedUnions.Shared\obj\**\*.cs" />
+    <Compile Remove="..\Sundew.DiscriminatedUnions.Shared\UnionHelper.cs" />
+    <Compile Include="@(SundewDiscriminatedUnionsShared)" LinkBase="Shared"></Compile>
 
-		<SundewBaseEqualityCompile Include="..\Sundew.Base\Source\Sundew.Base.Equality\Equality.cs" />
-		<Compile Include="@(SundewBaseEqualityCompile)" LinkBase="Shared\Sundew.Base.Equality" />
-		<SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\EnumExtensions.cs" />
-		<Compile Include="@(SundewBasePrimitivesCompile)" LinkBase="Shared\Sundew.Base.Primitives" />
-		<SundewBaseCollectionsCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections\Immutable\ValueArray{TItem}.cs" />
-		<Compile Include="@(SundewBaseCollectionsCompile)" LinkBase="Shared\Sundew.Base.Collections" />
-		<SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.AppendItems.cs" />
-		<SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.cs" />
-		<SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\FromEnd.cs" />
-		<SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\Alignment.cs" />
-		<SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\Limit.cs" />
-		<Compile Include="@(SundewBaseTextCompile)" LinkBase="Shared\Sundew.Base.Text" />
-	</ItemGroup>
+    <SundewBaseEqualityCompile Include="..\Sundew.Base\Source\Sundew.Base.Equality\Equality.cs" />
+    <Compile Include="@(SundewBaseEqualityCompile)" LinkBase="Shared\Sundew.Base.Equality" />
+    <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\Computation\R*.cs" />
+    <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\Computation\O.cs" />
+    <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\EnumExtensions.cs" />
+    <Compile Include="@(SundewBasePrimitivesCompile)" LinkBase="Shared\Sundew.Base.Primitives" />
+    <SundewBaseCollectionsCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections\Immutable\ValueArray{TItem}.cs" />
+    <Compile Include="@(SundewBaseCollectionsCompile)" LinkBase="Shared\Sundew.Base.Collections" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.AppendItems.cs" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.cs" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\FromEnd.cs" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\Alignment.cs" />
+    <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\Limit.cs" />
+    <Compile Include="@(SundewBaseTextCompile)" LinkBase="Shared\Sundew.Base.Text" />
+  </ItemGroup>
 
-	<ItemGroup>
+
+  <ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

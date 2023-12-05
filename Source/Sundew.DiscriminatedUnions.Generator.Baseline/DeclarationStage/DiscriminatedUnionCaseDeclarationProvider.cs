@@ -34,7 +34,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         var symbol = semanticModel.GetDeclaredSymbol(syntaxNode);
         if (symbol is INamedTypeSymbol caseNamedTypeSymbol)
         {
-            var owners = FindOwners(caseNamedTypeSymbol).Select(x => (Type: x.GetSourceType(), HasConflictingName: HasConflictingName(x, caseNamedTypeSymbol))).ToImmutableArray();
+            var owners = FindOwners(caseNamedTypeSymbol).Select(x => (Type: x.GetSourceType(), ReturnType: x.GetFullType(true), HasConflictingName: HasConflictingName(x, caseNamedTypeSymbol))).ToImmutableArray();
             var parameters = TryGetParameters(caseNamedTypeSymbol);
             if (parameters == null)
             {
