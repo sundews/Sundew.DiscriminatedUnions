@@ -10,7 +10,6 @@ namespace Sundew.DiscriminatedUnions.Generator.IntegrationTests;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
-using NUnit.Framework;
 using Sundew.Testing.CodeAnalysis;
 using Sundew.Testing.IO;
 using Xunit;

@@ -176,19 +176,18 @@ internal static class StringBuilderExtensions
                 typeParameters,
                 (builder, parameter) =>
                 {
-                    builder
-                        .Append(indentation)
-                        .Append(Where)
-                        .Append(' ')
-                        .Append(parameter.Name)
-                        .Append(' ')
-                        .Append(':')
-                        .Append(' ');
-                    stringBuilder.AppendItems(
-                            parameter.Constraints,
-                            (builder1, constraint) => builder1.Append(constraint),
-                            ListSeparator)
-                        .AppendLine();
+                    builder.If(
+                        !parameter.Constraints.IsEmpty,
+                        builder1 => builder1.Append(indentation)
+                            .Append(Where)
+                            .Append(' ')
+                            .Append(parameter.Name)
+                            .Append(' ').Append(':').Append(' ')
+                            .AppendItems(
+                                parameter.Constraints,
+                                (builder1, constraint) => builder1.Append(constraint),
+                                ListSeparator)
+                            .AppendLine());
                 },
                 string.Empty);
         }

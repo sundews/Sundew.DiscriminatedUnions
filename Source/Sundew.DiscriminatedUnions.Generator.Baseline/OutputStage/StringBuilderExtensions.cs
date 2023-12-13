@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Sundew.Base.Collections.Immutable;
 using Sundew.Base.Text;
@@ -176,19 +177,18 @@ internal static class StringBuilderExtensions
                 typeParameters,
                 (builder, parameter) =>
                 {
-                    builder
-                        .Append(indentation)
-                        .Append(Where)
-                        .Append(' ')
-                        .Append(parameter.Name)
-                        .Append(' ')
-                        .Append(':')
-                        .Append(' ');
-                    stringBuilder.AppendItems(
-                            parameter.Constraints,
-                            (builder1, constraint) => builder1.Append(constraint),
-                            ListSeparator)
-                        .AppendLine();
+                    builder.If(
+                        !parameter.Constraints.IsEmpty,
+                        builder1 => builder1.Append(indentation)
+                            .Append(Where)
+                            .Append(' ')
+                            .Append(parameter.Name)
+                            .Append(' ').Append(':').Append(' ')
+                            .AppendItems(
+                                parameter.Constraints,
+                                (builder1, constraint) => builder1.Append(constraint),
+                                ListSeparator)
+                            .AppendLine());
                 },
                 string.Empty);
         }

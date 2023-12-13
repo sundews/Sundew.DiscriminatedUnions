@@ -22,8 +22,8 @@
 
     <SundewBaseEqualityCompile Include="..\Sundew.Base\Source\Sundew.Base.Equality\Equality.cs" />
     <Compile Include="@(SundewBaseEqualityCompile)" LinkBase="Shared\Sundew.Base.Equality" />
-    <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\Computation\R*.cs" />
-    <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\Computation\O.cs" />
+    <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\R*.cs" />
+    <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\O.cs" />
     <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\EnumExtensions.cs" />
     <Compile Include="@(SundewBasePrimitivesCompile)" LinkBase="Shared\Sundew.Base.Primitives" />
     <SundewBaseCollectionsCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections\Immutable\ValueArray{TItem}.cs" />
