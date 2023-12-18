@@ -13,7 +13,7 @@ using Sundew.Testing.IO;
 
 [MemoryDiagnoser]
 [SimpleJob(RuntimeMoniker.Net48, baseline: true)]
-[SimpleJob(RuntimeMoniker.Net70)]
+[SimpleJob(RuntimeMoniker.Net80)]
 public class DiscriminatedUnionGeneratorBenchmark
 {
     private readonly Compilation compilation;

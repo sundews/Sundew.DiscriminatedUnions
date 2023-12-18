@@ -26,8 +26,8 @@
     <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\O.cs" />
     <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\EnumExtensions.cs" />
     <Compile Include="@(SundewBasePrimitivesCompile)" LinkBase="Shared\Sundew.Base.Primitives" />
-    <SundewBaseCollectionsCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections\Immutable\ValueArray{TItem}.cs" />
-    <Compile Include="@(SundewBaseCollectionsCompile)" LinkBase="Shared\Sundew.Base.Collections" />
+    <SundewBaseCollectionsImmutableCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections.Immutable\ValueArray{TItem}.cs" />
+    <Compile Include="@(SundewBaseCollectionsImmutableCompile)" LinkBase="Shared\Sundew.Base.Collections.Immutable" />
     <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.AppendItems.cs" />
     <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.cs" />
     <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\FromEnd.cs" />
@@ -43,7 +43,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
-		<PackageReference Include="PolySharp" Version="1.14.0">
+		<PackageReference Include="PolySharp" Version="1.14.1">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

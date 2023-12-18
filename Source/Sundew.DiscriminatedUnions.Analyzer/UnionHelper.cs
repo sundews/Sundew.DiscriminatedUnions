@@ -26,7 +26,7 @@ public static class UnionHelper
     /// <returns>All case types within the discriminated unions.</returns>
     public static IEnumerable<ISymbol> GetKnownCases(ITypeSymbol unionType)
     {
-        return PrivateGetKnownCaseTypes(unionType)
+        return PrivateGetKnownCaseTypes(unionType, true)
             .Concat(GetEnumMembers(unionType))
             .Distinct(SymbolEqualityComparer.Default);
     }
@@ -38,7 +38,17 @@ public static class UnionHelper
     /// <returns>All case types within the discriminated unions.</returns>
     public static IEnumerable<INamedTypeSymbol> GetKnownCaseTypes(ITypeSymbol unionType)
     {
-        return PrivateGetKnownCaseTypes(unionType).Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+        return PrivateGetKnownCaseTypes(unionType, true).Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+    }
+
+    /// <summary>
+    /// Gets all case types.
+    /// </summary>
+    /// <param name="unionType">Type of the union.</param>
+    /// <returns>All case types within the discriminated unions.</returns>
+    public static IEnumerable<INamedTypeSymbol> GetKnownExternalCaseTypes(ITypeSymbol unionType)
+    {
+        return PrivateGetKnownCaseTypes(unionType, false).Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default);
     }
 
     /// <summary>
@@ -196,13 +206,13 @@ public static class UnionHelper
                semanticModel.Compilation.Options.NullableContextOptions != NullableContextOptions.Disable;
     }
 
-    private static IEnumerable<INamedTypeSymbol> PrivateGetKnownCaseTypes(ITypeSymbol unionType)
+    private static IEnumerable<INamedTypeSymbol> PrivateGetKnownCaseTypes(ITypeSymbol unionType, bool includeTypeMembers)
     {
         return GetFactoryMethodSymbols(unionType)
             .Select(x => TryGetCaseType(x.Attributes))
             .Where(x => x != null).Select(x => x!)
             .Concat(
-                unionType.GetTypeMembers()
+                includeTypeMembers ? unionType.GetTypeMembers()
                     .Where(x =>
                     {
                         var baseType = x.BaseType;
@@ -217,7 +227,7 @@ public static class UnionHelper
                         }
 
                         return false;
-                    }))
+                    }) : ImmutableArray<INamedTypeSymbol>.Empty)
             .Select(x => x.IsGenericType ? x.OriginalDefinition : x);
     }
 

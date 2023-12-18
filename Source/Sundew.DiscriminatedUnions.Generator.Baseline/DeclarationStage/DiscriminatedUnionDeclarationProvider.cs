@@ -14,7 +14,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Sundew.Base.Primitives;
+using Sundew.Base;
 using Sundew.DiscriminatedUnions.Generator;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Sundew.DiscriminatedUnions.Shared;

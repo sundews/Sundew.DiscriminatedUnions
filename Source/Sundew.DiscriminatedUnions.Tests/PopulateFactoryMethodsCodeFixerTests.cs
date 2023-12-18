@@ -653,4 +653,51 @@ public sealed record DoubleInput(double Value) : Input<double>;
 
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
     }
+
+    [TestMethod]
+    public async Task
+        Given_DiscriminatedUnionWithNestedCases_Then_FactoryMethodsAreImplemented()
+    {
+        var test = $@"{TestData.Usings}
+
+namespace Unions;
+
+[DiscriminatedUnion]
+public abstract record Input
+{{
+    public sealed record IntInput(int Value) : Input;
+
+    public sealed record DoubleInput(double Value) : Input;
+}}
+";
+
+        var fixtest = $@"{TestData.Usings}
+
+namespace Unions;
+
+[DiscriminatedUnion]
+public abstract record Input
+{{
+    public sealed record IntInput(int Value) : Input;
+
+    public sealed record DoubleInput(double Value) : Input;
+
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(IntInput))]
+    public static Input _IntInput(int value) => new IntInput(value);
+
+    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(DoubleInput))]
+    public static Input _DoubleInput(double value) => new DoubleInput(value);
+}}
+";
+
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+                .WithSeverity(DiagnosticSeverity.Info)
+                .WithArguments("Unions.Input")
+                .WithSpan(14, 24, 14, 29),
+        };
+
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
+    }
 }

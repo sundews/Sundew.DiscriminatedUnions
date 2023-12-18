@@ -127,7 +127,7 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
         Compilation compilation)
     {
         var allCaseTypes = GetDerivedTypes(compilation, unionType).Select(x => (CaseType: x, ReturnType: GetReturnType(x, unionType)));
-        var knownCaseTypes = UnionHelper.GetKnownCaseTypes(unionType).ToList();
+        var knownCaseTypes = UnionHelper.GetKnownExternalCaseTypes(unionType).ToList();
 
         return allCaseTypes.Where(x =>
         {
@@ -173,6 +173,7 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
 
             tokenList = tokenList.Add(SyntaxFactory.Token(SyntaxKind.StaticKeyword));
             var attributeCaseType = caseType.IsGenericType ? caseType.ConstructUnboundGenericType() : caseType;
+            const string underscore = "_";
             var syntaxNode = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.List(
                         SyntaxFactory.SingletonSeparatedList(
@@ -187,7 +188,7 @@ internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
                 tokenList,
                 SyntaxFactory.ParseTypeName(returnType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)),
                 null,
-                SyntaxFactory.Identifier(name),
+                SyntaxFactory.Identifier(SymbolEqualityComparer.Default.Equals(unionType, caseType.ContainingType) ? underscore + name : name),
                 null,
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SeparatedList<ParameterSyntax>()
