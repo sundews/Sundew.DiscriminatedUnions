@@ -10,8 +10,8 @@ namespace Sundew.DiscriminatedUnions.Generator.IntegrationTests;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
+using Sundew.Base.IO;
 using Sundew.Testing.CodeAnalysis;
-using Sundew.Testing.IO;
 using Xunit;
 
 [Trait("Category", "MainBranchBuilds")]
@@ -20,9 +20,9 @@ public class BaselineValidationFixture
     [Fact]
     public void VerifyWorkingCopyAndBaselineProjectsAreTheSame()
     {
-        var workingCopyProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator"), new Paths(), new Paths("bin", "obj"));
+        var workingCopyProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator")!, null, new Paths("bin", "obj"));
 
-        var baselineProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator.Baseline"), new Paths(), new Paths("bin", "obj"), null);
+        var baselineProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator.Baseline")!, null, new Paths("bin", "obj"), null);
 
         var workingCopyFiles = workingCopyProject.GetFiles().ToList();
         var baselineFiles = baselineProject.GetFiles().ToList();

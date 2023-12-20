@@ -8,8 +8,8 @@
 namespace Sundew.DiscriminatedUnions.Generator.IntegrationTests;
 
 using Microsoft.CodeAnalysis;
+using Sundew.Base.IO;
 using Sundew.Testing.CodeAnalysis;
-using Sundew.Testing.IO;
 
 public static class TestProjects
 {
@@ -17,7 +17,7 @@ public static class TestProjects
 
     private static ProjectData GetSundewDiscriminatedUnionsTester()
     {
-        var project = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Tester"), new Paths(Paths.FindPathUpwards("Sundew.DiscriminatedUnions")), new Paths("bin", "obj"));
+        var project = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Tester")!, new Paths(Paths.FindPathUpwards("Sundew.DiscriminatedUnions")!), new Paths("bin", "obj"));
         var compilation = project.Compile();
         return new ProjectData(project, compilation);
     }
