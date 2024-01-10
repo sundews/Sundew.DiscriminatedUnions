@@ -12,6 +12,9 @@ public static class TestData
     public const string UnionsResult = "Unions.Result";
     public const string UnionsState = "Unions.State";
     public const string UnionsOptionInt = "Unions.Option<int>";
+    public const string UnionsOptionString = "Unions.Option<string>";
+    public const string UnionsOptionT = "Unions.Option<T>";
+    public const string ListCardinalityString = "Unions.ListCardinality<string>";
 
     public const string Usings = @"
 using System;
@@ -98,5 +101,46 @@ public enum State
     On,
 
     Off
+}";
+
+    public const string ValidGenericListCardinalityUnion = @"
+[Sundew.DiscriminatedUnions.DiscriminatedUnion]
+public abstract partial class ListCardinality<TItem>
+{
+    [Sundew.DiscriminatedUnions.CaseType(typeof(Empty<>))]
+    public static ListCardinality<TItem> Empty { get; }
+        = new Empty<TItem>();
+
+    [Sundew.DiscriminatedUnions.CaseType(typeof(Multiple<>))]
+    public static ListCardinality<TItem> Multiple(global::System.Collections.Generic.IEnumerable<TItem> items)
+        => new Multiple<TItem>(items);
+
+    [Sundew.DiscriminatedUnions.CaseType(typeof(Single<>))]
+    public static ListCardinality<TItem> Single(TItem item)
+        => new Single<TItem>(item);
+}
+
+public sealed class Empty<TItem> : ListCardinality<TItem>
+{
+}
+
+public sealed class Single<TItem> : ListCardinality<TItem>
+{
+    internal Single(TItem item)
+    {
+        this.Item = item;
+    }
+
+    public TItem Item { get; }
+}
+
+public sealed class Multiple<TItem> : ListCardinality<TItem>
+{
+    public Multiple(IEnumerable<TItem> items)
+    {
+        this.Items = items;
+    }
+
+    public IEnumerable<TItem> Items { get; }
 }";
 }

@@ -46,9 +46,9 @@ internal class UnionSwitchExpressionAnalyzer
                 unionType));
         }
 
-        var caseTypes = UnionHelper.GetKnownCases(nonNullableUnionType);
+        var caseTypes = UnionHelper.GetKnownCases(nonNullableUnionType).ToList();
         DiagnosticReporterHelper.ReportDiagnostics(
-            caseTypes.ToList(),
+            caseTypes,
             SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).Where(x => x.HandlesCase).Select(x => x.Symbol),
             nullCase,
             switchNullability,

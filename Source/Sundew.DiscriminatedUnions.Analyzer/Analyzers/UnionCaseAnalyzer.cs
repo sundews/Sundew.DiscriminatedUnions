@@ -30,7 +30,7 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
                     {
                         var hasFactoryMethod = UnionHelper.GetFactoryMethodSymbols(baseType)
                             .Any(x =>
-                                (x.Name == caseNamedTypeSymbol.Name || SymbolEqualityComparer.Default.Equals(UnionHelper.TryGetCaseType(x.Attributes), caseNamedTypeSymbol)));
+                                (x.Name == caseNamedTypeSymbol.Name || SymbolEqualityComparer.Default.Equals(UnionHelper.TryGetCaseType(baseType, x.Attributes), caseNamedTypeSymbol)));
                         if (!hasFactoryMethod)
                         {
                             var propertyBuilder = ImmutableDictionary.CreateBuilder<string, string?>();

@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-using Sundew.DiscriminatedUnions.Shared;
 
 /// <summary>
 /// Helpers for analyzing discriminated unions.

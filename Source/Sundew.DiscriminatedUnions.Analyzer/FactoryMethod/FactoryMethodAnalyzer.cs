@@ -30,21 +30,9 @@ internal class FactoryMethodAnalyzer
                     UnionHelper.GetInstantiatedCaseTypeSymbol(factoryMethod, symbolAnalysisContext.Compilation);
                 if (caseTypeAttribute != null)
                 {
-                    var caseTypeSymbol =
-                        (INamedTypeSymbol?)caseTypeAttribute.ConstructorArguments.FirstOrDefault().Value ??
-                        (INamedTypeSymbol?)caseTypeAttribute.NamedArguments.FirstOrDefault().Value.Value;
+                    var caseTypeSymbol = UnionHelper.GetEquatableCaseTypeForUnionType(caseTypeAttribute, createdCaseTypeSymbol);
                     if (caseTypeAttribute.ApplicationSyntaxReference != null)
                     {
-                        if (caseTypeSymbol is { IsGenericType: true })
-                        {
-                            caseTypeSymbol = caseTypeSymbol.OriginalDefinition;
-                        }
-
-                        if (createdCaseTypeSymbol is { IsGenericType: true })
-                        {
-                            createdCaseTypeSymbol = createdCaseTypeSymbol.OriginalDefinition;
-                        }
-
                         if (!SymbolEqualityComparer.Default.Equals(caseTypeSymbol, createdCaseTypeSymbol))
                         {
                             var incorrectFactoryMethodSyntaxReference =

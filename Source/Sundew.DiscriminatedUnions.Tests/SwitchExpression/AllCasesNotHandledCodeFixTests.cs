@@ -269,4 +269,151 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }
+
+    [TestMethod]
+    public async Task Given_SwitchExpression_When_UnionIsClosedGenericAndNullableContextIsEnableAndMultipleCasesAreNotHandled_Then_RemainingCasesShouldBeHandled()
+    {
+        var test = $@"#nullable enable
+{TestData.Usings}
+
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Option<string> textOption)
+    {{
+        return textOption switch
+        {{
+        }};
+    }}
+}}
+{TestData.ValidGenericOptionUnion}
+";
+
+        var fixtest = $@"#nullable enable
+{TestData.Usings}
+
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(Option<string> textOption)
+    {{
+        return textOption switch
+        {{
+            Option<string>.Some some => throw new System.NotImplementedException(),
+            Option<string>.None none => throw new System.NotImplementedException(),
+        }};
+    }}
+}}
+{TestData.ValidGenericOptionUnion}
+";
+
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Some', 'None'", Resources.Cases, TestData.UnionsOptionString, Resources.Are)
+                .WithSpan(18, 16, 20, 10),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+    }
+
+    [TestMethod]
+    public async Task Given_SwitchExpression_When_UnionIsOpenGenericAndNullableContextIsEnableAndMultipleCasesAreNotHandled_Then_RemainingCasesShouldBeHandled()
+    {
+        var test = $@"#nullable enable
+{TestData.Usings}
+
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch<T>(Option<T> textOption)
+        where T : notnull
+    {{
+        return textOption switch
+        {{
+        }};
+    }}
+}}
+{TestData.ValidGenericOptionUnion}
+";
+
+        var fixtest = $@"#nullable enable
+{TestData.Usings}
+
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch<T>(Option<T> textOption)
+        where T : notnull
+    {{
+        return textOption switch
+        {{
+            Option<T>.Some some => throw new System.NotImplementedException(),
+            Option<T>.None none => throw new System.NotImplementedException(),
+        }};
+    }}
+}}
+{TestData.ValidGenericOptionUnion}
+";
+
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Some', 'None'", Resources.Cases, TestData.UnionsOptionT, Resources.Are)
+                .WithSpan(19, 16, 21, 10),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+    }
+
+    [TestMethod]
+    public async Task Given_SwitchExpression_When_UnionIsUnnestedClosedGenericAndNullableContextIsEnableAndMultipleCasesAreNotHandled_Then_RemainingCasesShouldBeHandled()
+    {
+        var test = $@"#nullable enable
+{TestData.Usings}
+
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(ListCardinality<string> listCardinality)
+    {{
+        return listCardinality switch
+        {{
+        }};
+    }}
+}}
+{TestData.ValidGenericListCardinalityUnion}
+";
+
+        var fixtest = $@"#nullable enable
+{TestData.Usings}
+
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(ListCardinality<string> listCardinality)
+    {{
+        return listCardinality switch
+        {{
+            Empty<string> empty => throw new System.NotImplementedException(),
+            Multiple<string> multiple => throw new System.NotImplementedException(),
+            Single<string> single => throw new System.NotImplementedException(),
+        }};
+    }}
+}}
+{TestData.ValidGenericListCardinalityUnion}
+";
+
+        var expected = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Empty', 'Multiple', 'Single'", Resources.Cases, TestData.ListCardinalityString, Resources.Are)
+                .WithSpan(18, 16, 20, 10),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+    }
 }

@@ -54,18 +54,16 @@ public static class UnionHelper
     /// <summary>
     /// Tries to get the case for the specified method symbol.
     /// </summary>
+    /// <param name="unionType">The union type.</param>
     /// <param name="attributes">The attributes.</param>
     /// <returns>The case type.</returns>
-    public static INamedTypeSymbol? TryGetCaseType(ImmutableArray<AttributeData> attributes)
+    public static INamedTypeSymbol? TryGetCaseType(ITypeSymbol unionType, ImmutableArray<AttributeData> attributes)
     {
         var caseTypeAttribute = attributes.FirstOrDefault(x =>
             x.AttributeClass?.ToDisplayString() == typeof(CaseTypeAttribute).FullName);
         if (caseTypeAttribute != null)
         {
-            var caseTypeSymbol = (INamedTypeSymbol?)caseTypeAttribute.ConstructorArguments.FirstOrDefault().Value ??
-                                 (INamedTypeSymbol?)caseTypeAttribute.NamedArguments.FirstOrDefault().Value.Value;
-
-            return caseTypeSymbol;
+            return GetEquatableCaseTypeForUnionType(caseTypeAttribute, unionType);
         }
 
         return null;
@@ -162,7 +160,7 @@ public static class UnionHelper
             }
         }
 
-        yield return (namedTypeSymbol?.IsGenericType ?? false ? namedTypeSymbol.OriginalDefinition : namedTypeSymbol, handlesCase);
+        yield return (namedTypeSymbol, handlesCase);
     }
 
     internal static IEnumerable<(ISymbol? Symbol, bool HandlesCase)> GetHandledFieldTypeSymbols(IFieldSymbol fieldSymbol)
@@ -192,11 +190,24 @@ public static class UnionHelper
             (_, _, _, true, false) => SwitchNullability.None,
             (true, false, _, _, true) => SwitchNullability.HasUnreachableNullCase,
             (_, _, true, _, false) => SwitchNullability.IsMissingNullCase,
-            (_, _, false, _,  true) => SwitchNullability.HasUnreachableNullCase,
+            (_, _, false, _, true) => SwitchNullability.HasUnreachableNullCase,
             (_, _, true, _, true) => SwitchNullability.None,
             (_, _, false, _, false) => SwitchNullability.None,
         };
         return switchNullability;
+    }
+
+    internal static INamedTypeSymbol? GetEquatableCaseTypeForUnionType(AttributeData caseTypeAttribute, ITypeSymbol? unionType)
+    {
+        var caseTypeSymbol = (INamedTypeSymbol?)caseTypeAttribute.ConstructorArguments.FirstOrDefault().Value ??
+                             (INamedTypeSymbol?)caseTypeAttribute.NamedArguments.FirstOrDefault().Value.Value;
+
+        if (caseTypeSymbol != null && caseTypeSymbol.IsGenericType && unionType is INamedTypeSymbol namedUnionType)
+        {
+            caseTypeSymbol = caseTypeSymbol.OriginalDefinition.Construct(namedUnionType.TypeArguments, namedUnionType.TypeArgumentNullableAnnotations);
+        }
+
+        return caseTypeSymbol;
     }
 
     private static bool IsNullableEnabled(SemanticModel semanticModel, IOperation operation)
@@ -209,26 +220,27 @@ public static class UnionHelper
     private static IEnumerable<INamedTypeSymbol> PrivateGetKnownCaseTypes(ITypeSymbol unionType, bool includeTypeMembers)
     {
         return GetFactoryMethodSymbols(unionType)
-            .Select(x => TryGetCaseType(x.Attributes))
+            .Select(x => TryGetCaseType(unionType, x.Attributes))
             .Where(x => x != null).Select(x => x!)
             .Concat(
-                includeTypeMembers ? unionType.GetTypeMembers()
-                    .Where(x =>
-                    {
-                        var baseType = x.BaseType;
-                        while (baseType != null)
+                includeTypeMembers
+                    ? unionType.GetTypeMembers()
+                        .Where(x =>
                         {
-                            if (SymbolEqualityComparer.Default.Equals(baseType, unionType))
+                            var baseType = x.BaseType;
+                            while (baseType != null)
                             {
-                                return true;
+                                if (SymbolEqualityComparer.Default.Equals(baseType, unionType))
+                                {
+                                    return true;
+                                }
+
+                                baseType = baseType.BaseType;
                             }
 
-                            baseType = baseType.BaseType;
-                        }
-
-                        return false;
-                    }) : ImmutableArray<INamedTypeSymbol>.Empty)
-            .Select(x => x.IsGenericType ? x.OriginalDefinition : x);
+                            return false;
+                        })
+                    : ImmutableArray<INamedTypeSymbol>.Empty);
     }
 
     private static IEnumerable<ISymbol> GetEnumMembers(ITypeSymbol unionType)
