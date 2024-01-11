@@ -50,14 +50,20 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
     {
         var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
         var generator = editor.Generator;
-        if (semanticModel.GetOperation(node) is ISwitchExpressionOperation switchExpressionOperation)
+        var operation = semanticModel.GetOperation(node);
+        if (operation is ISwitchExpressionOperation switchExpressionOperation)
         {
-            return Fix(document, root, node, semanticModel, switchExpressionOperation, generator);
+            return Fix(document, root, node, semanticModel, switchExpressionOperation, generator, null);
         }
 
-        if (semanticModel.GetOperation(node) is ISwitchOperation switchOperation)
+        if (operation is ISwitchOperation switchOperation)
         {
             return Fix(document, root, node, semanticModel, switchOperation, generator);
+        }
+
+        if (operation is IExpressionStatementOperation expressionStatementOperation && expressionStatementOperation.Operation is ISwitchExpressionOperation switchExpressionOperation2)
+        {
+            return Fix(document, root, node, semanticModel, switchExpressionOperation2, generator, expressionStatementOperation);
         }
 
         return document;
@@ -69,7 +75,8 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         SyntaxNode node,
         SemanticModel semanticModel,
         ISwitchExpressionOperation switchExpressionOperation,
-        SyntaxGenerator generator)
+        SyntaxGenerator generator,
+        IExpressionStatementOperation? expressionStatementOperation)
     {
         var switchType = switchExpressionOperation.Value.Type;
         if (!switchType.IsDiscriminatedUnion())
@@ -124,7 +131,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
                 armsWithSeparator.Add(SyntaxFactory.Token(SyntaxKind.CommaToken)));
         }
 
-        return document.WithSyntaxRoot(root.ReplaceNode(node, switchExpressionSyntax.WithArms(arms)));
+        return document.WithSyntaxRoot(root.ReplaceNode(expressionStatementOperation != null ? expressionStatementOperation.Operation.Syntax : node, switchExpressionSyntax.WithArms(arms)));
     }
 
     private static Document Fix(

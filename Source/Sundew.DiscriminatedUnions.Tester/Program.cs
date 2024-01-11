@@ -25,7 +25,7 @@ public static class Program
 
         var expression = new AdditionExpression(new ValueExpression(5),
             new SubtractionExpression(new ValueExpression(3), new ValueExpression(1)));
-        
+
         static int Evaluate(IExpression expression)
         {
             return expression switch

@@ -7,7 +7,10 @@
 
 namespace Sundew.DiscriminatedUnions.Tests.SwitchExpression;
 
+using System;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using Sundew.DiscriminatedUnions.Tests.Verifiers;
@@ -415,5 +418,93 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(18, 16, 20, 10),
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+    }
+
+    [TestMethod]
+    public async Task Given_SwitchExpression_When_UnionIsUnnestedClosedGenericAndNullableContextIsEnableAndMultipleCasesAreNotHandledAndReturnKeywordAndSemiColonIsMissing_Then_RemainingCasesShouldBeHandled()
+    {
+        var test = $@"#nullable enable
+{TestData.Usings}
+
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(ListCardinality<string> listCardinality)
+    {{
+        listCardinality switch
+        {{
+        }}
+    }}
+}}
+{TestData.ValidGenericListCardinalityUnion}
+";
+
+        var fixtest = $@"#nullable enable
+{TestData.Usings}
+
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public bool Switch(ListCardinality<string> listCardinality)
+    {{
+        listCardinality switch
+        {{
+            Empty<string> empty => throw new System.NotImplementedException(),
+            Multiple<string> multiple => throw new System.NotImplementedException(),
+            Single<string> single => throw new System.NotImplementedException(),
+        }}
+    }}
+}}
+{TestData.ValidGenericListCardinalityUnion}
+";
+
+        var notAllPathsReturnAValueDiagnostic = VerifyCS.Diagnostic(DiagnosticDescriptorHelper.Create(
+                "CS0161",
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                DiagnosticSeverity.Error,
+                true,
+                string.Empty))
+            .WithArguments("Unions.DiscriminatedUnionSymbolAnalyzerTests.Switch(Unions.ListCardinality<string>)")
+            .WithMessage("'DiscriminatedUnionSymbolAnalyzerTests.Switch(ListCardinality<string>)': not all code paths return a value")
+            .WithSpan(16, 17, 16, 23);
+        var noBestTypeWasFoundForTheSwitchExpressionDiagnostic = VerifyCS.Diagnostic(DiagnosticDescriptorHelper.Create(
+                "CS8506",
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                DiagnosticSeverity.Error,
+                true,
+                string.Empty))
+            .WithMessage("No best type was found for the switch expression.")
+            .WithSpan(18, 25, 18, 31);
+        var semiColonExpectedDiagnostic = VerifyCS.Diagnostic(DiagnosticDescriptorHelper.Create(
+                "CS1002",
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                DiagnosticSeverity.Error,
+                true,
+                string.Empty))
+            .WithMessage("; expected");
+        var expected = new[]
+        {
+            notAllPathsReturnAValueDiagnostic,
+            noBestTypeWasFoundForTheSwitchExpressionDiagnostic,
+            semiColonExpectedDiagnostic.WithSpan(20, 10, 20, 10),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Empty', 'Multiple', 'Single'", Resources.Cases, TestData.ListCardinalityString, Resources.Are)
+                .WithSpan(18, 9, 20, 10),
+        };
+        var expectedAfter = new DiagnosticResult[]
+        {
+            notAllPathsReturnAValueDiagnostic,
+            noBestTypeWasFoundForTheSwitchExpressionDiagnostic,
+            semiColonExpectedDiagnostic.WithSpan(23, 10, 23, 10),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 }
