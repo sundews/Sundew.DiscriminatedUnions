@@ -195,13 +195,10 @@ internal static class StringBuilderExtensions
         return stringBuilder;
     }
 
-    public static StringBuilder AppendTypeAttributes(this StringBuilder stringBuilder)
+    public static StringBuilder AppendTypeAttributes(this StringBuilder stringBuilder, bool appendDebuggerAttribute)
     {
-        stringBuilder.Append(SpaceIndentedBy4)
-            .Append('[')
-            .Append(DebuggerNonUserCode)
-            .Append(']')
-            .AppendLine()
+        stringBuilder
+            .If(appendDebuggerAttribute, builder => builder.AppendDebuggerCodeAttribute(4))
             .Append(SpaceIndentedBy4)
             .Append('[')
             .Append(GeneratedCodeAttribute)
@@ -210,6 +207,16 @@ internal static class StringBuilderExtensions
             .Append(ListSeparator)
             .Append('\"').Append(Assembly.GetExecutingAssembly().GetName().Version).Append('\"')
             .Append(')')
+            .Append(']')
+            .AppendLine();
+        return stringBuilder;
+    }
+
+    public static StringBuilder AppendDebuggerCodeAttribute(this StringBuilder stringBuilder, int indentation)
+    {
+        stringBuilder.Append(' ', indentation)
+            .Append('[')
+            .Append(DebuggerNonUserCode)
             .Append(']')
             .AppendLine();
         return stringBuilder;

@@ -91,6 +91,7 @@ internal static class DiscriminatedUnionOutputProvider
 
     private static string GetUnionSource(in DiscriminatedUnion discriminatedUnion, string discriminatedUnionNamespace)
     {
+        var isInterface = discriminatedUnion.UnderlyingType == UnderlyingType.Interface;
         var stringBuilder = new StringBuilder();
         stringBuilder
             .Append(NullableEnable)
@@ -103,7 +104,7 @@ internal static class DiscriminatedUnionOutputProvider
             .Append('{')
             .AppendLine()
             .AppendPragmaWarning(false, Sa1601)
-            .AppendTypeAttributes()
+            .AppendTypeAttributes(!isInterface)
             .Append(SpaceIndentedBy4)
             .AppendAccessibility(discriminatedUnion.Accessibility)
             .Append(' ')
@@ -133,6 +134,7 @@ internal static class DiscriminatedUnionOutputProvider
                 .Append(')')
                 .Append(']')
                 .AppendLine()
+                .If(isInterface, builder => builder.AppendDebuggerCodeAttribute(8))
                 .Append(SpaceIndentedBy8)
                 .Append(Public)
                 .Append(' ');
@@ -218,7 +220,7 @@ internal static class DiscriminatedUnionOutputProvider
             .Append('{')
             .AppendLine()
             .AppendDocumentation(SpaceIndentedBy4, $"Contains individual lists of the different cases of the discriminated union {discriminatedUnion.Type.Name}", segregationTypeName)
-            .AppendTypeAttributes()
+            .AppendTypeAttributes(true)
             .Append(SpaceIndentedBy4)
             .AppendAccessibility(discriminatedUnion.Accessibility)
             .Append(' ')
@@ -322,7 +324,7 @@ internal static class DiscriminatedUnionOutputProvider
             .Append('{')
             .AppendLine()
             .AppendDocumentation(SpaceIndentedBy4, SegregationExtensionMethodDescription, discriminatedUnion.Type.Name)
-            .AppendTypeAttributes()
+            .AppendTypeAttributes(true)
             .Append(SpaceIndentedBy4)
             .AppendAccessibility(discriminatedUnion.Accessibility)
             .Append(' ')
