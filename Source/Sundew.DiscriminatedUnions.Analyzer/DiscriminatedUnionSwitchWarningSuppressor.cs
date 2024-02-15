@@ -26,10 +26,17 @@ public class DiscriminatedUnionSwitchWarningSuppressor : DiagnosticSuppressor
             "CS8509",
             Resources.SuppressCS8509Justification);
 
+    private static readonly SuppressionDescriptor SuppressSwitchExpressionNotExhaustiveForEnumUnion =
+        new(
+            "SNE0002",
+            "CS8524",
+            Resources.SuppressCS8509Justification);
+
     /// <summary>
     /// Gets a set of descriptors for the suppressions that this suppressor is capable of producing.
     /// </summary>
-    public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions { get; } = ImmutableArray.Create(SuppressSwitchExpressionNotExhaustiveForUnion);
+    public override ImmutableArray<SuppressionDescriptor> SupportedSuppressions { get; }
+        = ImmutableArray.Create(SuppressSwitchExpressionNotExhaustiveForUnion, SuppressSwitchExpressionNotExhaustiveForEnumUnion);
 
     /// <summary>
     /// Suppress analyzer and/or compiler non-error diagnostics reported for the compilation.
@@ -45,7 +52,8 @@ public class DiscriminatedUnionSwitchWarningSuppressor : DiagnosticSuppressor
     {
         foreach (var diagnostic in context.ReportedDiagnostics)
         {
-            var node = diagnostic.Location.SourceTree?.GetRoot(context.CancellationToken).FindNode(diagnostic.Location.SourceSpan);
+            var node = diagnostic.Location.SourceTree?.GetRoot(context.CancellationToken)
+                .FindNode(diagnostic.Location.SourceSpan);
             if (node != null)
             {
                 var semanticModel = context.GetSemanticModel(node.SyntaxTree);
@@ -60,12 +68,25 @@ public class DiscriminatedUnionSwitchWarningSuppressor : DiagnosticSuppressor
 
     private static void SuppressIfDiscriminatedUnion(SuppressionAnalysisContext context, ITypeSymbol? switchType, Diagnostic diagnostic)
     {
-        if (switchType.IsDiscriminatedUnion())
+        if (switchType is { TypeKind: TypeKind.Enum })
         {
-            context.ReportSuppression(
-                Suppression.Create(
-                    SuppressSwitchExpressionNotExhaustiveForUnion,
-                    diagnostic));
+            if (switchType.IsDiscriminatedUnion())
+            {
+                context.ReportSuppression(
+                    Suppression.Create(
+                        SuppressSwitchExpressionNotExhaustiveForEnumUnion,
+                        diagnostic));
+            }
+        }
+        else
+        {
+            if (switchType.IsDiscriminatedUnion())
+            {
+                context.ReportSuppression(
+                    Suppression.Create(
+                        SuppressSwitchExpressionNotExhaustiveForUnion,
+                        diagnostic));
+            }
         }
     }
 }

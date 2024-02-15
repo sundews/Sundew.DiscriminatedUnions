@@ -9,10 +9,8 @@ namespace Sundew.DiscriminatedUnions.Generator.IntegrationTests;
 
 using FluentAssertions;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
-using VerifyXunit;
 using Xunit;
 
-[UsesVerify]
 public class DiscriminatedUnionCaseDeclarationEqualityFixture
 {
     [Fact]

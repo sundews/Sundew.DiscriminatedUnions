@@ -12,11 +12,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Sundew.Base.IO;
 using Sundew.Testing.CodeAnalysis;
-using VerifyTests;
 using VerifyXunit;
 using Xunit;
 
-[UsesVerify]
 public class DiscriminatedUnionGeneratorFixture
 {
     [Fact]
