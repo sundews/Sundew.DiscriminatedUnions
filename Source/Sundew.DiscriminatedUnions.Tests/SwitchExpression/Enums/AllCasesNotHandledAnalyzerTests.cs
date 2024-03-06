@@ -45,10 +45,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'On', 'Off'", Resources.Cases, TestData.UnionsState, Resources.Are)
-                .WithSpan(17, 16, 21, 14),
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsState)
-                .WithSpan(20, 17, 20, 27));
+                .WithSpan(17, 16, 21, 14));
     }
 
     [TestMethod]

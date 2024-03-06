@@ -38,7 +38,8 @@ internal class UnionSwitchExpressionAnalyzer
             nullCase != null);
 
         if (switchExpressionOperation.Arms
-                .SingleOrDefault(x => x.Pattern is IDiscardPatternOperation) is { } switchExpressionArmOperation)
+                .SingleOrDefault(x => x.Pattern is IDiscardPatternOperation) is { } switchExpressionArmOperation
+            && nonNullableUnionType.TypeKind != TypeKind.Enum)
         {
             operationAnalysisContext.ReportDiagnostic(Diagnostic.Create(
                 DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,

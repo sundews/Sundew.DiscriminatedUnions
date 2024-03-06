@@ -20,7 +20,7 @@ using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifie
 public class SwitchShouldNotHaveDefaultCaseAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_SwitchExpression_When_DefaultCaseIsHandled_Then_SwitchShouldNotHaveDefaultCaseIsReported()
+    public async Task Given_SwitchExpression_When_DefaultCaseIsHandled_Then_SwitchShouldNotReportAnyDiagnostics()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
@@ -43,10 +43,6 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 {TestData.ValidEnumUnion}
 ";
 
-        await VerifyCS.VerifyAnalyzerAsync(
-            test,
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsState)
-                .WithSpan(23, 17, 23, 27));
+        await VerifyCS.VerifyAnalyzerAsync(test);
     }
 }

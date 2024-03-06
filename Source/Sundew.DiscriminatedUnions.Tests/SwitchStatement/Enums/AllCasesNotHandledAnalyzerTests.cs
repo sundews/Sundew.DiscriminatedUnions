@@ -75,9 +75,6 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'None', 'Off'", Resources.Cases, TestData.UnionsState, Resources.Are)
-                .WithSpan(17, 9, 23, 10),
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsState)
-                .WithSpan(21, 13, 22, 23));
+                .WithSpan(17, 9, 23, 10));
     }
 }

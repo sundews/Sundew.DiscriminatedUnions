@@ -40,10 +40,13 @@ internal class UnionSwitchStatementAnalyzer
         {
             if (CanSwitchReachEnd(switchOperation))
             {
-                operationAnalysisContext.ReportDiagnostic(Diagnostic.Create(
-                    DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
-                    defaultSwitchCaseOperation.Syntax.GetLocation(),
-                    nonNullableUnionType));
+                if (nonNullableUnionType.TypeKind != TypeKind.Enum)
+                {
+                    operationAnalysisContext.ReportDiagnostic(Diagnostic.Create(
+                        DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule,
+                        defaultSwitchCaseOperation.Syntax.GetLocation(),
+                        nonNullableUnionType));
+                }
             }
             else
             {

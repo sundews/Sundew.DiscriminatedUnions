@@ -20,7 +20,7 @@ using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifie
 public class SwitchShouldNotHaveDefaultCaseAnalyzerTests
 {
     [TestMethod]
-    public async Task Given_SwitchStatement_When_DefaultCaseIsHandled_Then_SwitchShouldNotHaveDefaultCaseIsReported()
+    public async Task Given_SwitchStatement_When_DefaultCaseIsHandled_Then_SwitchShouldNotReportAnyDiagnostics()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
@@ -47,15 +47,11 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 {TestData.ValidEnumUnion}
 ";
 
-        await VerifyCS.VerifyAnalyzerAsync(
-            test,
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsState)
-                .WithSpan(26, 13, 27, 23));
+        await VerifyCS.VerifyAnalyzerAsync(test);
     }
 
     [TestMethod]
-    public async Task Given_SwitchStatement_When_ValueMayBeNullAndDefaultCaseIsHandled_Then_SwitchShouldNotHaveDefaultCaseIsReported()
+    public async Task Given_SwitchStatement_When_ValueMayBeNullAndDefaultCaseIsHandled_Then_SwitchNotAllCasesAreHandledIsReported()
     {
         var test = $@"{TestData.Usings}
 
@@ -83,9 +79,6 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
         await VerifyCS.VerifyAnalyzerAsync(
             test,
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsState)
-                .WithSpan(25, 13, 26, 23),
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'null'", Resources.Case, TestData.UnionsState + '?', Resources.Is)
                 .WithSpan(17, 9, 27, 10));
@@ -93,7 +86,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
 
     [TestMethod]
     public async Task
-        Given_SwitchStatement_When_DefaultCaseIsHandledAndNotAllCasesAreHandled_Then_AllCasesNotHandledAndSwitchShouldNotHaveDefaultCaseAreReported()
+        Given_SwitchStatement_When_DefaultCaseIsHandledAndNotAllCasesAreHandled_Then_AllCasesNotHandledIsReported()
     {
         var test = $@"{TestData.Usings}
 
@@ -119,9 +112,6 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             test,
             VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
                 .WithArguments("'On', 'Off'", Resources.Cases, TestData.UnionsState, Resources.Are)
-                .WithSpan(17, 9, 23, 10),
-            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchShouldNotHaveDefaultCaseRule)
-                .WithArguments(TestData.UnionsState)
-                .WithSpan(21, 13, 22, 23));
+                .WithSpan(17, 9, 23, 10));
     }
 }
