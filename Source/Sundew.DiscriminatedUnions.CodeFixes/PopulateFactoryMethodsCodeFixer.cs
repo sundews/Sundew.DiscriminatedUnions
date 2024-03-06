@@ -22,7 +22,7 @@ using Sundew.DiscriminatedUnions.Text;
 
 internal class PopulateFactoryMethodsCodeFixer : ICodeFixer
 {
-    public string DiagnosticId => PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsDiagnosticId;
+    public string DiagnosticId => PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsDiagnosticId;
 
     public CodeFixStatus GetCodeFixState(
         SyntaxNode syntaxNode,

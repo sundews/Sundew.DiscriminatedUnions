@@ -15,7 +15,6 @@ using Sundew.DiscriminatedUnions.Analyzer.Analyzers;
 using Sundew.DiscriminatedUnions.Analyzer.FactoryMethod;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchExpression;
 using Sundew.DiscriminatedUnions.Analyzer.SwitchStatement;
-using Sundew.DiscriminatedUnions.Shared;
 
 /// <summary>
 /// Discriminated Union analyzer that ensures all cases in switch statements and expression are handled and that the code defining the discriminated union is a closed inheritance hierarchy.

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PopulateUnionFactoryMethodsMarkerAnalyzer.cs" company="Sundews">
+// <copyright file="PopulateFactoryMethodsMarkerAnalyzer.cs" company="Sundews">
 // Copyright (c) Sundews. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,7 +8,10 @@
 namespace Sundew.DiscriminatedUnions.Analyzer;
 
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Sundew.DiscriminatedUnions.Shared;
 
@@ -17,12 +20,12 @@ using Sundew.DiscriminatedUnions.Shared;
 /// </summary>
 /// <seealso cref="Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer" />
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class PopulateUnionFactoryMethodsMarkerAnalyzer : DiagnosticAnalyzer
+public class PopulateFactoryMethodsMarkerAnalyzer : DiagnosticAnalyzer
 {
     /// <summary>
     /// Diagnostic id  for populating factory methods in a union.
     /// </summary>
-    public const string PopulateFactoryMethodsDiagnosticId = "PDU0001";
+    public const string PopulateFactoryMethodsDiagnosticId = "PDU0002";
 
     /// <summary>
     /// The switch should throw in default case rule.
@@ -33,7 +36,7 @@ public class PopulateUnionFactoryMethodsMarkerAnalyzer : DiagnosticAnalyzer
             nameof(Resources.PopulateFactoryMethodsTitle),
             nameof(Resources.PopulateFactoryMethodsMessageFormat),
             Category,
-            DiagnosticSeverity.Error,
+            DiagnosticSeverity.Info,
             true,
             nameof(Resources.PopulateFactoryMethodsDescription));
 
@@ -62,7 +65,7 @@ public class PopulateUnionFactoryMethodsMarkerAnalyzer : DiagnosticAnalyzer
                 }
 
                 if (namedTypeSymbol.IsDiscriminatedUnion() &&
-                    (namedTypeSymbol.IsAbstract || namedTypeSymbol.TypeKind == TypeKind.Interface))
+                    (namedTypeSymbol.IsAbstract || namedTypeSymbol.TypeKind == TypeKind.Interface) && !IsPartial(namedTypeSymbol))
                 {
                     foreach (var location in namedTypeSymbol.Locations)
                     {
@@ -78,5 +81,16 @@ public class PopulateUnionFactoryMethodsMarkerAnalyzer : DiagnosticAnalyzer
                 }
             },
             SymbolKind.NamedType);
+    }
+
+    private static bool IsPartial(INamedTypeSymbol namedTypeSymbol)
+    {
+        var syntax = namedTypeSymbol.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax();
+        if (syntax is TypeDeclarationSyntax typeDeclarationSyntax)
+        {
+            return typeDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword));
+        }
+
+        return false;
     }
 }

@@ -205,6 +205,33 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Makes the union partial for the code generator can create factory methods..
+        /// </summary>
+        public static string MakeUnionPartialDescription {
+            get {
+                return ResourceManager.GetString("MakeUnionPartialDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; should be partial to enable the code generator..
+        /// </summary>
+        public static string MakeUnionPartialMessageFormat {
+            get {
+                return ResourceManager.GetString("MakeUnionPartialMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make union partial..
+        /// </summary>
+        public static string MakeUnionPartialTitle {
+            get {
+                return ResourceManager.GetString("MakeUnionPartialTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only unions can extend other unions, so that all cases are known at compile time...
         /// </summary>
         public static string OnlyUnionsCanExtendOtherUnionsDescription {

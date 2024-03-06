@@ -20,7 +20,7 @@ Either specify the partial keyword to the union for a source generator to implem
 ### Defining a union
 ```csharp
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
-public abstract record Result
+public abstract partial record Result
 {
     public sealed record Success : Result;
 
@@ -118,12 +118,11 @@ In addition, the DiscriminatedUnion attribute can specify a flags enum (Generato
 | SDU0008       | Cases should be sealed                                                 |   yes     |
 | SDU0009       | Unnested cases should have factory method                              |   PDU0001 |
 | SDU0010       | Factory method should have correct CaseTypeAttribute                   |   yes     |
-| PDU0001       | Populate union factory methods                                         |   yes     |
+| PDU0001       | Make union partial for code generator                                  |   yes     |
+| PDU0002       | Populate union factory methods                                         |   yes     |
 | SDU9999       | Switch should throw in default case                                    |   no      |
 | GDU0001       | Discriminated union declaration could not be found                     |   no      |
 
 ## Issues/Todos
 * Switch appears with red squiggly lines in VS: https://github.com/dotnet/roslyn/issues/57041
 * Nullability is falsely evaluated when the switch hints null is possible: https://github.com/dotnet/roslyn/issues/57042
-* SDU0009 gets reported in VS, but no code fix is offered. VS issue here: https://github.com/dotnet/roslyn/issues/57621
-  * Workaround: A PDU0001 is always reported on unions offering to generate factory methods, as it is not technically possible to implement a code fix for SDU0009 (See issue).

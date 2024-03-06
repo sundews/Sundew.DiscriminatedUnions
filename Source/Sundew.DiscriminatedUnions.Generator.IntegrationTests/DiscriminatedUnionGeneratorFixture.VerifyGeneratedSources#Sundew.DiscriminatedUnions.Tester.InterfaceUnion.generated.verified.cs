@@ -4,7 +4,7 @@
 namespace Sundew.DiscriminatedUnions.Tester
 {
 #pragma warning disable SA1601
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.2.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "5.3.0.0")]
     public partial interface InterfaceUnion
 #pragma warning restore SA1601
     {

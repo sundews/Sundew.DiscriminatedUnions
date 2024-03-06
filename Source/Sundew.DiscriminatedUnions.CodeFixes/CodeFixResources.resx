@@ -145,6 +145,9 @@
     <value>Make '{0}' internal</value>
   </data>
   <data name="InsertCorrectCaseTypeAttribute" xml:space="preserve">
-    <value>Insert the correct CaseTypeAttribute.</value>
+    <value>Insert the correct CaseTypeAttribute</value>
+  </data>
+  <data name="MakePartial" xml:space="preserve">
+    <value>Make union '{0}' partial</value>
   </data>
 </root>

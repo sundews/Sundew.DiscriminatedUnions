@@ -240,4 +240,13 @@
   <data name="FactoryMethodShouldHaveMatchingCaseTypeAttributeTitle" xml:space="preserve">
     <value>Factory method must have CaseTypeAttribute.</value>
   </data>
+  <data name="MakeUnionPartialDescription" xml:space="preserve">
+    <value>Makes the union partial for the code generator can create factory methods.</value>
+  </data>
+  <data name="MakeUnionPartialMessageFormat" xml:space="preserve">
+    <value>'{0}' should be partial to enable the code generator.</value>
+  </data>
+  <data name="MakeUnionPartialTitle" xml:space="preserve">
+    <value>Make union partial.</value>
+  </data>
 </root>

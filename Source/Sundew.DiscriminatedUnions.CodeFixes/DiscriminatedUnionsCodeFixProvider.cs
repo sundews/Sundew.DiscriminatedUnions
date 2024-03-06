@@ -38,6 +38,7 @@ public class DiscriminatedUnionsCodeFixProvider : CodeFixProvider
             new SwitchHasUnreachableNullCaseCodeFixer(),
             new UnionsMustBeAbstractCodeFixer(),
             new CasesShouldBeSealedCodeFixer(),
+            new MakePartialCodeFixer(),
             new PopulateFactoryMethodsCodeFixer(),
             new CaseTypeAttributeCodeFixer(),
         }.ToDictionary(x => x.DiagnosticId);

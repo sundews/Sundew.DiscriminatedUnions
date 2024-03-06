@@ -11,9 +11,8 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
-using Sundew.DiscriminatedUnions.Tests.Verifiers;
 using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifier<
-    Sundew.DiscriminatedUnions.Analyzer.PopulateUnionFactoryMethodsMarkerAnalyzer,
+    Sundew.DiscriminatedUnions.Analyzer.PopulateFactoryMethodsMarkerAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
@@ -68,7 +67,7 @@ public sealed record ValueExpression(int Value) : Expression;
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(14, 24, 14, 34),
@@ -124,7 +123,7 @@ public sealed record ValueExpression(int Value) : Expression;
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(14, 24, 14, 34),
@@ -244,30 +243,30 @@ public sealed record ValueExpression(int Value) : Expression;
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.IAssociativeExpression")
                 .WithSpan(14, 18, 14, 40),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.ArithmeticExpression")
                 .WithSpan(24, 24, 24, 44),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(41, 24, 41, 34),
         };
         var expectedAfter = new[]
         {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.IAssociativeExpression")
                 .WithSpan(14, 18, 14, 40),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.ArithmeticExpression")
                 .WithSpan(24, 24, 24, 44),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(41, 24, 41, 34),
@@ -390,30 +389,30 @@ public sealed record ValueExpression(int Value) : Expression;
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.IAssociativeExpression")
                 .WithSpan(14, 18, 14, 40),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.ArithmeticExpression")
                 .WithSpan(21, 24, 21, 44),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(38, 24, 38, 34),
         };
         var expectedAfter = new[]
         {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.IAssociativeExpression")
                 .WithSpan(14, 18, 14, 40),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.ArithmeticExpression")
                 .WithSpan(24, 24, 24, 44),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(41, 24, 41, 34),
@@ -533,15 +532,15 @@ public sealed record ValueExpression(int Value) : Expression;
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.IAssociativeExpression")
                 .WithSpan(14, 18, 14, 40),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Expression")
                 .WithSpan(24, 24, 24, 34),
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.ArithmeticExpression")
                 .WithSpan(40, 24, 40, 44),
@@ -597,60 +596,11 @@ public sealed record Empty<TItem>() : SingleOrMultiple<TItem>;
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.SingleOrMultiple<TItem>")
                 .WithSpan(14, 24, 14, 40),
         };
-        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
-    }
-
-    [TestMethod]
-    public async Task
-        Given_DiscriminatedUnionWithUnnestedCases_When_UnionIsGenericAndCaseSpecifyTypeArgument_Then_FactoryMethodsAreImplementedWithTypeArgument()
-    {
-        var test = $@"{TestData.Usings}
-
-namespace Unions;
-
-[DiscriminatedUnion]
-public abstract partial record Input<TValue>()
-{{
-}}
-
-public sealed record IntInput(int Value) : Input<int>;
-
-public sealed record DoubleInput(double Value) : Input<double>;
-";
-
-        var fixtest = $@"{TestData.Usings}
-
-namespace Unions;
-
-[DiscriminatedUnion]
-public abstract partial record Input<TValue>()
-{{
-
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(IntInput))]
-    public static Input<int> IntInput(int value) => new IntInput(value);
-
-    [Sundew.DiscriminatedUnions.CaseTypeAttribute(typeof(DoubleInput))]
-    public static Input<double> DoubleInput(double value) => new DoubleInput(value);
-}}
-
-public sealed record IntInput(int Value) : Input<int>;
-
-public sealed record DoubleInput(double Value) : Input<double>;
-";
-
-        var expected = new[]
-        {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
-                .WithSeverity(DiagnosticSeverity.Info)
-                .WithArguments("Unions.Input<TValue>")
-                .WithSpan(14, 32, 14, 37),
-        };
-
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
     }
 
@@ -692,7 +642,7 @@ public abstract record Input
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(PopulateUnionFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
+            VerifyCS.Diagnostic(PopulateFactoryMethodsMarkerAnalyzer.PopulateFactoryMethodsRule)
                 .WithSeverity(DiagnosticSeverity.Info)
                 .WithArguments("Unions.Input")
                 .WithSpan(14, 24, 14, 29),

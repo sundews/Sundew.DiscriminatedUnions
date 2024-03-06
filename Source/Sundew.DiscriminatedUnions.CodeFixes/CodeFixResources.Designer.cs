@@ -97,7 +97,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insert the correct CaseTypeAttribute..
+        ///   Looks up a localized string similar to Insert the correct CaseTypeAttribute.
         /// </summary>
         internal static string InsertCorrectCaseTypeAttribute {
             get {
@@ -120,6 +120,15 @@ namespace Sundew.DiscriminatedUnions.CodeFixes {
         internal static string MakeInternal {
             get {
                 return ResourceManager.GetString("MakeInternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make union &apos;{0}&apos; partial.
+        /// </summary>
+        internal static string MakePartial {
+            get {
+                return ResourceManager.GetString("MakePartial", resourceCulture);
             }
         }
         
