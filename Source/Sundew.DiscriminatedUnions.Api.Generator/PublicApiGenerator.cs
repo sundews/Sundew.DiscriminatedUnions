@@ -1,11 +1,10 @@
-﻿using Sundew.Generator.Code;
-using Sundew.Generator.Core;
-using Sundew.Generator;
-
-namespace Sundew.Quantities.Generator;
+﻿namespace Sundew.Quantities.Generator;
 
 using System.Collections.Generic;
 using System.IO;
+using Sundew.Generator;
+using Sundew.Generator.Code;
+using Sundew.Generator.Core;
 
 public class PublicApiGenerator : IGenerator<ISetup, IGeneratorSetup, IProject, string, IRun, ITextOutput>
 {

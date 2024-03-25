@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Sundew.DiscriminatedUnions.Tester;
+﻿namespace Sundew.DiscriminatedUnions.Tester;
 
 using System.Collections;
+using System.Collections.Generic;
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract partial class ListCardinality<TItem>

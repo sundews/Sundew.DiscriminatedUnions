@@ -35,7 +35,7 @@ public static class Program
                 ValueExpression valueExpression => valueExpression.Value,
             };
         }
-            
+
         Console.WriteLine(Evaluate(expression));
         /*
         Console.WriteLine("Hello World!");

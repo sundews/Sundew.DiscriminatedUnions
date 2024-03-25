@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.3.1" />
-    <PackageReference Include="Sundew.Testing.CodeAnalysis" Version="0.3.2" />
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="Microsoft.CodeAnalysis" />
+    <PackageReference Include="Sundew.Testing.CodeAnalysis" />
   </ItemGroup>
 
   <ItemGroup>

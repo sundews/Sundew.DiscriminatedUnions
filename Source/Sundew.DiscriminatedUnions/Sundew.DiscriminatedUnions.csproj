@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Api.Generator\Sundew.DiscriminatedUnions.Api.Generator.csproj" SkipGetTargetFrameworkProperties="true" ReferenceOutputAssembly="false" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">
+    <PackageReference Include="StyleCop.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
