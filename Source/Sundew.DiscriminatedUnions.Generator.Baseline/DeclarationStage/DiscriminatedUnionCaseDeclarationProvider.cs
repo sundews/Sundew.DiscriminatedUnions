@@ -7,14 +7,12 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Sundew.DiscriminatedUnions.Generator;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Sundew.DiscriminatedUnions.Generator.OutputStage;
 using Sundew.DiscriminatedUnions.Shared;
@@ -36,15 +34,15 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         {
             var owners = FindOwners(caseNamedTypeSymbol).Select(x => (Type: x.GetSourceType(), ReturnType: x.GetFullType(true), HasConflictingName: HasConflictingName(x, caseNamedTypeSymbol))).ToImmutableArray();
             var parameters = TryGetParameters(caseNamedTypeSymbol);
-            if (parameters == null)
+            if (parameters == default)
             {
-                return null;
+                return default;
             }
 
             return new DiscriminatedUnionCaseDeclaration(caseNamedTypeSymbol.GetFullType(), owners, parameters.ToImmutableArray());
         }
 
-        return null;
+        return default;
     }
 
     private static bool HasConflictingName(INamedTypeSymbol discriminatedUnionNameTypeSymbol, INamedTypeSymbol caseNamedTypeSymbol)
@@ -55,19 +53,21 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
 
     private static IEnumerable<Parameter>? TryGetParameters(INamedTypeSymbol namedTypeSymbol)
     {
-        var selectedConstructor = namedTypeSymbol.Constructors.SkipWhile(x =>
+        var selectedConstructor = namedTypeSymbol.Constructors
+            .OrderByDescending(x => x.Parameters.Length)
+            .SkipWhile(x =>
                 x.ContainingType.IsRecord &&
                 SymbolEqualityComparer.Default.Equals(x.Parameters.FirstOrDefault()?.Type, x.ContainingType))
             .FirstOrDefault();
-        if (selectedConstructor == null)
+        if (selectedConstructor == default)
         {
-            return null;
+            return default;
         }
 
         return selectedConstructor.Parameters.Select(x =>
         {
             var typeName = x.Type.ToDisplayString(CodeAnalysisHelper.FullyQualifiedParameterTypeFormat);
-            var defaultValue = x.HasExplicitDefaultValue ? x.ExplicitDefaultValue?.ToString() ?? GeneratorConstants.Null : null;
+            var defaultValue = x.HasExplicitDefaultValue ? x.ExplicitDefaultValue?.ToString() ?? GeneratorConstants.Null : default;
             return new Parameter(typeName, x.Name.Uncapitalize().AvoidKeywordCollision(), defaultValue);
         });
     }
@@ -75,7 +75,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
     private static IEnumerable<INamedTypeSymbol> FindOwners(ITypeSymbol typeSymbol)
     {
         var baseType = typeSymbol.BaseType;
-        while (baseType != null)
+        while (baseType != default)
         {
             if (baseType.IsDiscriminatedUnion())
             {
@@ -95,7 +95,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
     {
         static bool HasBaseListAndIsNotAbstract(TypeDeclarationSyntax typeDeclarationSyntax)
         {
-            return typeDeclarationSyntax.BaseList != null && typeDeclarationSyntax.Modifiers.Any(SyntaxKind.SealedKeyword);
+            return typeDeclarationSyntax.BaseList != default && typeDeclarationSyntax.Modifiers.Any(SyntaxKind.SealedKeyword);
         }
 
         return syntaxNode switch

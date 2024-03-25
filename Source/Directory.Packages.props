@@ -1,34 +1,34 @@
 <Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageVersion Include="BenchmarkDotNet" Version="0.13.12" />
-        <PackageVersion Include="FluentAssertions" Version="6.12.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4"/>
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest" Version="1.1.1" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest" Version="1.1.1" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.MSTest" Version="1.1.1" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.1" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.MSTest" Version="1.1.1" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.MSTest" Version="1.1.1" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.MSTest" Version="1.1.1" />
-        <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.3.1" />
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-        <PackageVersion Include="MSTest.TestAdapter" Version="3.2.2" />
-        <PackageVersion Include="MSTest.TestFramework" Version="3.2.2" />
-        <PackageVersion Include="NUnit" Version="4.1.0" />
-        <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
-        <PackageVersion Include="PolySharp" Version="1.14.1"/>
-        <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435"/>
-        <PackageVersion Include="Sundew.Generator.Code" Version="3.1.21" />
-        <PackageVersion Include="Sundew.Packaging.Publish" Version="10.0.7"/>
-        <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.2" />
-        <PackageVersion Include="Verify.SourceGenerators" Version="2.2.0" />
-        <PackageVersion Include="Verify.Xunit" Version="23.2.3" />
-        <PackageVersion Include="Verify" Version="23.2.3" />
-        <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7"/>
-        <PackageVersion Include="xunit" Version="2.7.0" />
-    </ItemGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.13.12" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.MSTest" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.MSTest" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.MSTest" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.MSTest" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.3.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="3.2.2" />
+    <PackageVersion Include="MSTest.TestFramework" Version="3.2.2" />
+    <PackageVersion Include="NUnit" Version="4.1.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageVersion Include="PolySharp" Version="1.14.1" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435" />
+    <PackageVersion Include="Sundew.Generator.Code" Version="3.1.21" />
+    <PackageVersion Include="Sundew.Packaging.Publish" Version="10.0.8" />
+    <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.2" />
+    <PackageVersion Include="Verify.SourceGenerators" Version="2.2.0" />
+    <PackageVersion Include="Verify.Xunit" Version="23.5.2" />
+    <PackageVersion Include="Verify" Version="23.5.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7" />
+    <PackageVersion Include="xunit" Version="2.7.0" />
+  </ItemGroup>
 </Project>
