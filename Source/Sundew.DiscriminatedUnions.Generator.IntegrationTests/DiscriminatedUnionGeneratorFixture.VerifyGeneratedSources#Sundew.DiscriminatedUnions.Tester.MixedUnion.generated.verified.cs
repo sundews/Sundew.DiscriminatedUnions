@@ -21,10 +21,13 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// Factory method for the Case1 case.
         /// </summary>
         /// <param name="info">The info.</param>
+        /// <param name="isValid">The isValid.</param>
+        /// <param name="status">The status.</param>
+        /// <param name="number">The number.</param>
         /// <returns>A new Case1.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.MixedUnion.Case1))]
-        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion _Case1(string info)
-            => new global::Sundew.DiscriminatedUnions.Tester.MixedUnion.Case1(info);
+        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion _Case1(string info, bool isValid = false, global::Sundew.DiscriminatedUnions.Tester.Status status = global::Sundew.DiscriminatedUnions.Tester.Status.On, int number = 3)
+            => new global::Sundew.DiscriminatedUnions.Tester.MixedUnion.Case1(info, isValid, status, number);
 
         /// <summary>
         /// Factory method for the Case2 case.
@@ -34,7 +37,7 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// <param name="optionalInts">The optionalInts.</param>
         /// <returns>A new Case2.</returns>
         [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.Case2))]
-        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case2(int? info = 4, global::System.Collections.Generic.List<string?>? optionalList = null, global::System.Collections.Generic.List<int?>? optionalInts = null)
+        public static global::Sundew.DiscriminatedUnions.Tester.MixedUnion Case2(int? info = 4, global::System.Collections.Generic.List<string?>? optionalList = default, global::System.Collections.Generic.List<int?>? optionalInts = default)
             => new global::Sundew.DiscriminatedUnions.Tester.Case2(info, optionalList, optionalInts);
     }
 }

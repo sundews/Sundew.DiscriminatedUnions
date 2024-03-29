@@ -54,5 +54,8 @@ internal static class GeneratorConstants
     public const string Struct = "struct";
     public const string NewConstructor = "new()";
     public const string Record = "record";
+    public const string Default = "default";
     public const string Null = "null";
+    public const string True = "true";
+    public const string False = "false";
 }

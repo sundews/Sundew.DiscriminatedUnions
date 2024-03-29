@@ -66,8 +66,19 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
 
         return selectedConstructor.Parameters.Select(x =>
         {
+            string GetDefaultValue(IParameterSymbol parameterSymbol)
+            {
+                return (parameterSymbol.ExplicitDefaultValue, parameterSymbol.Type.TypeKind) switch
+                {
+                    (bool value, _) => value ? GeneratorConstants.True : GeneratorConstants.False,
+                    ({ } enumValue, TypeKind.Enum) => x.Type.GetMembers().OfType<IFieldSymbol>().Where(x => x.IsStatic).First(x => x.ConstantValue == enumValue).ToDisplayString(CodeAnalysisHelper.FullyQualifiedParameterTypeFormat),
+                    ({ } enumValue, _) => enumValue.ToString(),
+                    _ => GeneratorConstants.Default,
+                };
+            }
+
             var typeName = x.Type.ToDisplayString(CodeAnalysisHelper.FullyQualifiedParameterTypeFormat);
-            var defaultValue = x.HasExplicitDefaultValue ? x.ExplicitDefaultValue?.ToString() ?? GeneratorConstants.Null : default;
+            var defaultValue = x.HasExplicitDefaultValue ? GetDefaultValue(x) : default;
             return new Parameter(typeName, x.Name.Uncapitalize().AvoidKeywordCollision(), defaultValue);
         });
     }
