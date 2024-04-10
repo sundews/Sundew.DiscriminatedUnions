@@ -88,6 +88,33 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reported when a case is implemented by throwing NotImplementedException, because CodeCleanup may siliently &apos;fix&apos; SDU0001..
+        /// </summary>
+        public static string CaseShouldBeImplementedDescription {
+            get {
+                return ResourceManager.GetString("CaseShouldBeImplementedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Case &apos;{0}&apos; is not implemented.
+        /// </summary>
+        public static string CaseShouldBeImplementedMessageFormat {
+            get {
+                return ResourceManager.GetString("CaseShouldBeImplementedMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Case is implemented by throwing NotImplementedException..
+        /// </summary>
+        public static string CaseShouldBeImplementedTitle {
+            get {
+                return ResourceManager.GetString("CaseShouldBeImplementedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A union and its cases must be declared in the same assembly, so that all cases are known at compile time..
         /// </summary>
         public static string CasesMustBeDeclaredInUnionAssemblyDescription {

@@ -17,10 +17,15 @@ public readonly struct CaseInfo
     /// <summary>
     /// Gets the type.
     /// </summary>
-    public ISymbol Symbol { get; init; }
+    public ISymbol? Symbol { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether the case is handled.
     /// </summary>
     public bool HandlesCase { get; init; }
+
+    /// <summary>
+    /// Gets the syntax node throwing NotImplementedException if present.
+    /// </summary>
+    public IOperation? ThrowingNotImplementedException { get; init; }
 }

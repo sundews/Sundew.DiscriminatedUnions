@@ -29,9 +29,9 @@ public static class Program
         {
             return expression switch
             {
-                AdditionExpression additionExpression => throw new System.NotImplementedException(),
-                SubtractionExpression subtractionExpression => throw new System.NotImplementedException(),
-                MultiplicationExpression multiplicationExpression => throw new System.NotImplementedException(),
+                AdditionExpression additionExpression => throw new System.NotSupportedException(),
+                SubtractionExpression subtractionExpression => throw new System.NotSupportedException(),
+                MultiplicationExpression multiplicationExpression => throw new NotSupportedException(),
                 ValueExpression valueExpression => valueExpression.Value,
             };
         }

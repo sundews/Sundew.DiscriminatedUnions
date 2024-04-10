@@ -249,4 +249,13 @@
   <data name="MakeUnionPartialTitle" xml:space="preserve">
     <value>Make union partial.</value>
   </data>
+  <data name="CaseShouldBeImplementedDescription" xml:space="preserve">
+    <value>Reported when a case is implemented by throwing NotImplementedException, because CodeCleanup may siliently 'fix' SDU0001.</value>
+  </data>
+  <data name="CaseShouldBeImplementedMessageFormat" xml:space="preserve">
+    <value>Case '{0}' is not implemented</value>
+  </data>
+  <data name="CaseShouldBeImplementedTitle" xml:space="preserve">
+    <value>Case is implemented by throwing NotImplementedException.</value>
+  </data>
 </root>

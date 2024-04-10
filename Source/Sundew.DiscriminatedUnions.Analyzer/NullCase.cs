@@ -1,20 +1,15 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CodeFixStatus.cs" company="Sundews">
+// <copyright file="NullCase.cs" company="Sundews">
 // Copyright (c) Sundews. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.CodeFixes;
+namespace Sundew.DiscriminatedUnions.Analyzer;
 
-// [DiscriminatedUnion]
-internal abstract record CodeFixStatus
-{
-    private CodeFixStatus()
-    {
-    }
+using Microsoft.CodeAnalysis;
 
-    internal sealed record CanFix(string Title, string EquivalenceKey) : CodeFixStatus;
-
-    internal sealed record CannotFix : CodeFixStatus;
-}
+/// <summary>
+/// Contains information about a case in a switch statement or expression.
+/// </summary>
+public readonly record struct NullCase(IOperation NullOperation, IOperation? ThrowingNotImplementedException);

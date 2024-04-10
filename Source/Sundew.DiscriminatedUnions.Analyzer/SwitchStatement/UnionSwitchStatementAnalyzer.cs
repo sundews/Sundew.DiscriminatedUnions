@@ -35,7 +35,7 @@ internal class UnionSwitchStatementAnalyzer
         var switchNullability = UnionHelper.EvaluateSwitchNullability(
             switchOperation.Value,
             switchOperation.SemanticModel,
-            nullCase != null);
+            nullCase.HasValue);
         if (GetDefaultSwitchCaseOperation(switchOperation) is { } defaultSwitchCaseOperation)
         {
             if (CanSwitchReachEnd(switchOperation))
@@ -72,9 +72,7 @@ internal class UnionSwitchStatementAnalyzer
         var caseTypes = UnionHelper.GetKnownCases(nonNullableUnionType);
         DiagnosticReporterHelper.ReportDiagnostics(
             caseTypes.ToList(),
-            SwitchStatementHelper.GetHandledCaseTypes(switchOperation)
-                .Where(x => x.HandlesCase)
-                .Select(x => x.Symbol),
+            SwitchStatementHelper.GetHandledCaseTypes(switchOperation).ToList(),
             nullCase,
             switchNullability,
             unionType,

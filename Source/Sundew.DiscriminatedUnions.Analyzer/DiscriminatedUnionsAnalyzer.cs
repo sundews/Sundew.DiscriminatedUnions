@@ -74,6 +74,11 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
     public const string FactoryMethodShouldHaveMatchingCaseTypeAttributeDiagnosticId = "SDU0010";
 
     /// <summary>
+    /// Diagnostic id indicating that cases should be implemented.
+    /// </summary>
+    public const string CaseShouldBeImplementedDiagnosticId = "SDU0011";
+
+    /// <summary>
     /// Diagnostic id indicating that the switch should throw in default case.
     /// </summary>
     public const string SwitchShouldThrowInDefaultCaseDiagnosticId = "SDU9999";
@@ -207,6 +212,19 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
             nameof(Resources.FactoryMethodShouldHaveMatchingCaseTypeAttributeDescription));
 
     /// <summary>
+    /// A case should be implemented. E.g. not throw NotImplementedException.
+    /// </summary>
+    public static readonly DiagnosticDescriptor CaseShouldBeImplementedRule =
+        DiagnosticDescriptorHelper.Create(
+            CaseShouldBeImplementedDiagnosticId,
+            nameof(Resources.CaseShouldBeImplementedTitle),
+            nameof(Resources.CaseShouldBeImplementedMessageFormat),
+            Category,
+            DiagnosticSeverity.Error,
+            true,
+            nameof(Resources.CaseShouldBeImplementedDescription));
+
+    /// <summary>
     /// The switch should throw in default case rule.
     /// </summary>
     public static readonly DiagnosticDescriptor SwitchShouldThrowInDefaultCaseRule =
@@ -235,6 +253,7 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
         CasesShouldBeSealedRule,
         UnnestedCasesShouldHaveFactoryMethodRule,
         FactoryMethodShouldHaveMatchingCaseTypeAttributeRule,
+        CaseShouldBeImplementedRule,
         SwitchShouldThrowInDefaultCaseRule);
 
     /// <summary>

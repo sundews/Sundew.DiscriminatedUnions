@@ -240,4 +240,39 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Multiple', 'Empty'", Resources.Cases, "Unions.SingleOrMultiple<TItem>", Resources.Are)
                 .WithSpan(37, 16, 40, 10));
     }
+
+    [TestMethod]
+    public async Task
+        Given_SwitchExpression_When_SomeCasesThrowNotImplementedExceptionAndNotAllCasesAreHandled_Then_CaseShouldBeImplementedAndAllCasesNotHandledAreReported()
+    {
+        var test = $@"{TestData.Usings}
+
+namespace Unions;
+
+public class DiscriminatedUnionSymbolAnalyzerTests
+{{   
+    public int Switch(Result result)
+    {{
+        return result switch
+        {{
+            Result.Success => throw new NotImplementedException(),
+            Result.Warning => throw new System.NotImplementedException(),
+        }};
+    }}
+}}
+{TestData.ValidResultUnion}
+";
+
+        await VerifyCS.VerifyAnalyzerAsync(
+            test,
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledRule)
+                .WithArguments("'Error', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
+                .WithSpan(17, 16, 21, 10),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Success")
+                .WithSpan(19, 31, 19, 66),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Warning")
+                .WithSpan(20, 31, 20, 73));
+    }
 }

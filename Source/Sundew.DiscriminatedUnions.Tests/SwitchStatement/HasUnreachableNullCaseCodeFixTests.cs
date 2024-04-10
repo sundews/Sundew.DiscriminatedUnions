@@ -10,7 +10,6 @@ namespace Sundew.DiscriminatedUnions.Tests.SwitchStatement;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
-using Sundew.DiscriminatedUnions.Tests.Verifiers;
 using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
@@ -36,7 +35,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             case Result.Success success:
                 break;
             case Result.Warning warning:
-                throw new System.NotImplementedException();
+                throw new System.NotSupportedException();
             case Result.Error error:
                 break;
             case null:
@@ -61,7 +60,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             case Result.Success success:
                 break;
             case Result.Warning warning:
-                throw new System.NotImplementedException();
+                throw new System.NotSupportedException();
             case Result.Error error:
                 break;
         }}
@@ -76,6 +75,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments(TestData.UnionsResult)
                 .WithSpan(26, 13, 27, 23),
         };
+
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }
 }

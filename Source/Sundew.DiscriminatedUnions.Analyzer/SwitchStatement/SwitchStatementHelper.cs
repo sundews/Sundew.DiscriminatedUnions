@@ -27,35 +27,40 @@ public static class SwitchStatementHelper
         return switchOperation.Cases.SelectMany(switchCaseOperation =>
             switchCaseOperation.Clauses.SelectMany(caseClauseOperation =>
                 {
+                    var throwingNotImplementedException = switchCaseOperation.Body.Select(UnionHelper.GetThrowingNotImplementedException).FirstOrDefault();
                     if (caseClauseOperation is IPatternCaseClauseOperation patternCaseClauseOperation)
                     {
                         if (patternCaseClauseOperation.Pattern is IDeclarationPatternOperation
                             declarationPatternOperation)
                         {
-                            return UnionHelper.GetHandledSymbols(declarationPatternOperation.MatchedType as INamedTypeSymbol, true);
+                            return UnionHelper.GetHandledSymbols(declarationPatternOperation.MatchedType as INamedTypeSymbol, true, throwingNotImplementedException);
                         }
 
                         if (patternCaseClauseOperation.Pattern is ITypePatternOperation typePatternOperation)
                         {
-                            return UnionHelper.GetHandledSymbols(typePatternOperation.MatchedType as INamedTypeSymbol, true);
+                            return UnionHelper.GetHandledSymbols(typePatternOperation.MatchedType as INamedTypeSymbol, true, throwingNotImplementedException);
                         }
 
                         if (patternCaseClauseOperation.Pattern is IConstantPatternOperation { Value: IFieldReferenceOperation fieldReferenceOperation })
                         {
-                            return UnionHelper.GetHandledFieldTypeSymbols(fieldReferenceOperation.Field);
+                            return UnionHelper.GetHandledFieldTypeSymbols(fieldReferenceOperation.Field, throwingNotImplementedException);
                         }
 
-                        return UnionHelper.GetHandledSymbols(patternCaseClauseOperation.Pattern.NarrowedType as INamedTypeSymbol, false);
+                        if (IsNullLiteralCaseClauseOperation(caseClauseOperation))
+                        {
+                            return Enumerable.Empty<(ISymbol? Symbol, bool HandlesCase, IOperation? ThrowingNotImplementedException)>();
+                        }
+
+                        return UnionHelper.GetHandledSymbols(patternCaseClauseOperation.Pattern.NarrowedType as INamedTypeSymbol, false, throwingNotImplementedException);
                     }
 
                     if (caseClauseOperation is ISingleValueCaseClauseOperation { Value: IFieldReferenceOperation fieldReferenceOperation2 })
                     {
-                        return UnionHelper.GetHandledFieldTypeSymbols(fieldReferenceOperation2.Field);
+                        return UnionHelper.GetHandledFieldTypeSymbols(fieldReferenceOperation2.Field, throwingNotImplementedException);
                     }
 
-                    return UnionHelper.GetHandledSymbols(null, false);
-                }).Where(x => x.Symbol != null)
-                .Select(x => new CaseInfo { Symbol = x.Symbol!, HandlesCase = x.HandlesCase }));
+                    return Enumerable.Empty<(ISymbol? Symbol, bool HandlesCase, IOperation? ThrowingNotImplementedException)>();
+                }).Select(x => new CaseInfo { Symbol = x.Symbol, HandlesCase = x.HandlesCase, ThrowingNotImplementedException = x.ThrowingNotImplementedException }));
     }
 
     /// <summary>
@@ -65,20 +70,34 @@ public static class SwitchStatementHelper
     /// <returns>
     ///   <c>true</c> if [has null case] [the specified switch operation]; otherwise, <c>false</c>.
     /// </returns>
-    public static ISwitchCaseOperation? GetNullCase(ISwitchOperation switchOperation)
+    public static NullCase? GetNullCase(ISwitchOperation switchOperation)
     {
-        return switchOperation.Cases.FirstOrDefault(x => x.Clauses.Any(
-            x => (x is IPatternCaseClauseOperation patternCaseClauseOperation &&
-                  patternCaseClauseOperation.Pattern is IConstantPatternOperation constantPatternOperation &&
-                  ((constantPatternOperation.Value is IConversionOperation conversionOperation &&
-                    conversionOperation.Operand is ILiteralOperation conversionLiteralOperation &&
-                    IsNullLiteral(conversionLiteralOperation)) ||
-                   (constantPatternOperation.Value is ILiteralOperation literalOperation &&
-                    IsNullLiteral(literalOperation)))) ||
-                 (x is ISingleValueCaseClauseOperation singleValueCaseClauseOperation &&
-                  singleValueCaseClauseOperation.Value is IConversionOperation conversionOperation2 &&
-                  conversionOperation2.Operand is ILiteralOperation literalOperation2 &&
-                  IsNullLiteral(literalOperation2))));
+        var (nullCase, throwingNotImplementedException) = switchOperation.Cases.Select(caseOperation =>
+        {
+            var hasNullClause = caseOperation.Clauses.Any(IsNullLiteralCaseClauseOperation);
+            return hasNullClause ? (Case: caseOperation, Clause: caseOperation.Body.Select(UnionHelper.GetThrowingNotImplementedException).FirstOrDefault()) : default;
+        }).FirstOrDefault(x => x.Case != default);
+        if (nullCase == default)
+        {
+            return null;
+        }
+
+        return new NullCase(nullCase, throwingNotImplementedException);
+    }
+
+    private static bool IsNullLiteralCaseClauseOperation(ICaseClauseOperation x)
+    {
+        return (x is IPatternCaseClauseOperation patternCaseClauseOperation &&
+                patternCaseClauseOperation.Pattern is IConstantPatternOperation constantPatternOperation &&
+                ((constantPatternOperation.Value is IConversionOperation conversionOperation &&
+                  conversionOperation.Operand is ILiteralOperation conversionLiteralOperation &&
+                  IsNullLiteral(conversionLiteralOperation)) ||
+                 (constantPatternOperation.Value is ILiteralOperation literalOperation &&
+                  IsNullLiteral(literalOperation)))) ||
+               (x is ISingleValueCaseClauseOperation singleValueCaseClauseOperation &&
+                singleValueCaseClauseOperation.Value is IConversionOperation conversionOperation2 &&
+                conversionOperation2.Operand is ILiteralOperation literalOperation2 &&
+                IsNullLiteral(literalOperation2));
     }
 
     private static bool IsNullLiteral(ILiteralOperation literalOperation)

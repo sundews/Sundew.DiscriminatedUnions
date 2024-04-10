@@ -7,6 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Analyzer;
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -150,27 +151,50 @@ public static class UnionHelper
             }).FirstOrDefault();
     }
 
-    internal static IEnumerable<(ISymbol? Symbol, bool HandlesCase)> GetHandledSymbols(INamedTypeSymbol? namedTypeSymbol, bool handlesCase)
+    internal static IEnumerable<(ISymbol? Symbol, bool HandlesCase, IOperation? ThrowingNotImplementedException)> GetHandledSymbols(INamedTypeSymbol? namedTypeSymbol, bool handlesCase, IOperation? throwingNotImplementedException)
     {
         if (namedTypeSymbol != null && namedTypeSymbol.IsDiscriminatedUnion())
         {
             foreach (var knownCase in UnionHelper.GetKnownCaseTypes(namedTypeSymbol))
             {
-                yield return (knownCase, handlesCase);
+                yield return (knownCase, handlesCase, throwingNotImplementedException);
             }
         }
 
-        yield return (namedTypeSymbol, handlesCase);
+        yield return (namedTypeSymbol, handlesCase, throwingNotImplementedException);
     }
 
-    internal static IEnumerable<(ISymbol? Symbol, bool HandlesCase)> GetHandledFieldTypeSymbols(IFieldSymbol fieldSymbol)
+    internal static IEnumerable<(ISymbol? Symbol, bool HandlesCase, IOperation? ThrowingNotImplementedException)> GetHandledFieldTypeSymbols(IFieldSymbol fieldSymbol, IOperation? throwingNotImplementedException)
     {
-        yield return (fieldSymbol, true);
+        yield return (fieldSymbol, true, throwingNotImplementedException);
     }
 
     internal static ITypeSymbol GetNonNullableUnionType(INamedTypeSymbol unionType)
     {
         return unionType.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T ? unionType.TypeArguments.Single() : unionType.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
+    }
+
+    internal static IOperation? GetThrowingNotImplementedException(IOperation? implementationOperation)
+    {
+        if (implementationOperation == default)
+        {
+            return default;
+        }
+
+        if (implementationOperation is IConversionOperation conversionOperation)
+        {
+            implementationOperation = conversionOperation.Operand;
+        }
+
+        if (implementationOperation is IThrowOperation { Exception: IConversionOperation exceptionConversionOperation } &&
+            exceptionConversionOperation.Operand.Type!.Name.EndsWith(
+                nameof(NotImplementedException)) &&
+            exceptionConversionOperation.Operand is IObjectCreationOperation)
+        {
+            return implementationOperation;
+        }
+
+        return default;
     }
 
     internal static SwitchNullability EvaluateSwitchNullability(

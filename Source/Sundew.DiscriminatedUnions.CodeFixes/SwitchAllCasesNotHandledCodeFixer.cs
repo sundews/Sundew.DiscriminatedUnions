@@ -85,7 +85,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         }
 
         var cases = UnionHelper.GetKnownCaseTypes(switchType).Pair().ToList();
-        var handledCaseTypes = SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).ToList();
+        var handledCaseTypes = SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).Where(x => x.Symbol != default).ToList();
 
         if (switchExpressionOperation.Syntax is not SwitchExpressionSyntax switchExpressionSyntax)
         {
@@ -149,7 +149,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         }
 
         var cases = UnionHelper.GetKnownCaseTypes(switchType).Pair().ToList();
-        var handledCaseTypes = SwitchStatementHelper.GetHandledCaseTypes(switchOperation).ToList();
+        var handledCaseTypes = SwitchStatementHelper.GetHandledCaseTypes(switchOperation).Where(x => x.Symbol != default).ToList();
 
         if (switchOperation.Syntax is not SwitchStatementSyntax switchStatementSyntax)
         {

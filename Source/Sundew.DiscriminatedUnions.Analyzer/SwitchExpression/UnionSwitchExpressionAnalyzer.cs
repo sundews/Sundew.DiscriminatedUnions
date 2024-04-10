@@ -50,7 +50,7 @@ internal class UnionSwitchExpressionAnalyzer
         var caseTypes = UnionHelper.GetKnownCases(nonNullableUnionType).ToList();
         DiagnosticReporterHelper.ReportDiagnostics(
             caseTypes,
-            SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).Where(x => x.HandlesCase).Select(x => x.Symbol),
+            SwitchExpressionHelper.GetHandledCaseTypes(switchExpressionOperation).ToList(),
             nullCase,
             switchNullability,
             unionType,

@@ -35,7 +35,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             case Result.Success success:
                 break;
             case Result.Warning warning:
-                throw new System.NotImplementedException();
+                throw new System.NotSupportedException();
             case Result.Error error:
                 break;
             default:
@@ -60,7 +60,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
             case Result.Success success:
                 break;
             case Result.Warning warning:
-                throw new System.NotImplementedException();
+                throw new System.NotSupportedException();
             case Result.Error error:
                 break;
         }}
@@ -75,6 +75,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments(TestData.UnionsResult)
                 .WithSpan(26, 13, 27, 23),
         };
+
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }
 }

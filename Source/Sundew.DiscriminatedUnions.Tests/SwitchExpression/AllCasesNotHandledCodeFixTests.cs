@@ -7,13 +7,10 @@
 
 namespace Sundew.DiscriminatedUnions.Tests.SwitchExpression;
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
-using Sundew.DiscriminatedUnions.Tests.Verifiers;
 using VerifyCS = Sundew.DiscriminatedUnions.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
@@ -69,7 +66,16 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Warning', 'Error'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(18, 16, 21, 10),
         };
-        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        var expectedAfter = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Warning")
+                .WithSpan(21, 39, 21, 81),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Error")
+                .WithSpan(22, 35, 22, 77),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
     [TestMethod]
@@ -120,7 +126,13 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Warning'", Resources.Case, TestData.UnionsResult, Resources.Is)
                 .WithSpan(18, 16, 22, 10),
         };
-        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        var expectedAfter = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Warning")
+                .WithSpan(21, 39, 21, 81),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
     [TestMethod]
@@ -172,7 +184,17 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Success', 'Warning'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(18, 16, 22, 10),
         };
-        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+
+        var expectedAfter = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Success")
+                .WithSpan(20, 39, 20, 81),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Warning")
+                .WithSpan(22, 39, 22, 81),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
     [TestMethod]
@@ -221,7 +243,19 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Success', 'Warning', 'Error'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(18, 16, 20, 10),
         };
-        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        var expectedAfter = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Success")
+                .WithSpan(20, 39, 20, 81),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Warning")
+                .WithSpan(21, 39, 21, 81),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Error")
+                .WithSpan(22, 35, 22, 77),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
     [TestMethod]
@@ -270,7 +304,19 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Warning', 'Error', 'null'", Resources.Cases, TestData.UnionsResult, Resources.Are)
                 .WithSpan(17, 16, 20, 10),
         };
-        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        var expectedAfter = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Warning")
+                .WithSpan(20, 39, 20, 81),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Error")
+                .WithSpan(21, 35, 21, 77),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("null")
+                .WithSpan(22, 21, 22, 63),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
     [TestMethod]
@@ -318,7 +364,16 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Some', 'None'", Resources.Cases, TestData.UnionsOptionString, Resources.Are)
                 .WithSpan(18, 16, 20, 10),
         };
-        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        var expectedAfter = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Some")
+                .WithSpan(20, 41, 20, 83),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("None")
+                .WithSpan(21, 41, 21, 83),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
     [TestMethod]
@@ -368,7 +423,16 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Some', 'None'", Resources.Cases, TestData.UnionsOptionT, Resources.Are)
                 .WithSpan(19, 16, 21, 10),
         };
-        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        var expectedAfter = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Some")
+                .WithSpan(21, 36, 21, 78),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("None")
+                .WithSpan(22, 36, 22, 78),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
     [TestMethod]
@@ -417,7 +481,19 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Empty', 'Multiple', 'Single'", Resources.Cases, TestData.ListCardinalityString, Resources.Are)
                 .WithSpan(18, 16, 20, 10),
         };
-        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        var expectedAfter = new[]
+        {
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Empty")
+                .WithSpan(20, 36, 20, 78),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Multiple")
+                .WithSpan(21, 42, 21, 84),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Single")
+                .WithSpan(22, 38, 22, 80),
+        };
+        await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
     [TestMethod]
@@ -499,11 +575,20 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithArguments("'Empty', 'Multiple', 'Single'", Resources.Cases, TestData.ListCardinalityString, Resources.Are)
                 .WithSpan(18, 9, 20, 10),
         };
-        var expectedAfter = new DiagnosticResult[]
+        var expectedAfter = new[]
         {
             notAllPathsReturnAValueDiagnostic,
             noBestTypeWasFoundForTheSwitchExpressionDiagnostic,
             semiColonExpectedDiagnostic.WithSpan(23, 10, 23, 10),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Empty")
+                .WithSpan(20, 36, 20, 78),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Multiple")
+                .WithSpan(21, 42, 21, 84),
+            VerifyCS.Diagnostic(DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule)
+                .WithArguments("Single")
+                .WithSpan(22, 38, 22, 80),
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
