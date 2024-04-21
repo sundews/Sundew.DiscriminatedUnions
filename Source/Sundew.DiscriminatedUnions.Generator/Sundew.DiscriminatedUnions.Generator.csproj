@@ -18,14 +18,17 @@
     <SundewDiscriminatedUnionsShared Remove="..\Sundew.DiscriminatedUnions.Shared\obj\**\*.cs" />
     <Compile Remove="..\Sundew.DiscriminatedUnions.Shared\UnionHelper.cs" />
     <Compile Include="@(SundewDiscriminatedUnionsShared)" LinkBase="Shared"></Compile>
-
     <SundewBaseEqualityCompile Include="..\Sundew.Base\Source\Sundew.Base.Equality\Equality.cs" />
     <Compile Include="@(SundewBaseEqualityCompile)" LinkBase="Shared\Sundew.Base.Equality" />
+    <SundewBaseCollectionsPrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections.Primitives\ReadOnlyListExtensions.cs" />
+    <Compile Include="@(SundewBaseCollectionsPrimitivesCompile)" LinkBase="Shared\Sundew.Base.Collections.Primitives" />
     <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\R*.cs" />
     <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\O.cs" />
     <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\EnumExtensions.cs" />
     <Compile Include="@(SundewBasePrimitivesCompile)" LinkBase="Shared\Sundew.Base.Primitives" />
+    <SundewBaseCollectionsImmutableCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections.Immutable\EnumerableExtensions.ValueCollections.cs" />
     <SundewBaseCollectionsImmutableCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections.Immutable\ValueArray{TItem}.cs" />
+    <SundewBaseCollectionsImmutableCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections.Immutable\ValueList{TItem}.cs" />
     <Compile Include="@(SundewBaseCollectionsImmutableCompile)" LinkBase="Shared\Sundew.Base.Collections.Immutable" />
     <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.AppendItems.cs" />
     <SundewBaseTextCompile Include="..\Sundew.Base\Source\Sundew.Base.Text\StringBuilderExtensions.cs" />
@@ -49,6 +52,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Bcl.Hashcode"/>
   </ItemGroup>
 
   <ItemGroup>
