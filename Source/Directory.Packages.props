@@ -16,24 +16,23 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.MSTest" Version="1.1.1" />
     <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.3.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="3.2.2" />
-    <PackageVersion Include="MSTest.TestFramework" Version="3.2.2" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="3.3.1" />
+    <PackageVersion Include="MSTest.TestFramework" Version="3.3.1" />
     <PackageVersion Include="NUnit" Version="4.1.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageVersion Include="PolySharp" Version="1.14.1" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435" />
     <PackageVersion Include="System.Collections.Immutable" Version="6.0.0" />
-    <PackageVersion Include="Sundew.Generator.Code" Version="3.1.21" />
+    <PackageVersion Include="Sundew.Generator.Code" Version="3.1.22" />
     <PackageVersion Include="Sundew.Packaging.Publish" Version="10.0.8" />
-    <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.2" />
+    <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.3" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.2.0" />
-    <PackageVersion Include="Verify.Xunit" Version="23.5.2" />
-    <PackageVersion Include="Verify" Version="23.5.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7" />
-    <PackageVersion Include="xunit" Version="2.7.0" />
+    <PackageVersion Include="Verify.Xunit" Version="24.2.0" />
+    <PackageVersion Include="Verify" Version="24.2.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.0" />
+    <PackageVersion Include="xunit" Version="2.8.0" />
   </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-      <PackageVersion Include="Microsoft.Bcl.Hashcode" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.Bcl.Hashcode" Version="1.1.1" />
   </ItemGroup>
 </Project>

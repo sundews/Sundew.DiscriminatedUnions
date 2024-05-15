@@ -7,7 +7,6 @@
 
 namespace Sundew.DiscriminatedUnions.Tester;
 
-using System;
 using System.Collections.Generic;
 using TestData;
 
@@ -25,7 +24,7 @@ public static class Program
         var expression = new AdditionExpression(new ValueExpression(5),
             new SubtractionExpression(new ValueExpression(3), new ValueExpression(1)));
 
-        static int Evaluate(IExpression expression)
+        /*static int Evaluate(IExpression expression)
         {
             return expression switch
             {
@@ -36,7 +35,7 @@ public static class Program
             };
         }
 
-        Console.WriteLine(Evaluate(expression));
+        Console.WriteLine(Evaluate(expression));*/
         /*
         Console.WriteLine("Hello World!");
         Result? result = Compute("Error");

@@ -72,9 +72,10 @@ internal static class StringBuilderExtensions
             }
             else
             {
+                var typeParameterCount = fullType.TypeMetadata.TypeParameters.Count;
                 stringBuilder
                     .Append('<')
-                    .Append(',', fullType.TypeMetadata.TypeParameters.Count - 1)
+                    .If(typeParameterCount > 0, stringBuilder => stringBuilder.Append(',', typeParameterCount - 1))
                     .Append('>');
             }
         }
