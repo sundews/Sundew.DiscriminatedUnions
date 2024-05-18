@@ -14,6 +14,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
+using Sundew.DiscriminatedUnions.Shared;
 using static Sundew.DiscriminatedUnions.Generator.OutputStage.GeneratorConstants;
 
 internal static class CodeAnalysisHelper
@@ -194,7 +195,7 @@ internal static class CodeAnalysisHelper
                     isShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     false,
                     new TypeMetadata(
-                        !isShortNameAlias && namedTypeSymbol.IsGenericType && namedTypeSymbol.TypeParameters.Length > 0
+                        !isShortNameAlias && namedTypeSymbol.IsTypeGenericWithTypeParameters()
                             ? GetGenericQualifier(namedTypeSymbol)
                             : null,
                         fullName,
@@ -285,7 +286,7 @@ internal static class CodeAnalysisHelper
         while (containingType != null)
         {
             stringBuilder.Append(containingType.Name);
-            if (containingType.IsGenericType && containingType.TypeParameters.Length > 0)
+            if (containingType.IsTypeGenericWithTypeParameters())
             {
                 stringBuilder.Append('<').Append(',', containingType.TypeParameters.Length - 1).Append('>');
             }
@@ -295,7 +296,7 @@ internal static class CodeAnalysisHelper
         }
 
         stringBuilder.Append(typeSymbol.Name);
-        if (typeSymbol is INamedTypeSymbol { IsGenericType: true, TypeParameters.Length: > 0 } namedTypeSymbol)
+        if (typeSymbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.IsTypeGenericWithTypeParameters())
         {
             stringBuilder.Append('<').Append(',', namedTypeSymbol.TypeParameters.Length - 1).Append('>');
         }

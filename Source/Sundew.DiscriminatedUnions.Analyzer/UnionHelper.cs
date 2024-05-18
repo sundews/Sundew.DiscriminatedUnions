@@ -226,7 +226,7 @@ public static class UnionHelper
         var caseTypeSymbol = (INamedTypeSymbol?)caseTypeAttribute.ConstructorArguments.FirstOrDefault().Value ??
                              (INamedTypeSymbol?)caseTypeAttribute.NamedArguments.FirstOrDefault().Value.Value;
 
-        if (caseTypeSymbol != null && caseTypeSymbol.IsGenericType && unionType is INamedTypeSymbol namedUnionType)
+        if (caseTypeSymbol != null && caseTypeSymbol.IsTypeGenericWithTypeParameters() && unionType is INamedTypeSymbol namedUnionType)
         {
             caseTypeSymbol = caseTypeSymbol.OriginalDefinition.Construct(namedUnionType.TypeArguments, namedUnionType.TypeArgumentNullableAnnotations);
         }
