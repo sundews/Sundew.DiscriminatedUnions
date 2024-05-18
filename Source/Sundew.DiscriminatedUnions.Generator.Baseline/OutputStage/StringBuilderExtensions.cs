@@ -51,9 +51,8 @@ internal static class StringBuilderExtensions
                 .Append('.');
         }
 
-        stringBuilder.Append(fullType.NestedTypeQualifier);
-        stringBuilder.Append(fullType.Name);
-        stringBuilder.TryAppendGenericQualifier(fullType, omitTypeParameters);
+        stringBuilder.Append(omitTypeParameters ? fullType.NameForTypeOfAttribute : fullType.TypeMetadata.FullName);
+
         if (fullType.IsArray)
         {
             stringBuilder.Append('[').Append(']');

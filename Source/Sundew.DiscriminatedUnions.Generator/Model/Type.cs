@@ -7,4 +7,4 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.Model;
 
-internal readonly record struct Type(string Name, string Namespace, string NestedTypeQualifier, string AssemblyAlias, int TypeParameterCount, bool IsArray);
+internal readonly record struct Type(string Name, string Namespace, string AttributeName, string AssemblyAlias, int TypeParameterCount, bool IsArray);

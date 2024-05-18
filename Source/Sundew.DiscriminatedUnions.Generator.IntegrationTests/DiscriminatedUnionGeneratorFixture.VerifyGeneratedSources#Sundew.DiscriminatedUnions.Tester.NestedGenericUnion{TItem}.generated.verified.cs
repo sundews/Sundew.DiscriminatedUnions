@@ -14,17 +14,17 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// </summary>
         /// <param name="item">The item.</param>
         /// <returns>A new Target.</returns>
-        [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion.Target<>))]
+        [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion<>.Target))]
         public static global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion<TItem> _Target(TItem item)
-            => new global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion.Target<TItem>.Target(item);
+            => new global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion<TItem>.Target(item);
 
         /// <summary>
         /// Factory method for the TargetList case.
         /// </summary>
         /// <param name="item">The item.</param>
         /// <returns>A new TargetList.</returns>
-        [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion.TargetList<>))]
+        [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion<>.TargetList))]
         public static global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion<TItem> _TargetList(global::System.Collections.Generic.List<TItem> item)
-            => new global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion.TargetList<TItem>.TargetList(item);
+            => new global::Sundew.DiscriminatedUnions.Tester.NestedGenericUnion<TItem>.TargetList(item);
     }
 }
