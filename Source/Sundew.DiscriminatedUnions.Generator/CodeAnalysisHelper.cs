@@ -16,9 +16,13 @@ using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Sundew.DiscriminatedUnions.Shared;
 using static Sundew.DiscriminatedUnions.Generator.OutputStage.GeneratorConstants;
+using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class CodeAnalysisHelper
 {
+    private const string? OutText = "out";
+    private const string? InText = "in";
+
     private static readonly HashSet<string> Keywords = new HashSet<string>
     {
         "abstract",
@@ -172,18 +176,6 @@ internal static class CodeAnalysisHelper
 
     public static FullType GetFullType(this ITypeSymbol typeSymbol, bool useFullyQualifiedFormat = false)
     {
-        string? GetGenericQualifier(INamedTypeSymbol namedTypeSymbol)
-        {
-            var name = namedTypeSymbol.ToDisplayString(useFullyQualifiedFormat ? FullyQualifiedDisplayFormat : NameQualifiedTypeFormat);
-            var index = name.IndexOf('<');
-            if (index > -1)
-            {
-                return name.Substring(index);
-            }
-
-            return null;
-        }
-
         switch (typeSymbol)
         {
             case INamedTypeSymbol namedTypeSymbol:
@@ -195,12 +187,10 @@ internal static class CodeAnalysisHelper
                     isShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     false,
                     new TypeMetadata(
-                        !isShortNameAlias && namedTypeSymbol.IsTypeGenericWithTypeParameters()
-                            ? GetGenericQualifier(namedTypeSymbol)
-                            : null,
                         fullName,
                         namedTypeSymbol.TypeParameters.Select(x => new TypeParameter(
                             x.Name,
+                            x.Variance,
                             GetUnderlyingTypeConstraint(x)
                                 .Concat(x.ConstraintTypes.Select(x =>
                                     x.ToDisplayString(FullyQualifiedDisplayFormat)))
@@ -213,9 +203,9 @@ internal static class CodeAnalysisHelper
                     elementAttributeName,
                     elementIsShortNameAlias ? string.Empty : GlobalAssemblyAlias,
                     true,
-                    new TypeMetadata(null, elementFullName, ImmutableArray<TypeParameter>.Empty));
+                    new TypeMetadata(elementFullName, ImmutableArray<TypeParameter>.Empty));
             case ITypeParameterSymbol typeParameterSymbol:
-                return new FullType(typeParameterSymbol.MetadataName, string.Empty, string.Empty, string.Empty, false, new TypeMetadata(null, string.Empty, ImmutableArray<TypeParameter>.Empty));
+                return new FullType(typeParameterSymbol.MetadataName, string.Empty, string.Empty, string.Empty, false, new TypeMetadata(string.Empty, ImmutableArray<TypeParameter>.Empty));
             default:
                 throw new System.ArgumentOutOfRangeException(nameof(typeSymbol));
         }

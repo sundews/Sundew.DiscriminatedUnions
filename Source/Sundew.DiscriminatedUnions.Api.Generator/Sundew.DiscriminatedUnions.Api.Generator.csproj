@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
     <IsPackable>false</IsPackable>
-    <RuntimeIdentifiers>win10-x64;osx.10.12-x64;debian.8-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>

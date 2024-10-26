@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Sundew.Base.Collections.Immutable;
 using Sundew.Base.Text;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
@@ -39,8 +40,10 @@ internal static class StringBuilderExtensions
     private const string SummaryStart = "/// <summary>";
     private const string SummaryEnd = "/// </summary>";
     private const string Documentation = "/// ";
+    private const string OutText = "out";
+    private const string InText = "in";
 
-    public static StringBuilder AppendType(this StringBuilder stringBuilder, in FullType fullType, bool fullyQualify = true, bool omitTypeParameters = false)
+    public static StringBuilder AppendType(this StringBuilder stringBuilder, in FullType fullType, bool fullyQualify = true, bool isForAttribute = false, bool isForPartial = false)
     {
         if (fullyQualify && fullType.Namespace != string.Empty)
         {
@@ -51,7 +54,18 @@ internal static class StringBuilderExtensions
                 .Append('.');
         }
 
-        stringBuilder.Append(omitTypeParameters ? fullType.NameForTypeOfAttribute : fullType.TypeMetadata.FullName);
+        if (isForAttribute)
+        {
+            stringBuilder.Append(fullType.NameForTypeOfAttribute);
+        }
+        else if (isForPartial)
+        {
+            stringBuilder.Append(fullType.Name).TryAppendGenericQualifier(fullType, false, false);
+        }
+        else
+        {
+            stringBuilder.Append(fullType.TypeMetadata.FullName);
+        }
 
         if (fullType.IsArray)
         {
@@ -61,21 +75,39 @@ internal static class StringBuilderExtensions
         return stringBuilder;
     }
 
-    public static StringBuilder TryAppendGenericQualifier(this StringBuilder stringBuilder, in FullType fullType, bool omitTypeParameters = false)
+    public static StringBuilder TryAppendGenericQualifier(this StringBuilder stringBuilder, in FullType fullType, bool omitTypeParameters = false, bool omitVariance = true)
     {
-        if (fullType.TypeMetadata.GenericQualifier != null)
+        string GetVariance(TypeParameter typeParameter)
+        {
+            return typeParameter.VarianceKind switch
+            {
+                VarianceKind.None => throw new ArgumentOutOfRangeException(),
+                VarianceKind.Out => OutText,
+                VarianceKind.In => InText,
+                _ => throw new UnreachableCaseException(typeParameter.VarianceKind.GetType()),
+            };
+        }
+
+        var typeParameterCount = fullType.TypeMetadata.TypeParameters.Count;
+        if (typeParameterCount > 0)
         {
             if (!omitTypeParameters)
             {
-                stringBuilder.Append(fullType.TypeMetadata.GenericQualifier);
+                const string separator = ", ";
+                stringBuilder
+                    .Append('<')
+                    .AppendItems(
+                        fullType.TypeMetadata.TypeParameters,
+                        (builder, typeParameter) =>
+                        {
+                            builder.If(!omitVariance && typeParameter.VarianceKind != VarianceKind.None, builder => builder.Append(GetVariance(typeParameter)).Append(' ')).Append(typeParameter.Name);
+                        },
+                        separator)
+                    .Append('>');
             }
             else
             {
-                var typeParameterCount = fullType.TypeMetadata.TypeParameters.Count;
-                stringBuilder
-                    .Append('<')
-                    .If(typeParameterCount > 0, stringBuilder => stringBuilder.Append(',', typeParameterCount - 1))
-                    .Append('>');
+                stringBuilder.Append('<').Append(',', typeParameterCount - 1).Append('>');
             }
         }
 

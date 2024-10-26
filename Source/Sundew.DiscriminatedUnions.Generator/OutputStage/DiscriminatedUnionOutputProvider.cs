@@ -112,7 +112,7 @@ internal static class DiscriminatedUnionOutputProvider
             .Append(' ')
             .AppendUnderlyingType(discriminatedUnion.UnderlyingType)
             .Append(' ')
-            .AppendType(discriminatedUnion.Type, false)
+            .AppendType(discriminatedUnion.Type, false, false, true)
             .AppendLine()
             .TryAppendConstraints(discriminatedUnion.Type.TypeMetadata.TypeParameters, SpaceIndentedBy8)
             .AppendPragmaWarning(true, Sa1601)
