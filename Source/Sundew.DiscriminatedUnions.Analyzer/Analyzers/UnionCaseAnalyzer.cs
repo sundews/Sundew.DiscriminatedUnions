@@ -61,11 +61,37 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
                                 baseType.ContainingAssembly.Name));
                         }
                     }
+
+                    if (baseType.IsTypeGenericWithTypeParameters() &&
+                        caseNamedTypeSymbol.IsTypeGenericWithTypeParameters())
+                    {
+                        var invalidTypeParameters = caseNamedTypeSymbol.TypeParameters
+                            .Where(x => !baseType.TypeParameters.Any(y => x.MetadataName == y.MetadataName)).Select(x => x.MetadataName).ToArray();
+                        if (invalidTypeParameters.Length > 0)
+                        {
+                            foreach (var declaringSyntaxReference in caseNamedTypeSymbol.DeclaringSyntaxReferences)
+                            {
+                                var separator = ", ";
+                                reportDiagnostic(Diagnostic.Create(
+                                    DiscriminatedUnionsAnalyzer
+                                        .CasesCannotContainTypeParametersWhichAreNotInTheUnionRule,
+                                    declaringSyntaxReference.GetSyntax().GetLocation(),
+                                    caseNamedTypeSymbol,
+                                    string.Join(separator, invalidTypeParameters),
+                                    baseType.MetadataName));
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        if (isCase && !namedTypeSymbol.IsSealed)
+        if (!isCase)
+        {
+            return;
+        }
+
+        if (!namedTypeSymbol.IsSealed)
         {
             foreach (var declaringSyntaxReference in namedTypeSymbol.DeclaringSyntaxReferences)
             {

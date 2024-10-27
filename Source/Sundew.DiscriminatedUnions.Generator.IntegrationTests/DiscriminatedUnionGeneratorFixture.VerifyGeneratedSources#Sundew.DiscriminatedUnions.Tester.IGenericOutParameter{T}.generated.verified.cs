@@ -18,5 +18,15 @@ namespace Sundew.DiscriminatedUnions.Tester
         [global::System.Diagnostics.DebuggerNonUserCode]
         public static global::Sundew.DiscriminatedUnions.Tester.IGenericOutParameter<T> GenericOutParameter(T value)
             => new global::Sundew.DiscriminatedUnions.Tester.GenericOutParameter<T>(value);
+
+        /// <summary>
+        /// Factory method for the SpecialGenericOutParameter case.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>A new SpecialGenericOutParameter.</returns>
+        [Sundew.DiscriminatedUnions.CaseType(typeof(global::Sundew.DiscriminatedUnions.Tester.SpecialGenericOutParameter<>))]
+        [global::System.Diagnostics.DebuggerNonUserCode]
+        public static global::Sundew.DiscriminatedUnions.Tester.IGenericOutParameter<T> SpecialGenericOutParameter(T value)
+            => new global::Sundew.DiscriminatedUnions.Tester.SpecialGenericOutParameter<T>(value);
     }
 }

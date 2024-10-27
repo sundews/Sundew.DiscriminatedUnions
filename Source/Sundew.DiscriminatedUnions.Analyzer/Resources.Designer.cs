@@ -88,6 +88,33 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additional type parameters in a case, would break exhaustive checking that all cases are handled..
+        /// </summary>
+        public static string CasesCannotContainTypeParametersWhichAreNotInTheUnionDescription {
+            get {
+                return ResourceManager.GetString("CasesCannotContainTypeParametersWhichAreNotInTheUnionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The case &apos;{0}&apos; contains the type parameter &apos;{1}&apos; which is not present in the union type &apos;{2}&apos;..
+        /// </summary>
+        public static string CasesCannotContainTypeParametersWhichAreNotInTheUnionMessageFormat {
+            get {
+                return ResourceManager.GetString("CasesCannotContainTypeParametersWhichAreNotInTheUnionMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cases cannot contain type parameters which are not in the union..
+        /// </summary>
+        public static string CasesCannotContainTypeParametersWhichAreNotInTheUnionTitle {
+            get {
+                return ResourceManager.GetString("CasesCannotContainTypeParametersWhichAreNotInTheUnionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reported when a case is implemented by throwing NotImplementedException, because CodeCleanup may siliently &apos;fix&apos; SDU0001..
         /// </summary>
         public static string CaseShouldBeImplementedDescription {

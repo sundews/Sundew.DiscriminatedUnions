@@ -79,6 +79,11 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
     public const string CaseShouldBeImplementedDiagnosticId = "SDU0011";
 
     /// <summary>
+    /// Diagnostic id indicating that cases cannot contain type parameters which are not in the union.
+    /// </summary>
+    public const string CasesCannotContainTypeParametersWhichAreNotInTheUnionDiagnosticId = "SDU0012";
+
+    /// <summary>
     /// Diagnostic id indicating that the switch should throw in default case.
     /// </summary>
     public const string SwitchShouldThrowInDefaultCaseDiagnosticId = "SDU9999";
@@ -225,6 +230,19 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
             nameof(Resources.CaseShouldBeImplementedDescription));
 
     /// <summary>
+    /// A case should be implemented. E.g. not throw NotImplementedException.
+    /// </summary>
+    public static readonly DiagnosticDescriptor CasesCannotContainTypeParametersWhichAreNotInTheUnionRule =
+        DiagnosticDescriptorHelper.Create(
+            CasesCannotContainTypeParametersWhichAreNotInTheUnionDiagnosticId,
+            nameof(Resources.CasesCannotContainTypeParametersWhichAreNotInTheUnionTitle),
+            nameof(Resources.CasesCannotContainTypeParametersWhichAreNotInTheUnionMessageFormat),
+            Category,
+            DiagnosticSeverity.Error,
+            true,
+            nameof(Resources.CasesCannotContainTypeParametersWhichAreNotInTheUnionDescription));
+
+    /// <summary>
     /// The switch should throw in default case rule.
     /// </summary>
     public static readonly DiagnosticDescriptor SwitchShouldThrowInDefaultCaseRule =
@@ -254,7 +272,8 @@ public class DiscriminatedUnionsAnalyzer : DiagnosticAnalyzer
         UnnestedCasesShouldHaveFactoryMethodRule,
         FactoryMethodShouldHaveMatchingCaseTypeAttributeRule,
         CaseShouldBeImplementedRule,
-        SwitchShouldThrowInDefaultCaseRule);
+        SwitchShouldThrowInDefaultCaseRule,
+        CasesCannotContainTypeParametersWhichAreNotInTheUnionRule);
 
     /// <summary>
     /// Called once at session start to register actions in the analysis context.

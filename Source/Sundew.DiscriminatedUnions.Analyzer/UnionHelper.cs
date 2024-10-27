@@ -228,6 +228,11 @@ public static class UnionHelper
 
         if (caseTypeSymbol != null && caseTypeSymbol.IsTypeGenericWithTypeParameters() && unionType is INamedTypeSymbol namedUnionType)
         {
+            if (caseTypeSymbol.OriginalDefinition.TypeParameters.Length != namedUnionType.TypeArguments.Length)
+            {
+                return default;
+            }
+
             caseTypeSymbol = caseTypeSymbol.OriginalDefinition.Construct(namedUnionType.TypeArguments, namedUnionType.TypeArgumentNullableAnnotations);
         }
 

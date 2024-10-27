@@ -11,6 +11,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Sundew.Base.Collections;
 using Sundew.Base.Collections.Immutable;
 using Sundew.Base.Text;
 using Sundew.DiscriminatedUnions.Generator;
@@ -151,12 +152,25 @@ internal static class DiscriminatedUnionOutputProvider
                 unionFactoryMethodName = _Case + unionFactoryMethodName;
             }
 
+            var union = discriminatedUnion;
+            var outsideTypeParameters = discriminatedUnionOwnedCase.Type.TypeMetadata.TypeParameters.Where(x => union.Type.TypeMetadata.TypeParameters.All(y => x.Name != y.Name)).ToArray();
+
+            const string separator = ", ";
             stringBuilder
                 .Append(Static)
                 .Append(' ')
                 .AppendType(discriminatedUnionOwnedCase.ReturnType)
                 .Append(' ')
-                .Append(unionFactoryMethodName);
+                .Append(unionFactoryMethodName)
+                .If(
+                    !outsideTypeParameters.IsEmpty(),
+                    builder =>
+                    {
+                        return builder
+                            .Append('<')
+                            .AppendItems(outsideTypeParameters, (builder, typeParameter) => builder.Append(typeParameter.Name), separator)
+                            .Append('>');
+                    });
             if (implementAsMethod)
             {
                 stringBuilder
@@ -179,6 +193,21 @@ internal static class DiscriminatedUnionOutputProvider
                         ListSeparator)
                     .Append(')')
                     .AppendLine()
+                    .If(
+                        !outsideTypeParameters.IsEmpty(),
+                        builder => builder.AppendItems(
+                            outsideTypeParameters,
+                            (builder, typeParameter) => builder
+                                .Append(SpaceIndentedBy12)
+                                .Append(Where)
+                                .Append(' ')
+                                .Append(typeParameter.Name)
+                                .Append(' ').Append(':').Append(' ')
+                                .AppendItems(
+                                    typeParameter.Constraints,
+                                    (builder, constraint) => builder.Append(constraint),
+                                    separator))
+                            .AppendLine())
                     .Append(SpaceIndentedBy12)
                     .Append(Lambda);
             }

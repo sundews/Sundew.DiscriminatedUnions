@@ -258,4 +258,13 @@
   <data name="CaseShouldBeImplementedTitle" xml:space="preserve">
     <value>Case is implemented by throwing NotImplementedException.</value>
   </data>
+  <data name="CasesCannotContainTypeParametersWhichAreNotInTheUnionTitle" xml:space="preserve">
+    <value>Cases cannot contain type parameters which are not in the union.</value>
+  </data>
+  <data name="CasesCannotContainTypeParametersWhichAreNotInTheUnionDescription" xml:space="preserve">
+    <value>Additional type parameters in a case, would break exhaustive checking that all cases are handled.</value>
+  </data>
+  <data name="CasesCannotContainTypeParametersWhichAreNotInTheUnionMessageFormat" xml:space="preserve">
+    <value>The case '{0}' contains the type parameter '{1}' which is not present in the union type '{2}'.</value>
+  </data>
 </root>

@@ -11,9 +11,10 @@ namespace Sundew.DiscriminatedUnions.Tester
     public sealed partial class IGenericOutParameterSegregation<T>
         where T : notnull
     {
-        internal IGenericOutParameterSegregation(System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.GenericOutParameter<T>> genericOutParameters)
+        internal IGenericOutParameterSegregation(System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.GenericOutParameter<T>> genericOutParameters, System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.SpecialGenericOutParameter<T>> specialGenericOutParameters)
         {
             this.GenericOutParameters = genericOutParameters;
+            this.SpecialGenericOutParameters = specialGenericOutParameters;
         }
 
         /// <summary>
@@ -21,5 +22,11 @@ namespace Sundew.DiscriminatedUnions.Tester
         /// </summary>
         /// <returns>The GenericOutParameters.</returns>
         public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.GenericOutParameter<T>> GenericOutParameters { get; }
+
+        /// <summary>
+        /// Gets the SpecialGenericOutParameters.
+        /// </summary>
+        /// <returns>The SpecialGenericOutParameters.</returns>
+        public System.Collections.Generic.IReadOnlyList<global::Sundew.DiscriminatedUnions.Tester.SpecialGenericOutParameter<T>> SpecialGenericOutParameters { get; }
     }
 }

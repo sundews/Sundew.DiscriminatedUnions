@@ -19,6 +19,7 @@ namespace Sundew.DiscriminatedUnions.Tester
             where T : notnull
         {
             var genericOutParameters = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.GenericOutParameter<T>>();
+            var specialGenericOutParameters = new System.Collections.Generic.List<global::Sundew.DiscriminatedUnions.Tester.SpecialGenericOutParameter<T>>();
 
             foreach (var value in iGenericOutParameters)
             {
@@ -27,10 +28,13 @@ namespace Sundew.DiscriminatedUnions.Tester
                     case global::Sundew.DiscriminatedUnions.Tester.GenericOutParameter<T> genericOutParameter:
                         genericOutParameters.Add(genericOutParameter);
                         break;
+                    case global::Sundew.DiscriminatedUnions.Tester.SpecialGenericOutParameter<T> specialGenericOutParameter:
+                        specialGenericOutParameters.Add(specialGenericOutParameter);
+                        break;
                 }
             }
 
-            return new global::Sundew.DiscriminatedUnions.Tester.IGenericOutParameterSegregation<T>(genericOutParameters);
+            return new global::Sundew.DiscriminatedUnions.Tester.IGenericOutParameterSegregation<T>(genericOutParameters, specialGenericOutParameters);
         }
     }
 }
