@@ -119,6 +119,7 @@ In addition, the DiscriminatedUnion attribute can specify a flags enum (Generato
 | SDU0009       | Unnested cases should have factory method                                                                                 | PDU0001  |
 | SDU0010       | Factory method should have correct CaseTypeAttribute                                                                      |   yes    |
 | SDU0011       | Reported when a case is implemented by throwing NotImplementedException, because CodeCleanup may siliently 'fix' SDU0001. |   yes    |
+| SDU0012       | Reported when a case contains type parameters that are not in the union type parameter list.                              |   yes    |
 | PDU0001       | Make union partial for code generator                                                                                     |   yes    |
 | PDU0002       | Populate union factory methods                                                                                            |   yes    |
 | SDU9999       | Switch should throw in default case                                                                                       |    no    |
