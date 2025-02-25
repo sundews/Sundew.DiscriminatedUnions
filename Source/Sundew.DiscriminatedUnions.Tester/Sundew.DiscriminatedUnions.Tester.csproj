@@ -6,6 +6,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+
   <ItemGroup>
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

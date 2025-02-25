@@ -34,6 +34,10 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.x.x
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.x.x
     - name: Build setup
       id: build-setup
       run: >

@@ -62,8 +62,8 @@ internal class UnionCaseAnalyzer : IUnionSymbolAnalyzer
                         }
                     }
 
-                    if (baseType.IsTypeGenericWithTypeParameters() &&
-                        caseNamedTypeSymbol.IsTypeGenericWithTypeParameters())
+                    if (baseType.IsTypeGeneric() &&
+                        caseNamedTypeSymbol.IsTypeGeneric())
                     {
                         var invalidTypeParameters = caseNamedTypeSymbol.TypeParameters
                             .Where(x => !baseType.TypeParameters.Any(y => x.MetadataName == y.MetadataName)).Select(x => x.MetadataName).ToArray();

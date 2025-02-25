@@ -226,8 +226,13 @@ public static class UnionHelper
         var caseTypeSymbol = (INamedTypeSymbol?)caseTypeAttribute.ConstructorArguments.FirstOrDefault().Value ??
                              (INamedTypeSymbol?)caseTypeAttribute.NamedArguments.FirstOrDefault().Value.Value;
 
-        if (caseTypeSymbol != null && caseTypeSymbol.IsTypeGenericWithTypeParameters() && unionType is INamedTypeSymbol namedUnionType)
+        if (caseTypeSymbol != null && caseTypeSymbol.IsTypeGeneric() && unionType is INamedTypeSymbol namedUnionType && namedUnionType.TypeArguments.Length > 0)
         {
+            if (SymbolEqualityComparer.Default.Equals(caseTypeSymbol.OriginalDefinition, unionType))
+            {
+                return caseTypeSymbol.OriginalDefinition.Construct(namedUnionType.TypeArguments, namedUnionType.TypeArgumentNullableAnnotations);
+            }
+
             if (caseTypeSymbol.OriginalDefinition.TypeParameters.Length != namedUnionType.TypeArguments.Length)
             {
                 return default;

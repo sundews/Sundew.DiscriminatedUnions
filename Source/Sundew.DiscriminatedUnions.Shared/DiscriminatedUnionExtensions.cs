@@ -60,12 +60,22 @@ public static class DiscriminatedUnionExtensions
     }
 
     /// <summary>
+    /// Determines whether the type is generic.
+    /// </summary>
+    /// <param name="namedTypeSymbol">The named type symbol.</param>
+    /// <returns><c>true</c>, if this is generic and has type parameters, otherwise <c>false</c>.</returns>
+    public static bool IsTypeGeneric(this INamedTypeSymbol namedTypeSymbol)
+    {
+        return namedTypeSymbol.IsGenericType | namedTypeSymbol.IsUnboundGenericType;
+    }
+
+    /// <summary>
     /// Determines whether the type is generic and has type parameters.
     /// </summary>
     /// <param name="namedTypeSymbol">The named type symbol.</param>
     /// <returns><c>true</c>, if this is generic and has type parameters, otherwise <c>false</c>.</returns>
     public static bool IsTypeGenericWithTypeParameters(this INamedTypeSymbol namedTypeSymbol)
     {
-        return namedTypeSymbol is { IsGenericType: true, TypeParameters.Length: > 0 };
+        return IsTypeGeneric(namedTypeSymbol) && namedTypeSymbol.TypeParameters.Length > 0;
     }
 }
