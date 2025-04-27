@@ -25,6 +25,7 @@
     <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\R*.cs" />
     <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\O.cs" />
     <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\EnumExtensions.cs" />
+    <SundewBasePrimitivesCompile Include="..\Sundew.Base\Source\Sundew.Base.Primitives\Arrays.cs" />
     <Compile Include="@(SundewBasePrimitivesCompile)" LinkBase="Shared\Sundew.Base.Primitives" />
     <SundewBaseCollectionsImmutableCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections.Immutable\EnumerableExtensions.ValueCollections.cs" />
     <SundewBaseCollectionsImmutableCompile Include="..\Sundew.Base\Source\Sundew.Base.Collections.Immutable\ValueArray{TItem}.cs" />
