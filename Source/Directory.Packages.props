@@ -19,19 +19,19 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.MSTest" Version="1.1.1" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="3.10.4" />
-    <PackageVersion Include="MSTest.TestFramework" Version="3.10.4" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="3.11.0" />
+    <PackageVersion Include="MSTest.TestFramework" Version="3.11.0" />
     <PackageVersion Include="NUnit" Version="4.4.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="5.1.0" />
     <PackageVersion Include="PolySharp" Version="1.15.0" />
     <PackageVersion Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556" />
     <PackageVersion Include="System.Collections.Immutable" Version="9.0.9" />
-    <PackageVersion Include="Sundew.Generator.Code" Version="3.1.24-u20250922-140601-local" />
-    <PackageVersion Include="Sundew.Packaging.Publish" Version="10.0.9" />
-    <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.5-u20250922-221218-local" />
+    <PackageVersion Include="Sundew.Generator.Code" Version="3.1.24-u20251004-121134-ci" />
+    <PackageVersion Include="Sundew.Packaging.Publish" Version="10.0.10-u20250427-204945-ci" />
+    <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.5-u20251004-125443-ci" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.5.0" />
-    <PackageVersion Include="Verify.Xunit" Version="30.18.0" />
-    <PackageVersion Include="Verify" Version="30.18.0" />
+    <PackageVersion Include="Verify.Xunit" Version="30.20.0" />
+    <PackageVersion Include="Verify" Version="30.20.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit" Version="2.9.3" />
   </ItemGroup>
