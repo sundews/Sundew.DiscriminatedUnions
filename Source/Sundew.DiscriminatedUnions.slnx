@@ -1,0 +1,35 @@
+<Solution>
+  <Folder Name="/Build/">
+    <File Path="../.github/workflows/dotnet.yml" />
+    <File Path="../README.md" />
+    <File Path=".editorconfig" />
+    <File Path="Build/stylecop.json" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.props.user" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="NuGet.config" />
+  </Folder>
+  <Folder Name="/Build/Development/">
+    <File Path="Build/Development/stylecop.json" />
+  </Folder>
+  <Folder Name="/Performance/">
+    <Project Path="Sundew.DiscriminatedUnions.Generator.Development.Baseline/Sundew.DiscriminatedUnions.Generator.Development.Baseline.csproj" />
+    <Project Path="Sundew.DiscriminatedUnions.Generator.Development.PerformanceBenchmark/Sundew.DiscriminatedUnions.Generator.Development.PerformanceBenchmark.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Sundew.DiscriminatedUnions.Generator.Development.IntegrationTests/Sundew.DiscriminatedUnions.Generator.Development.IntegrationTests.csproj" />
+    <Project Path="Sundew.DiscriminatedUnions.Development.TestData/Sundew.DiscriminatedUnions.Development.TestData.csproj" />
+    <Project Path="Sundew.DiscriminatedUnions.Development.Tester/Sundew.DiscriminatedUnions.Development.Tester.csproj" />
+    <Project Path="Sundew.DiscriminatedUnions.Development.Tests/Sundew.DiscriminatedUnions.Development.Tests.csproj" />
+  </Folder>
+  <Project Path="Sundew.DiscriminatedUnions.Analyzer/Sundew.DiscriminatedUnions.Analyzer.csproj" />
+  <Project Path="Sundew.DiscriminatedUnions.Api.Generator/Sundew.DiscriminatedUnions.Api.Generator.csproj" />
+  <Project Path="Sundew.DiscriminatedUnions.CodeFixes/Sundew.DiscriminatedUnions.CodeFixes.csproj" />
+  <Project Path="Sundew.DiscriminatedUnions.Generator/Sundew.DiscriminatedUnions.Generator.csproj" />
+  <Project Path="Sundew.DiscriminatedUnions.Package/Sundew.DiscriminatedUnions.Package.csproj" />
+  <Project Path="Sundew.DiscriminatedUnions.Shared/Sundew.DiscriminatedUnions.Shared.csproj" />
+  <Project Path="Sundew.DiscriminatedUnions/Sundew.DiscriminatedUnions.csproj">
+    <BuildDependency Project="Sundew.DiscriminatedUnions.Api.Generator/Sundew.DiscriminatedUnions.Api.Generator.csproj" />
+  </Project>
+</Solution>

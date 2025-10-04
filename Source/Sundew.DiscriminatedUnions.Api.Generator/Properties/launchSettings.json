@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Sundew.Quantities.Generator": {
+    "Sundew.DiscriminatedUnions.Api.Generator": {
       "commandName": "Project"
     }
   }

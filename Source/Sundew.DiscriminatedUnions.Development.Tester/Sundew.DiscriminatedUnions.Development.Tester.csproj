@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);CS1591;SA1600;SA1402</NoWarn>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Development.TestData\Sundew.DiscriminatedUnions..Development.TestData.csproj" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator\Sundew.DiscriminatedUnions.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Development.TestData\Sundew.DiscriminatedUnions.Development.TestData.csproj" />
+  </ItemGroup>
+
+</Project>

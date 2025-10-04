@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net8.0;net48</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="Microsoft.CodeAnalysis" />
+    <PackageReference Include="Sundew.Testing.CodeAnalysis" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator.Development.Baseline\Sundew.DiscriminatedUnions.Generator.Development.Baseline.csproj">
+      <Aliases>baseline</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator\Sundew.DiscriminatedUnions.Generator.csproj" />
+  </ItemGroup>
+
+</Project>

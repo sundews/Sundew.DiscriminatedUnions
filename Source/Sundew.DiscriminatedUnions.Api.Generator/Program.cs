@@ -1,7 +1,14 @@
-﻿namespace Sundew.Quantities.Generator;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.cs" company="Sundews">
+// Copyright (c) Sundews. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
-using Sundew.Generator;
+namespace Sundew.DiscriminatedUnions.Api.Generator;
+
 using System.Threading.Tasks;
+using Sundew.Generator;
 using Sundew.Generator.Code;
 using Sundew.Generator.Input;
 using Sundew.Generator.Output;
@@ -34,7 +41,7 @@ public static class Program
                     FileNameSuffix = ".g",
                     Folder = ".generated",
                 },
-            }
+            },
         });
     }
 }

@@ -1,4 +1,66 @@
 <Project>
+  <PropertyGroup>
+    <TargetFrameworkMonikerAssemblyAttributesPath>$([System.IO.Path]::Combine('$(IntermediateOutputPath)','$(TargetFrameworkMoniker).AssemblyAttributes$(DefaultLanguageSourceExtension)'))</TargetFrameworkMonikerAssemblyAttributesPath>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+    <StyleCopJsonFile>$(MSBuildThisFileDirectory)\Build\stylecop.json</StyleCopJsonFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers.Unstable">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" >
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('netstandard'))">
+    <PackageReference Include="PolySharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <PropertyGroup Condition="$(AssemblyName.EndsWith('Tests'))">
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);CS1591;</NoWarn>
+    <StyleCopJsonFile>$(MSBuildThisFileDirectory)\Build\Development\stylecop.json</StyleCopJsonFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(AssemblyName.Contains('Development'))">
+    <NoWarn>$(NoWarn);CS1591;SA1201</NoWarn>
+    <StyleCopJsonFile>$(MSBuildThisFileDirectory)\Build\Development\stylecop.json</StyleCopJsonFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(StyleCopJsonFile)" Link="stylecop.json"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(AssemblyName.EndsWith('Tests'))">
+    <PackageReference Include="AwesomeAssertions" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk"  />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" >
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" >
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Sundew.Packaging.Publish" >
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
   <Target Name="AddGitMetadaAssemblyAttributes"
           BeforeTargets="CoreGenerateAssemblyInfo">
     <ItemGroup>

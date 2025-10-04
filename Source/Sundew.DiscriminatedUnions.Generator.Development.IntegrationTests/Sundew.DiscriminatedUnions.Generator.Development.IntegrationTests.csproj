@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <WarningsAsErrors>;NU1605</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestAdapter" />
+    <PackageReference Include="MSTest.TestFramework" />
+    <PackageReference Include="Microsoft.CodeAnalysis" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.MSTest" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.MSTest" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.MSTest" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.MSTest" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="Sundew.Testing.CodeAnalysis" />
+    <PackageReference Include="Verify" />
+    <PackageReference Include="Verify.SourceGenerators" />
+    <PackageReference Include="Verify.Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator\Sundew.DiscriminatedUnions.Generator.csproj" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Development.TestData\Sundew.DiscriminatedUnions.Development.TestData.csproj" />
+  </ItemGroup>
+
+</Project>

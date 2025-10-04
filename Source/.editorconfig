@@ -1,3 +1,5 @@
+root = true
+
 [*.csproj]
 tab_width = 2
 indent_size = 2
@@ -9,3 +11,7 @@ csharp_style_namespace_declarations = file_scoped:error
 dotnet_style_readonly_field = true:error
 
 dotnet_sort_system_directives_first = true
+
+[**TestData/**/*.cs]
+dotnet_diagnostic.CS1591.severity = none  # Don't require XML comments in test projects
+

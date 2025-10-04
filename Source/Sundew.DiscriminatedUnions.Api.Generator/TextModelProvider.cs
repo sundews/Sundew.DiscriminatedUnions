@@ -1,6 +1,12 @@
-﻿namespace Sundew.Quantities.Generator;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TextModelProvider.cs" company="Sundews">
+// Copyright (c) Sundews. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System;
+namespace Sundew.DiscriminatedUnions.Api.Generator;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sundew.Base.Collections;
@@ -14,7 +20,7 @@ public class TextModelProvider : IModelProvider<ISetup, FolderModelSetup, string
     {
         if (modelSetup == null)
         {
-            return Array.Empty<IModelInfo<string>>();
+            return [];
         }
 
         var files = await Directory.EnumerateFilesAsync(modelSetup.Folder, modelSetup.FilesSearchPattern).ConfigureAwait(false);

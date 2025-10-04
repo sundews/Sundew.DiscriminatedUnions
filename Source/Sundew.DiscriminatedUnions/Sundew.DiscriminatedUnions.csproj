@@ -6,12 +6,7 @@
     <IsPackable>false</IsPackable>
     <!-- Avoid ID conflicts with the package project. -->
     <PackageId>Sundew.DiscriminatedUnion.Library</PackageId>
-    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <Folder Include=".generated\" />
@@ -19,10 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Api.Generator\Sundew.DiscriminatedUnions.Api.Generator.csproj" SkipGetTargetFrameworkProperties="true" ReferenceOutputAssembly="false" />
-    <PackageReference Include="StyleCop.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
   <Target Name="IncludeGenerated" AfterTargets="ResolveProjectReferences">

@@ -6,14 +6,12 @@
     <IsPackable>false</IsPackable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <IsRoslynComponent>true</IsRoslynComponent>
-    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 	  <DefineConstants>$(DefineConstants);Analyzer</DefineConstants>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.ModuleInitializerAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
     <SundewDiscriminatedUnionsShared Include="..\Sundew.DiscriminatedUnions.Shared\**\*.cs" />
     <SundewDiscriminatedUnionsShared Remove="..\Sundew.DiscriminatedUnions.Shared\obj\**\*.cs" />
     <Compile Remove="..\Sundew.DiscriminatedUnions.Shared\UnionHelper.cs" />
@@ -45,14 +43,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
-    <PackageReference Include="PolySharp">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.Bcl.Hashcode"/>
   </ItemGroup>
 
@@ -62,7 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Sundew.DiscriminatedUnions.Generator.IntegrationTests" />
+    <InternalsVisibleTo Include="Sundew.DiscriminatedUnions.Generator.Development.IntegrationTests" />
   </ItemGroup>
 
 

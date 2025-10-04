@@ -7,7 +7,9 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <NoWarn>$(NoWarn);CS1591;SA1600;SA1402</NoWarn>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
@@ -16,10 +18,6 @@
     <None Include="Models/*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <AdditionalFiles Include="stylecop.json" />
-    <GeneratorSetup Include="Quantities.gs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </GeneratorSetup>
   </ItemGroup>
  
   <ItemGroup>
