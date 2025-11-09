@@ -163,7 +163,7 @@ internal static class DiscriminatedUnionOutputProvider
                 .Append(' ')
                 .Append(unionFactoryMethodName)
                 .If(
-                    !outsideTypeParameters.IsEmpty(),
+                    !outsideTypeParameters.IsEmpty,
                     builder =>
                     {
                         return builder
@@ -194,7 +194,7 @@ internal static class DiscriminatedUnionOutputProvider
                     .Append(')')
                     .AppendLine()
                     .If(
-                        !outsideTypeParameters.IsEmpty(),
+                        !outsideTypeParameters.IsEmpty,
                         builder => builder.AppendItems(
                             outsideTypeParameters,
                             (builder, typeParameter) => builder

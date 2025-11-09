@@ -44,6 +44,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
     <PackageReference Include="Microsoft.Bcl.Hashcode"/>
+    <PackageReference Include="System.Collections.Immutable"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -15,6 +15,7 @@ using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCo
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
+[TestClass]
 public class CasesCannotContainAdditionalTypeParametersTests
 {
     [TestMethod]
