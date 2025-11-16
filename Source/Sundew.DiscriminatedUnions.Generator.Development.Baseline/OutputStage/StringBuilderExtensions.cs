@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Sundew.Base.Collections;
 using Sundew.Base.Collections.Immutable;
 using Sundew.Base.Text;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
@@ -56,7 +57,13 @@ internal static class StringBuilderExtensions
 
         if (isForAttribute)
         {
-            stringBuilder.Append(fullType.NameForTypeOfAttribute);
+            var actualFullType = fullType;
+            stringBuilder.AppendItems(
+                fullType.ContainingTypes.Reverse(),
+                (builder, type) => builder.Append(type.Name)
+                    .If(type.TypeParameters.HasAny, builder1 => builder1.Append('<').Append(',', type.TypeParameters.Count - 1).Append('>').Append('.'), builder1 => builder1.Append('.')))
+                .Append(fullType.Name)
+                .If(fullType.TypeMetadata.TypeParameters.HasAny, builder1 => builder1.Append('<').Append(',', actualFullType.TypeMetadata.TypeParameters.Count - 1).Append('>'));
         }
         else if (isForPartial)
         {
@@ -149,12 +156,12 @@ internal static class StringBuilderExtensions
             .AppendLine();
     }
 
-    public static StringBuilder AppendDocumentation(this StringBuilder stringBuilder, string indentation, string summaryFormat, object element, ValueArray<TypeParameter> typeParameters = default, IEnumerable<string>? parameters = default, string? returns = null)
+    public static StringBuilder AppendDocumentation(this StringBuilder stringBuilder, string baseIndentation, string indentation, string summaryFormat, object element, ValueArray<TypeParameter> typeParameters = default, IEnumerable<string>? parameters = default, string? returns = null)
     {
         stringBuilder
-            .Append(indentation).Append(SummaryStart).AppendLine()
-            .Append(indentation).Append(Documentation).AppendFormat(summaryFormat, element).Append('.').AppendLine()
-            .Append(indentation).Append(SummaryEnd);
+            .Append(baseIndentation).Append(indentation).Append(SummaryStart).AppendLine()
+            .Append(baseIndentation).Append(indentation).Append(Documentation).AppendFormat(summaryFormat, element).Append('.').AppendLine()
+            .Append(baseIndentation).Append(indentation).Append(SummaryEnd);
 
         if (!typeParameters.IsDefault)
         {
@@ -164,6 +171,7 @@ internal static class StringBuilderExtensions
                 {
                     builder
                         .AppendLine()
+                        .Append(baseIndentation)
                         .Append(indentation)
                         .Append(TypeparamStart).Append('\"').Append(typeParameter.Name).Append('\"').Append('>')
                         .Append(TheTypeOfThe).Append(' ')
@@ -184,6 +192,7 @@ internal static class StringBuilderExtensions
                     var parameterName = parameter[0] == '@' ? parameter.Substring(1) : parameter;
                     builder
                         .AppendLine()
+                        .Append(baseIndentation)
                         .Append(indentation)
                         .Append(ParamStart).Append('\"').Append(parameterName).Append('\"').Append('>')
                         .Append(The).Append(' ').Append(parameterName).Append('.').Append(ParamEnd);
@@ -194,7 +203,7 @@ internal static class StringBuilderExtensions
         if (!string.IsNullOrEmpty(returns))
         {
             stringBuilder.AppendLine()
-                .Append(indentation).Append(ReturnsStart).AppendFormat(returns, element).Append('.').Append(ReturnsEnd);
+                .Append(baseIndentation).Append(indentation).Append(ReturnsStart).AppendFormat(returns, element).Append('.').Append(ReturnsEnd);
         }
 
         return stringBuilder.AppendLine();
@@ -227,10 +236,11 @@ internal static class StringBuilderExtensions
         return stringBuilder;
     }
 
-    public static StringBuilder AppendTypeAttributes(this StringBuilder stringBuilder, bool appendDebuggerAttribute)
+    public static StringBuilder AppendTypeAttributes(this StringBuilder stringBuilder, bool appendDebuggerAttribute, string baseIndentation)
     {
         stringBuilder
-            .If(appendDebuggerAttribute, builder => builder.AppendDebuggerCodeAttribute(4))
+            .If(appendDebuggerAttribute, builder => builder.AppendDebuggerCodeAttribute(4, baseIndentation))
+            .Append(baseIndentation)
             .Append(SpaceIndentedBy4)
             .Append('[')
             .Append(GeneratedCodeAttribute)
@@ -244,9 +254,11 @@ internal static class StringBuilderExtensions
         return stringBuilder;
     }
 
-    public static StringBuilder AppendDebuggerCodeAttribute(this StringBuilder stringBuilder, int indentation)
+    public static StringBuilder AppendDebuggerCodeAttribute(this StringBuilder stringBuilder, int indentation, string baseIndentation)
     {
-        stringBuilder.Append(' ', indentation)
+        stringBuilder
+            .Append(baseIndentation)
+            .Append(' ', indentation)
             .Append('[')
             .Append(DebuggerNonUserCode)
             .Append(']')

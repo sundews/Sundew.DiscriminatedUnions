@@ -44,6 +44,32 @@ internal static class DiscriminatedUnionDeclarationProvider
         return null;
     }
 
+    internal static UnderlyingType GetUnderlyingType(ITypeSymbol typeSymbol)
+    {
+        return typeSymbol.TypeKind switch
+        {
+            TypeKind.Class => typeSymbol.IsRecord ? UnderlyingType.Record : UnderlyingType.Class,
+            TypeKind.Interface => UnderlyingType.Interface,
+            _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol.TypeKind), typeSymbol.TypeKind, FormattableString.Invariant($"Unexpected TypeKind on {typeSymbol.Name}")),
+        };
+    }
+
+    internal static bool TryGetSupportedAccessibility(ITypeSymbol typeSymbol, out Accessibility accessibility)
+    {
+        switch (typeSymbol.DeclaredAccessibility)
+        {
+            case Microsoft.CodeAnalysis.Accessibility.Internal:
+                accessibility = Accessibility.Internal;
+                return true;
+            case Microsoft.CodeAnalysis.Accessibility.Public:
+                accessibility = Accessibility.Public;
+                return true;
+            default:
+                accessibility = default;
+                return false;
+        }
+    }
+
     private static bool TryGetUnionWithFeatures(ITypeSymbol typeSymbol, out GeneratorFeatures generatorFeatures)
     {
         generatorFeatures = GeneratorFeatures.None;
@@ -69,16 +95,6 @@ internal static class DiscriminatedUnionDeclarationProvider
         return true;
     }
 
-    private static UnderlyingType GetUnderlyingType(ITypeSymbol typeSymbol)
-    {
-        return typeSymbol.TypeKind switch
-        {
-            TypeKind.Class => typeSymbol.IsRecord ? UnderlyingType.Record : UnderlyingType.Class,
-            TypeKind.Interface => UnderlyingType.Interface,
-            _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol.TypeKind), typeSymbol.TypeKind, FormattableString.Invariant($"Unexpected TypeKind on {typeSymbol.Name}")),
-        };
-    }
-
     private static bool IsDiscriminatedUnionCandidate(SyntaxNode syntaxNode)
     {
         if (syntaxNode is TypeDeclarationSyntax typeDeclarationSyntax)
@@ -94,21 +110,5 @@ internal static class DiscriminatedUnionDeclarationProvider
         }
 
         return false;
-    }
-
-    private static bool TryGetSupportedAccessibility(ITypeSymbol typeSymbol, out Accessibility accessibility)
-    {
-        switch (typeSymbol.DeclaredAccessibility)
-        {
-            case Microsoft.CodeAnalysis.Accessibility.Internal:
-                accessibility = Accessibility.Internal;
-                return true;
-            case Microsoft.CodeAnalysis.Accessibility.Public:
-                accessibility = Accessibility.Public;
-                return true;
-            default:
-                accessibility = default;
-                return false;
-        }
     }
 }

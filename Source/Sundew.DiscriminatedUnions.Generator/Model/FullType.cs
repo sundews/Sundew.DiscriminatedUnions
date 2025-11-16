@@ -8,19 +8,21 @@
 namespace Sundew.DiscriminatedUnions.Generator.Model;
 
 using System;
+using Sundew.Base.Collections.Immutable;
 
-internal readonly record struct FullType(string Name, string Namespace, string NameForTypeOfAttribute, string AssemblyAlias, bool IsArray, TypeMetadata TypeMetadata) : IEquatable<Type>
+internal readonly record struct FullType(string Name, string Namespace, ValueArray<ContainingType> ContainingTypes, string AssemblyAlias, bool IsArray, TypeMetadata TypeMetadata) : IEquatable<Type>
 {
     public FullType(Type type, TypeMetadata typeMetadata)
-        : this(type.Name, type.Namespace, type.AttributeName, type.AssemblyAlias, type.IsArray, typeMetadata)
+        : this(type.Name, type.Namespace, type.ContainingTypes, type.AssemblyAlias, type.IsArray, typeMetadata)
     {
     }
 
     public bool Equals(Type other)
     {
-        return this.NameForTypeOfAttribute.Equals(other.AttributeName) &&
+        return this.AssemblyAlias.Equals(other.AssemblyAlias) &&
                this.Namespace.Equals(other.Namespace) &&
-               this.AssemblyAlias.Equals(other.AssemblyAlias) &&
+               this.ContainingTypes.Equals(other.ContainingTypes) &&
+               this.Name.Equals(other.Name) &&
                this.IsArray.Equals(other.IsArray) &&
                this.TypeMetadata.TypeParameters.Count == other.TypeParameterCount;
     }

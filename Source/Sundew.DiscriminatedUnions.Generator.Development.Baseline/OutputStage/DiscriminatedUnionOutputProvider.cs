@@ -7,6 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.OutputStage;
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -50,7 +51,7 @@ internal static class DiscriminatedUnionOutputProvider
                 if (discriminatedUnion.IsPartial)
                 {
                     sourceProductionContext.AddSource(
-                        discriminatedUnionNamespace + '.' + discriminatedUnion.Type.Name + genericParametersForFileName + GeneratedSuffix,
+                        discriminatedUnionNamespace + GetNestedName(discriminatedUnion.Type.ContainingTypes) + '.' + discriminatedUnion.Type.Name + genericParametersForFileName + GeneratedSuffix,
                         GetUnionSource(in discriminatedUnion, discriminatedUnionNamespace));
                 }
 
@@ -74,6 +75,27 @@ internal static class DiscriminatedUnionOutputProvider
         }
     }
 
+    private static string GetNestedName(ValueArray<ContainingType> containingTypes)
+    {
+        if (!containingTypes.HasAny)
+        {
+            return string.Empty;
+        }
+
+        const string dot = ".";
+        var stringBuilder = new StringBuilder(dot);
+        stringBuilder.AppendItems(
+            containingTypes,
+            (builder, containingType) =>
+                builder.Append(containingType.Name)
+                    .If(containingType.TypeParameters.HasAny, builder1 => builder1
+                        .Append('{')
+                        .AppendItems(containingType.TypeParameters, (builder2, name) => builder2.Append(name), ',')
+                        .Append('}')),
+            '.');
+        return stringBuilder.ToString();
+    }
+
     private static string TryGetGenericParametersForFileName(ValueArray<TypeParameter> typeParameters)
     {
         if (typeParameters.IsDefault)
@@ -92,8 +114,11 @@ internal static class DiscriminatedUnionOutputProvider
 
     private static string GetUnionSource(in DiscriminatedUnion discriminatedUnion, string discriminatedUnionNamespace)
     {
+        var discriminatedUnionType = discriminatedUnion.Type;
+        var baseIndentationSpace = new string(' ', discriminatedUnionType.ContainingTypes.Count * 4);
         var isInterface = discriminatedUnion.UnderlyingType == UnderlyingType.Interface;
         var stringBuilder = new StringBuilder();
+        var nestedClassIndentation = 0;
         stringBuilder
             .Append(NullableEnable)
             .AppendLine()
@@ -104,8 +129,35 @@ internal static class DiscriminatedUnionOutputProvider
             .AppendLine()
             .Append('{')
             .AppendLine()
+            .AppendItems(
+                discriminatedUnionType.ContainingTypes,
+                (builder, containingType) => builder
+                    .Append(' ', 4 * nestedClassIndentation)
+                    .Append(SpaceIndentedBy4)
+                    .AppendAccessibility(containingType.Accessibility)
+                    .Append(' ')
+                    .Append(Partial)
+                    .Append(' ')
+                    .AppendUnderlyingType(containingType.UnderlyingType)
+                    .Append(' ')
+                    .Append(containingType.Name)
+                    .If(
+                        containingType.TypeParameters.HasAny,
+                        builder1 => builder1
+                            .Append('<')
+                            .AppendItems(
+                                containingType.TypeParameters,
+                                (builder1, typeParameter) => builder1.Append(typeParameter),
+                                GeneratorConstants.ListSeparator)
+                            .Append('>'))
+                    .AppendLine()
+                    .Append(' ', 4 * nestedClassIndentation++)
+                    .Append(SpaceIndentedBy4)
+                    .Append('{')
+                    .AppendLine())
             .AppendPragmaWarning(false, Sa1601)
-            .AppendTypeAttributes(!isInterface)
+            .AppendTypeAttributes(!isInterface, baseIndentationSpace)
+            .Append(baseIndentationSpace)
             .Append(SpaceIndentedBy4)
             .AppendAccessibility(discriminatedUnion.Accessibility)
             .Append(' ')
@@ -117,13 +169,15 @@ internal static class DiscriminatedUnionOutputProvider
             .AppendLine()
             .TryAppendConstraints(discriminatedUnion.Type.TypeMetadata.TypeParameters, SpaceIndentedBy8)
             .AppendPragmaWarning(true, Sa1601)
+            .Append(baseIndentationSpace)
             .Append(SpaceIndentedBy4)
             .Append('{');
         foreach (var discriminatedUnionOwnedCase in discriminatedUnion.Cases)
         {
             var implementAsMethod = discriminatedUnionOwnedCase.Parameters.Any();
             stringBuilder.AppendLine()
-                .AppendDocumentation(SpaceIndentedBy8, implementAsMethod ? FactoryMethodDescription : FactoryPropertyDescription, discriminatedUnionOwnedCase.Type.Name, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), implementAsMethod ? FactoryMethodReturnsDescription : FactoryPropertyReturnsDescription)
+                .AppendDocumentation(baseIndentationSpace, SpaceIndentedBy8, implementAsMethod ? FactoryMethodDescription : FactoryPropertyDescription, discriminatedUnionOwnedCase.Type.Name, default, discriminatedUnionOwnedCase.Parameters.Select(x => x.Name), implementAsMethod ? FactoryMethodReturnsDescription : FactoryPropertyReturnsDescription)
+                .Append(baseIndentationSpace)
                 .Append(SpaceIndentedBy8)
                 .Append('[')
                 .Append(SundewDiscriminatedUnionsCaseType)
@@ -135,7 +189,8 @@ internal static class DiscriminatedUnionOutputProvider
                 .Append(')')
                 .Append(']')
                 .AppendLine()
-                .If(isInterface, builder => builder.AppendDebuggerCodeAttribute(8))
+                .If(isInterface, builder => builder.AppendDebuggerCodeAttribute(8, baseIndentationSpace))
+                .Append(baseIndentationSpace)
                 .Append(SpaceIndentedBy8)
                 .Append(Public)
                 .Append(' ');
@@ -198,6 +253,7 @@ internal static class DiscriminatedUnionOutputProvider
                         builder => builder.AppendItems(
                             outsideTypeParameters,
                             (builder, typeParameter) => builder
+                                .Append(baseIndentationSpace)
                                 .Append(SpaceIndentedBy12)
                                 .Append(Where)
                                 .Append(' ')
@@ -208,12 +264,13 @@ internal static class DiscriminatedUnionOutputProvider
                                     (builder, constraint) => builder.Append(constraint),
                                     separator))
                             .AppendLine())
+                    .Append(baseIndentationSpace)
                     .Append(SpaceIndentedBy12)
                     .Append(Lambda);
             }
             else
             {
-                stringBuilder.Append(' ').Append(Get).AppendLine().Append(SpaceIndentedBy12).Append('=');
+                stringBuilder.Append(' ').Append(Get).AppendLine().Append(baseIndentationSpace).Append(SpaceIndentedBy12).Append('=');
             }
 
             stringBuilder
@@ -228,9 +285,18 @@ internal static class DiscriminatedUnionOutputProvider
             stringBuilder.AppendLine();
         }
 
-        stringBuilder.Append(SpaceIndentedBy4)
+        stringBuilder
+            .Append(baseIndentationSpace)
+            .Append(SpaceIndentedBy4)
             .Append('}')
             .AppendLine()
+            .AppendItems(
+                discriminatedUnionType.ContainingTypes,
+                (builder, containingType) => builder
+                    .Append(' ', 4 * --nestedClassIndentation)
+                    .Append(SpaceIndentedBy4)
+                    .Append('}')
+                    .AppendLine())
             .Append('}')
             .AppendLine();
         return stringBuilder.ToString();
@@ -248,8 +314,8 @@ internal static class DiscriminatedUnionOutputProvider
             .AppendLine()
             .Append('{')
             .AppendLine()
-            .AppendDocumentation(SpaceIndentedBy4, $"Contains individual lists of the different cases of the discriminated union {discriminatedUnion.Type.Name}", segregationTypeName)
-            .AppendTypeAttributes(true)
+            .AppendDocumentation(string.Empty, SpaceIndentedBy4, $"Contains individual lists of the different cases of the discriminated union {discriminatedUnion.Type.Name}", segregationTypeName)
+            .AppendTypeAttributes(true, string.Empty)
             .Append(SpaceIndentedBy4)
             .AppendAccessibility(discriminatedUnion.Accessibility)
             .Append(' ')
@@ -316,7 +382,7 @@ internal static class DiscriminatedUnionOutputProvider
             (sb, caseItem) =>
             {
                 sb
-                    .AppendDocumentation(SpaceIndentedBy8, GetPropertyDescription, caseItem.PropertyName, default, default, ReturnsDescription)
+                    .AppendDocumentation(string.Empty, SpaceIndentedBy8, GetPropertyDescription, caseItem.PropertyName, default, default, ReturnsDescription)
                     .Append(SpaceIndentedBy8)
                     .Append(Public)
                     .Append(' ')
@@ -352,8 +418,8 @@ internal static class DiscriminatedUnionOutputProvider
             .AppendLine()
             .Append('{')
             .AppendLine()
-            .AppendDocumentation(SpaceIndentedBy4, SegregationExtensionMethodDescription, discriminatedUnion.Type.Name)
-            .AppendTypeAttributes(true)
+            .AppendDocumentation(string.Empty, SpaceIndentedBy4, SegregationExtensionMethodDescription, discriminatedUnion.Type.Name)
+            .AppendTypeAttributes(true, string.Empty)
             .Append(SpaceIndentedBy4)
             .AppendAccessibility(discriminatedUnion.Accessibility)
             .Append(' ')
@@ -368,7 +434,7 @@ internal static class DiscriminatedUnionOutputProvider
             .Append(SpaceIndentedBy4)
             .Append('{')
             .AppendLine()
-            .AppendDocumentation(SpaceIndentedBy8, SegregateMethodDescription, discriminatedUnion.Type.Name, default, new[] { unionsParameterName }, SegregateMethodReturnsDescription)
+            .AppendDocumentation(string.Empty, SpaceIndentedBy8, SegregateMethodDescription, discriminatedUnion.Type.Name, default, new[] { unionsParameterName }, SegregateMethodReturnsDescription)
             .Append(SpaceIndentedBy8)
             .Append(Public)
             .Append(' ')

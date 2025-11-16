@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Build/">
     <File Path="../.github/workflows/dotnet.yml" />
+    <File Path="../.gitignore" />
     <File Path="../README.md" />
     <File Path=".editorconfig" />
     <File Path="Build/stylecop.json" />
