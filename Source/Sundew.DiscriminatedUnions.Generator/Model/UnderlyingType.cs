@@ -10,6 +10,8 @@ namespace Sundew.DiscriminatedUnions.Generator.Model;
 internal enum UnderlyingType
 {
     Class,
-    Record,
+    RecordClass,
     Interface,
+    Struct,
+    RecordStruct,
 }

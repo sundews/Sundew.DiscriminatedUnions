@@ -126,8 +126,10 @@ internal static class StringBuilderExtensions
         stringBuilder.Append(underlyingType switch
         {
             UnderlyingType.Class => Class,
-            UnderlyingType.Record => Record,
+            UnderlyingType.RecordClass => Record,
             UnderlyingType.Interface => Interface,
+            UnderlyingType.Struct => Struct,
+            UnderlyingType.RecordStruct => RecordStruct,
             _ => throw new ArgumentOutOfRangeException(nameof(underlyingType), underlyingType, null),
         });
         return stringBuilder;
