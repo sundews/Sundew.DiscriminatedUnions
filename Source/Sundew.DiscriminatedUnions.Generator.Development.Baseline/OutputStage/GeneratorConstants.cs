@@ -52,6 +52,7 @@ internal static class GeneratorConstants
     public const string Class = "class";
     public const string Unmanaged = "unmanaged";
     public const string Struct = "struct";
+    public const string RecordStruct = "record struct";
     public const string NewConstructor = "new()";
     public const string Record = "record";
     public const string Default = "default";

@@ -48,8 +48,9 @@ internal static class DiscriminatedUnionDeclarationProvider
     {
         return typeSymbol.TypeKind switch
         {
-            TypeKind.Class => typeSymbol.IsRecord ? UnderlyingType.Record : UnderlyingType.Class,
+            TypeKind.Class => typeSymbol.IsRecord ? UnderlyingType.RecordClass : UnderlyingType.Class,
             TypeKind.Interface => UnderlyingType.Interface,
+            TypeKind.Struct => typeSymbol.IsRecord ? UnderlyingType.RecordStruct : UnderlyingType.Struct,
             _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol.TypeKind), typeSymbol.TypeKind, FormattableString.Invariant($"Unexpected TypeKind on {typeSymbol.Name}")),
         };
     }
