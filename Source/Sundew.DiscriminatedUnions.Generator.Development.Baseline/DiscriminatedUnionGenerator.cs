@@ -24,6 +24,8 @@ public class DiscriminatedUnionGenerator : IIncrementalGenerator
     /// <param name="context">The context.</param>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        var targetFramework = context.AnalyzerConfigOptionsProvider.SetupFeatureSupportStage();
+
         var discriminatedUnionDeclarationProvider = context.SyntaxProvider.SetupDiscriminatedUnionDeclarationStage();
 
         var discriminatedUnionCaseProvider = context.SyntaxProvider.SetupDiscriminatedUnionCaseDeclarationStage();
@@ -32,6 +34,8 @@ public class DiscriminatedUnionGenerator : IIncrementalGenerator
 
         var discriminatedUnionResultsProvider = unionsAndCasesProvider.SetupDiscriminatedUnionStage();
 
-        context.RegisterSourceOutput(discriminatedUnionResultsProvider, DiscriminatedUnionOutputProvider.Generate);
+        var outputProvider = discriminatedUnionResultsProvider.Combine(targetFramework);
+
+        context.RegisterSourceOutput(outputProvider, DiscriminatedUnionOutputProvider.Generate);
     }
 }

@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
+    <TargetFrameworks>net10.0;net8.0;netstandard2.0</TargetFrameworks>
+    <LangVersion>11.0</LangVersion>
     <IsPackable>false</IsPackable>
     <!-- Avoid ID conflicts with the package project. -->
     <PackageId>Sundew.DiscriminatedUnion.Library</PackageId>
@@ -13,12 +13,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Api.Generator\Sundew.DiscriminatedUnions.Api.Generator.csproj" SkipGetTargetFrameworkProperties="true" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Api.Generator\Sundew.DiscriminatedUnions.Api.Generator.csproj" SetTargetFramework="TargetFramework=net8.0" SkipGetTargetFrameworkProperties="true" ReferenceOutputAssembly="false" IncludeAssets="none"/>
   </ItemGroup>
-
+  
   <Target Name="IncludeGenerated" AfterTargets="ResolveProjectReferences">
     <ItemGroup>
       <Compile Include=".generated\*.g.cs" />
     </ItemGroup>
   </Target>
+
 </Project>

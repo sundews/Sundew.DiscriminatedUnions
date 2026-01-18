@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Sundew.Base;
 using Sundew.Base.Collections;
 using Sundew.Base.Collections.Immutable;
 using Sundew.Base.Text;
@@ -158,7 +159,7 @@ internal static class StringBuilderExtensions
             .AppendLine();
     }
 
-    public static StringBuilder AppendDocumentation(this StringBuilder stringBuilder, string baseIndentation, string indentation, string summaryFormat, object element, ValueArray<TypeParameter> typeParameters = default, IEnumerable<string>? parameters = default, string? returns = null)
+    public static StringBuilder AppendDocumentation(this StringBuilder stringBuilder, string baseIndentation, string indentation, string summaryFormat, object? element = null, ValueArray<TypeParameter> typeParameters = default, IEnumerable<string>? parameters = default, string? returns = null)
     {
         stringBuilder
             .Append(baseIndentation).Append(indentation).Append(SummaryStart).AppendLine()

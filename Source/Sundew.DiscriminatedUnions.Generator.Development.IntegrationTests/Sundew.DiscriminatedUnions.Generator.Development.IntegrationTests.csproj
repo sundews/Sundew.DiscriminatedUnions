@@ -4,16 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <NoWarn>$(NoWarn);MSB3243</NoWarn>
     <WarningsAsErrors>;NU1605</WarningsAsErrors>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove=".cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include=".cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MSTest.TestAdapter" />
@@ -31,6 +24,9 @@
     <PackageReference Include="Verify" />
     <PackageReference Include="Verify.SourceGenerators" />
     <PackageReference Include="Verify.Xunit" />
+    <PackageReference Include="Sundew.DiscriminatedUnions" VersionOverride="*">
+      <ExcludeAssets>All</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

@@ -59,4 +59,5 @@ internal static class GeneratorConstants
     public const string Null = "null";
     public const string True = "true";
     public const string False = "false";
+    public const string Override = "override";
 }

@@ -37,10 +37,16 @@ internal static class DiscriminatedUnionOutputProvider
     private const string FactoryPropertyReturnsDescription = "The {0}";
     private const string GeneratedSuffix = ".generated";
     private const string NullableEnable = "#nullable enable";
+    private const string IDiscriminatedUnionTypeName = "global::Sundew.DiscriminatedUnions.IDiscriminatedUnion";
+    private const string SystemTypeTypeName = "global::System.Type";
+    private const string IReadonlylistOfSystemTypeTypeName = "global::System.Collections.Generic.IReadOnlyList<global::System.Type>";
+    private const string GetsAllCasesInTheUnionText = "Gets all cases in the union";
+    private const string? GetAllCasesReturnsText = "A readonly list of types";
+    private const string CasesName = "Cases";
 
-    public static void Generate(SourceProductionContext sourceProductionContext, ImmutableArray<DiscriminatedUnionResult> discriminatedUnionResults)
+    public static void Generate(SourceProductionContext sourceProductionContext, (ImmutableArray<DiscriminatedUnionResult> DescriminatedUnionResults, FeatureSupport FeatureSupport) context)
     {
-        foreach (var discriminatedUnionResult in discriminatedUnionResults)
+        foreach (var discriminatedUnionResult in context.DescriminatedUnionResults)
         {
             sourceProductionContext.CancellationToken.ThrowIfCancellationRequested();
             if (discriminatedUnionResult.IsSuccess)
@@ -52,7 +58,7 @@ internal static class DiscriminatedUnionOutputProvider
                 {
                     sourceProductionContext.AddSource(
                         discriminatedUnionNamespace + GetNestedName(discriminatedUnion.Type.ContainingTypes) + '.' + discriminatedUnion.Type.Name + genericParametersForFileName + GeneratedSuffix,
-                        GetUnionSource(in discriminatedUnion, discriminatedUnionNamespace));
+                        GetUnionSource(in discriminatedUnion, discriminatedUnionNamespace, context.FeatureSupport));
                 }
 
                 if (discriminatedUnion.GeneratorFeatures.HasFlag(GeneratorFeatures.Segregate))
@@ -112,7 +118,7 @@ internal static class DiscriminatedUnionOutputProvider
                 ',').ToString();
     }
 
-    private static string GetUnionSource(in DiscriminatedUnion discriminatedUnion, string discriminatedUnionNamespace)
+    private static string GetUnionSource(in DiscriminatedUnion discriminatedUnion, string discriminatedUnionNamespace, FeatureSupport featureSupport)
     {
         var discriminatedUnionType = discriminatedUnion.Type;
         var baseIndentationSpace = new string(' ', discriminatedUnionType.ContainingTypes.Count * 4);
@@ -166,6 +172,7 @@ internal static class DiscriminatedUnionOutputProvider
             .AppendUnderlyingType(discriminatedUnion.UnderlyingType)
             .Append(' ')
             .AppendType(discriminatedUnion.Type, false, false, true)
+            .If(featureSupport.IsDefaultInterfaceMembersSupported, builder => builder.Append(' ').Append(':').Append(' ').Append(IDiscriminatedUnionTypeName))
             .AppendLine()
             .TryAppendConstraints(discriminatedUnion.Type.TypeMetadata.TypeParameters, SpaceIndentedBy8)
             .AppendPragmaWarning(true, Sa1601)
@@ -210,7 +217,6 @@ internal static class DiscriminatedUnionOutputProvider
             var union = discriminatedUnion;
             var outsideTypeParameters = discriminatedUnionOwnedCase.Type.TypeMetadata.TypeParameters.Where(x => union.Type.TypeMetadata.TypeParameters.All(y => x.Name != y.Name)).ToArray();
 
-            const string separator = ", ";
             stringBuilder
                 .Append(Static)
                 .Append(' ')
@@ -223,7 +229,7 @@ internal static class DiscriminatedUnionOutputProvider
                     {
                         return builder
                             .Append('<')
-                            .AppendItems(outsideTypeParameters, (builder, typeParameter) => builder.Append(typeParameter.Name), separator)
+                            .AppendItems(outsideTypeParameters, (builder, typeParameter) => builder.Append(typeParameter.Name), ListSeparator)
                             .Append('>');
                     });
             if (implementAsMethod)
@@ -262,7 +268,7 @@ internal static class DiscriminatedUnionOutputProvider
                                 .AppendItems(
                                     typeParameter.Constraints,
                                     (builder, constraint) => builder.Append(constraint),
-                                    separator))
+                                    ListSeparator))
                             .AppendLine())
                     .Append(baseIndentationSpace)
                     .Append(SpaceIndentedBy12)
@@ -284,6 +290,60 @@ internal static class DiscriminatedUnionOutputProvider
                 .Append(';');
             stringBuilder.AppendLine();
         }
+
+        stringBuilder
+            .AppendLine()
+            .AppendDocumentation(baseIndentationSpace, SpaceIndentedBy8, GetsAllCasesInTheUnionText, returns: GetAllCasesReturnsText)
+            .Append(SpaceIndentedBy8)
+            .Append(' ', 4 * nestedClassIndentation)
+            .Append(Public)
+            .Append(' ')
+            .If(featureSupport.IsDefaultInterfaceMembersSupported && (isInterface || discriminatedUnion.IsConstrainingUnion), builder => builder.Append(New).Append(' '))
+            .Append(Static)
+            .Append(' ')
+            .Append(IReadonlylistOfSystemTypeTypeName)
+            .Append(' ')
+            .Append(CasesName)
+            .Append(' ')
+            .Append(Get)
+            .AppendLine()
+            .Append(SpaceIndentedBy12)
+            .Append(' ', 4 * nestedClassIndentation)
+            .Append('=')
+            .Append(' ')
+            .Append(New)
+            .Append(' ')
+            .Append(SystemTypeTypeName).Append('[').Append(']').Append(' ').Append('{').Append(' ')
+            .AppendItems(
+                discriminatedUnion.Cases,
+                (builder, x) => builder.Append(Typeof).Append('(').AppendType(x.Type).Append(')'),
+                ListSeparator)
+            .Append(' ')
+            .Append('}')
+            .Append(';')
+            .AppendLine();
+
+        stringBuilder
+            .If(
+                featureSupport.IsDefaultInterfaceMembersSupported && isInterface,
+                builder => builder.AppendLine()
+                .AppendDocumentation(baseIndentationSpace, SpaceIndentedBy8, GetsAllCasesInTheUnionText, returns: GetAllCasesReturnsText)
+                .Append(SpaceIndentedBy8)
+                .Append(' ', 4 * nestedClassIndentation)
+                .Append(Static)
+                .Append(' ')
+                .Append(IReadonlylistOfSystemTypeTypeName)
+                .Append(' ')
+                .Append(IDiscriminatedUnionTypeName)
+                .Append('.')
+                .Append(CasesName)
+                .Append(' ')
+                .Append('=')
+                .Append('>')
+                .Append(' ')
+                .Append(CasesName)
+                .Append(';')
+                .AppendLine());
 
         stringBuilder
             .Append(baseIndentationSpace)

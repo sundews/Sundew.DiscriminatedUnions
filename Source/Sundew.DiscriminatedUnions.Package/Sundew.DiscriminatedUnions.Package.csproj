@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net10.0;net8.0;netstandard2.0</TargetFrameworks>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -19,6 +19,7 @@ The idea is that this package can be deleted once unions are supported in C#, wi
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
     <PackageReleaseNotes>
+5.4 - Support IDiscriminatedUnion for enumerating cases.
 2.0 - Support matching unions in referenced projects, marker attributes included as source rather than library reference.
 1.0 - Initial version
     </PackageReleaseNotes>
@@ -38,14 +39,14 @@ The idea is that this package can be deleted once unions are supported in C#, wi
 
   <ItemGroup>
     <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
+    <None Include="$(BaseOutputPath)\$(Configuration)\netstandard2.0\Sundew.DiscriminatedUnions.Analyzer.dll" Pack="true" PackagePath="analyzers/dotnet/cs" />
+    <None Include="$(BaseOutputPath)\$(Configuration)\netstandard2.0\Sundew.DiscriminatedUnions.CodeFixes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" />
+    <None Include="$(BaseOutputPath)\$(Configuration)\netstandard2.0\Sundew.DiscriminatedUnions.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" />
   </ItemGroup>
 
   <Target Name="_AddAnalyzersToOutput">
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.Analyzer.dll" PackagePath="analyzers/dotnet/cs" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.Generator.dll" PackagePath="analyzers/dotnet/cs" />
-      <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.dll" PackagePath="lib/netstandard1.0" />
+      <TfmSpecificPackageFile Include="$(OutputPath)\Sundew.DiscriminatedUnions.dll" PackagePath="lib\$(TargetFramework)" />
     </ItemGroup>
   </Target>
 

@@ -17,7 +17,7 @@ public class PublicApiGenerator : IGenerator<ISetup, IGeneratorSetup, IProject, 
 {
     public IReadOnlyList<IRun> Prepare(ISetup setup, IGeneratorSetup generatorSetup, IProject target, string model, string modelOrigin)
     {
-        return new IRun[] { new CodeRun(modelOrigin, Path.GetFileNameWithoutExtension(modelOrigin) + target.FileSuffix, null) };
+        return [new CodeRun(modelOrigin, Path.GetFileNameWithoutExtension(modelOrigin) + target.FileSuffix, null)];
     }
 
     public ITextOutput Generate(ISetup setup, IGeneratorSetup generatorSetup, IProject target, string model, IRun run, long index)
