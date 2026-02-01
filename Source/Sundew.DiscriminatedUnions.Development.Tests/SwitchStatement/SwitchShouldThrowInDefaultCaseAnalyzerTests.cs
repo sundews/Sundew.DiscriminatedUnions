@@ -8,17 +8,15 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests.SwitchStatement;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class SwitchShouldThrowInDefaultCaseAnalyzerTests
 {
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_AllCasesHandledButDefaultCaseIsIncorrect_Then_SwitchShouldThrowInDefaultCaseIsReported()
     {
         var test = $@"#nullable enable
@@ -56,7 +54,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
     }
 
     /*
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_DefaultCaseIsHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
     {
         var test = $@"#nullable enable
@@ -91,7 +89,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(26, 17, 27, 27));
     }*/
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_AllCasesReturnAndDefaultCaseIsHandled_Then_SwitchShouldThrowInDefaultCaseIsReported()
     {
         var test = $@"#nullable enable
@@ -126,7 +124,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(26, 13, 27, 23));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_ValueMayBeNullAndAllCasesAreHandledAndDefaultCaseDoesNotThrow_Then_SwitchShouldThrowInDefaultCaseIsReported()
     {
         var test = $@"#nullable enable

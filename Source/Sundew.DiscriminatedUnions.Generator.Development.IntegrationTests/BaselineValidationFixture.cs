@@ -12,12 +12,11 @@ using System.Linq;
 using AwesomeAssertions;
 using Sundew.Base.IO;
 using Sundew.Testing.CodeAnalysis;
-using Xunit;
 
-[Trait("Category", "MainBranchBuilds")]
+[Category("MainBranchBuilds")]
 public class BaselineValidationFixture
 {
-    [Fact]
+    [Test]
     public void VerifyWorkingCopyAndBaselineProjectsAreTheSame()
     {
         var workingCopyProject = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Generator")!, null, new Paths("bin", "obj"));

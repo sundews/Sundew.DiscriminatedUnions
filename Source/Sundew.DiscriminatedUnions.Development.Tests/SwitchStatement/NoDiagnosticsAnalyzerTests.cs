@@ -8,16 +8,14 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests.SwitchStatement;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class NoDiagnosticsAnalyzerTests
 {
-    [TestMethod]
+    [Test]
     public async Task Given_EmptyCode_Then_NoDiagnosticsAreReported()
     {
         var test = string.Empty;
@@ -25,7 +23,7 @@ public class NoDiagnosticsAnalyzerTests
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_NoDiscriminatedUnionSwitch_Then_NoDiagnosticsAreReported()
     {
         var test = $@"{TestData.Usings}
@@ -56,7 +54,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_ExactlyAllCasesAreHandled_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
@@ -85,7 +83,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_ValueMayBeNullAndExactlyAllCasesAreHandled_Then_NoDiagnosticsAreReported()
     {
         var test = $@"{TestData.Usings}

@@ -16,6 +16,8 @@ jobs:
     name: .NET
     runs-on: ubuntu-latest
     env:
+      solutionDir: ./Source
+      solutionFileName: Sundew.DiscriminatedUnions.slnx
       solutionPath: ./Source/Sundew.DiscriminatedUnions.slnx
       versioningProjectPath: ./Source/Sundew.DiscriminatedUnions.Package/Sundew.DiscriminatedUnions.Package.csproj
       repository: 'https://sundew-dev:${{ secrets.SUNDEW_DEV_TOKEN }}@github.com/sundews/Sundew.DiscriminatedUnions.git'
@@ -89,7 +91,8 @@ jobs:
         -p:GeneratePackageOnBuild=true
         -p:"PackageOutputPath=${{ steps.stage-build.outputs.nuGetPackagesPath }}"
     - name: Test
-      run: dotnet test ${{ env.solutionPath }} --verbosity normal --configuration ${{ steps.stage-build.outputs.buildConfiguration }} --no-build${{ steps.stage-build.outputs.test-filter-if-set }}
+      working-directory: ${{ env.solutionDir }}
+      run: dotnet test --solution ${{ env.solutionFileName }} --verbosity normal --configuration ${{ steps.stage-build.outputs.buildConfiguration }} --no-build${{ steps.stage-build.outputs.test-filter-if-set }}
     - name: 'Publish package(s)'
       if: ${{ steps.stage-build.outputs.stage != 'none' }}
       run: cb -c "spt|push -s ${{ steps.stage-build.outputs.pushSource }} -k ${{ steps.stage-build.outputs.apiKey }} -ss ${{ steps.stage-build.outputs.symbolsPushSource }} -sk ${{ steps.stage-build.outputs.symbolsApiKey }} {1} -r 4" -bs NewLine -bvs '=' -bf ${{ env.source-packages-to-push }}

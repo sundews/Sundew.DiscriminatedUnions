@@ -8,16 +8,14 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class MultiUnionAnalyzerTests
 {
-    [TestMethod]
+    [Test]
     public async Task Given_MultiUnion_When_ItHasSubUnions_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable

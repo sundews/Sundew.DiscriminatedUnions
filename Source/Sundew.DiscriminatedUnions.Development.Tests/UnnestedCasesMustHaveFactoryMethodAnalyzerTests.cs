@@ -8,19 +8,16 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class UnnestedCasesMustHaveFactoryMethodAnalyzerTests
 {
-    [TestMethod]
-    public async Task
-        Given_Union_When_CasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
+    [Test]
+    public async Task Given_Union_When_CasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
     {
         var test = $@"#nullable enable
 {TestData.Usings}
@@ -52,7 +49,7 @@ public sealed record ValueExpression(int Value) : Expression;
                 .WithSpan(13, 1, 18, 2));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_Union_When_UnionIsInterfaceAndCasesAreNotNestedAndNoFactoryMethodIsDeclared_Then_UnnestedCasesShouldHaveFactoryMethodAreReported()
     {
         var test = $@"#nullable enable

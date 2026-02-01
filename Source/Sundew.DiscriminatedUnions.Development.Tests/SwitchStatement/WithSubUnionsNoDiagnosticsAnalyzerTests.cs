@@ -8,16 +8,14 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests.SwitchStatement;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class WithSubUnionsNoDiagnosticsAnalyzerTests
 {
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_AllCasesAreHandled_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
@@ -45,7 +43,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatementOnSubUnion_When_AllCasesAreHandled_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
@@ -73,7 +71,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_AllCasesAreHandledThroughSubUnion_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable

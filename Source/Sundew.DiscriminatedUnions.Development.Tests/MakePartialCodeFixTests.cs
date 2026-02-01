@@ -8,17 +8,15 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.MakePartialMarkerAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class MakePartialCodeFixTests
 {
-    [TestMethod]
+    [Test]
     public async Task Given_Union_When_ItIsNotDeclaredPartial_Then_ItShouldBeDeclaredPartial()
     {
         var test = $@"{TestData.Usings}

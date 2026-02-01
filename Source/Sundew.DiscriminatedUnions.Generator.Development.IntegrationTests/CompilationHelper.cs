@@ -9,7 +9,6 @@ namespace Sundew.DiscriminatedUnions.Generator.Development.IntegrationTests;
 
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using NUnit.Framework;
 
 internal static class CompilationHelper
 {

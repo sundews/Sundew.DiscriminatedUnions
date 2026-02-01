@@ -11,18 +11,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Sundew.Base.IO;
 using Sundew.Testing.CodeAnalysis;
-using VerifyXunit;
-using Xunit;
+using VerifyTUnit;
 
 public class DiscriminatedUnionGeneratorFixture
 {
-    [Theory]
-    [InlineData("netstandard2.0")]
-    [InlineData("net8.0")]
-    [InlineData("net10.0")]
+    [Test]
+    [Arguments("netstandard2.0")]
+    [Arguments("net8.0")]
+    [Arguments("net10.0")]
     public Task VerifyGeneratedSources(string targetFramework)
     {
         var project = new CSharpProject(Paths.FindPathUpwards("Sundew.DiscriminatedUnions.Development.Tester")!, null, new Paths("bin", "obj"));

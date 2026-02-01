@@ -8,17 +8,15 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests.SwitchStatement;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class AllCasesNotHandledCodeFixTests
 {
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_NullableContextIsEnabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithoutNullShouldBeHandled()
     {
         var test = $@"#nullable enable
@@ -80,7 +78,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndMultipleCasesAreNotHandled_Then_RemainingCasesWithNullShouldBeHandled()
     {
         var test = $@"{TestData.Usings}
@@ -146,7 +144,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_NullableContextIsEnabledAndCasesInBetweenIsNotHandled_Then_RemainingCaseShouldBeHandledInBetween()
     {
         var test = $@"#nullable enable
@@ -207,7 +205,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndCasesInBetweenIsNotHandled_Then_RemainingCaseShouldBeHandledInBetween()
     {
         var test = $@"{TestData.Usings}
@@ -272,7 +270,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndNoCasesAreHandled_Then_AllCasesAndNullCaseShouldBeHandled()
     {
         var test = $@"{TestData.Usings}
@@ -342,7 +340,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_NullableContextIsDisabledAndCasesInBetweenHasPattern_Then_RemainingCaseShouldBeHandledInBetweenAfterPattern()
     {
         var test = $@"{TestData.Usings}
@@ -411,7 +409,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_UnionIsClosedGenericAndNullableContextIsEnableAndMultipleCasesAreNotHandled_Then_RemainingCasesShouldBeHandled()
     {
         var test = $@"#nullable enable
@@ -470,7 +468,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_UnionIsOpenGenericAndNullableContextIsEnableAndMultipleCasesAreNotHandled_Then_RemainingCasesShouldBeHandled()
     {
         var test = $@"#nullable enable
@@ -531,7 +529,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_UnionIsUnnestedClosedGenericAndNullableContextIsEnableAndMultipleCasesAreNotHandled_Then_RemainingCasesShouldBeHandled()
     {
         var test = $@"#nullable enable

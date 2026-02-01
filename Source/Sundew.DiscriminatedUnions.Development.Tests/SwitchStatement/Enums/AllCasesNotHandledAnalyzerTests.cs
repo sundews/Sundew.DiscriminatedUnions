@@ -8,17 +8,15 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests.SwitchStatement.Enums;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class AllCasesNotHandledAnalyzerTests
 {
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchStatement_When_MultipleCasesAreMissing_Then_AllCasesNotHandledIsReported()
     {
         var test = $@"{TestData.Usings}
@@ -46,7 +44,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(17, 9, 21, 10));
     }
 
-    [TestMethod]
+    [Test]
     public async Task
         Given_SwitchStatement_When_DefaultCaseIsHandledAndNotAllCasesAreHandled_Then_AllCasesNotHandledAndSwitchShouldNotHaveDefaultCaseAreReported()
     {

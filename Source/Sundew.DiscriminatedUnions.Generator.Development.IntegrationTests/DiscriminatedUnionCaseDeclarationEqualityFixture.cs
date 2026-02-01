@@ -9,11 +9,10 @@ namespace Sundew.DiscriminatedUnions.Generator.Development.IntegrationTests;
 
 using AwesomeAssertions;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
-using Xunit;
 
 public class DiscriminatedUnionCaseDeclarationEqualityFixture
 {
-    [Fact]
+    [Test]
     public void TryGetDiscriminatedUnionCaseDeclaration_Then_ResultShouldNotBeNull()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
@@ -24,7 +23,7 @@ public class DiscriminatedUnionCaseDeclarationEqualityFixture
         result.Should().NotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void Equals_Then_ResultShouldBeTrue()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;
@@ -36,7 +35,7 @@ public class DiscriminatedUnionCaseDeclarationEqualityFixture
         lhs.Should().Be(rhs);
     }
 
-    [Fact]
+    [Test]
     public void Equals_When_ValuesDiffer_Then_ResultShouldBeFalse()
     {
         var compilation = TestProjects.SundewDiscriminatedUnionsTester.Compilation;

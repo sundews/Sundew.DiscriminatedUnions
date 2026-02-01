@@ -8,17 +8,15 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class FactoryMethodShouldHaveMatchingCaseTypeAttributeCodeFixTests
 {
-    [TestMethod]
+    [Test]
     public async Task Given_FactoryMethod_When_NoCaseTypeAttributeIsPresent_Then_CaseTypeIsInserted()
     {
         var test = $@"#nullable enable
@@ -67,7 +65,7 @@ internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : E
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_FactoryMethod_When_WrongCaseTypeAttributeIsPresent_Then_CorrectCaseIsInserted()
     {
         var test = $@"#nullable enable

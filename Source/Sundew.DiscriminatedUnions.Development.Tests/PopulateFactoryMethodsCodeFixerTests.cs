@@ -9,17 +9,15 @@ namespace Sundew.DiscriminatedUnions.Development.Tests;
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.PopulateFactoryMethodsMarkerAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class PopulateFactoryMethodsCodeFixerTests
 {
-    [TestMethod]
+    [Test]
     public async Task
         Given_DiscriminatedUnionWithUnnestedCases_When_ValueAndSubtractExpressionCaseHasNoFactoryMethod_Then_FactoryMethodsAreImplemented()
     {
@@ -75,9 +73,8 @@ public sealed record ValueExpression(int Value) : Expression;
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
     }
 
-    [TestMethod]
-    public async Task
-        Given_DiscriminatedUnionWithUnnestedCases_When_AdditionAndSubtractExpressionCasesHaveNoFactoryMethod_Then_FactoryMethodsAreImplemented()
+    [Test]
+    public async Task Given_DiscriminatedUnionWithUnnestedCases_When_AdditionAndSubtractExpressionCasesHaveNoFactoryMethod_Then_FactoryMethodsAreImplemented()
     {
         var test = $@"{TestData.Usings}
 
@@ -131,9 +128,8 @@ public sealed record ValueExpression(int Value) : Expression;
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
     }
 
-    [TestMethod]
-    public async Task
-        Given_MultiDiscriminatedUnionWithUnnestedCases_When_MultipleCasesHaveNoFactoryMethod_Then_FactoryMethodsAreImplemented()
+    [Test]
+    public async Task Given_MultiDiscriminatedUnionWithUnnestedCases_When_MultipleCasesHaveNoFactoryMethod_Then_FactoryMethodsAreImplemented()
     {
         var test = $@"{TestData.Usings}
 
@@ -274,9 +270,8 @@ public sealed record ValueExpression(int Value) : Expression;
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter, 1);
     }
 
-    [TestMethod]
-    public async Task
-        Given_MultiDiscriminatedUnionWithUnnestedCases_When_UnionIsInterfaceAndFactoryMethodIsMissing_Then_FactoryMethodsAreImplemented()
+    [Test]
+    public async Task Given_MultiDiscriminatedUnionWithUnnestedCases_When_UnionIsInterfaceAndFactoryMethodIsMissing_Then_FactoryMethodsAreImplemented()
     {
         var test = $@"{TestData.Usings}
 
@@ -420,9 +415,8 @@ public sealed record ValueExpression(int Value) : Expression;
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, expectedAfter, 2);
     }
 
-    [TestMethod]
-    public async Task
-        Given_MultiDiscriminatedUnionWithUnnestedCases_When_MultipleCasesInDerivedTypeHaveNoFactoryMethod_Then_FactoryMethodsAreImplemented()
+    [Test]
+    public async Task Given_MultiDiscriminatedUnionWithUnnestedCases_When_MultipleCasesInDerivedTypeHaveNoFactoryMethod_Then_FactoryMethodsAreImplemented()
     {
         var test = $@"{TestData.Usings}
 
@@ -548,9 +542,8 @@ public sealed record ValueExpression(int Value) : Expression;
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true, 1);
     }
 
-    [TestMethod]
-    public async Task
-        Given_DiscriminatedUnionWithUnnestedCases_When_UnionIsGenericAndMultipleHasNoFactoryMethod_Then_FactoryMethodsAreImplemented()
+    [Test]
+    public async Task Given_DiscriminatedUnionWithUnnestedCases_When_UnionIsGenericAndMultipleHasNoFactoryMethod_Then_FactoryMethodsAreImplemented()
     {
         var test = $@"{TestData.Usings}
 
@@ -604,9 +597,8 @@ public sealed record Empty<TItem>() : SingleOrMultiple<TItem>;
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest, true);
     }
 
-    [TestMethod]
-    public async Task
-        Given_DiscriminatedUnionWithNestedCases_Then_FactoryMethodsAreImplemented()
+    [Test]
+    public async Task Given_DiscriminatedUnionWithNestedCases_Then_FactoryMethodsAreImplemented()
     {
         var test = $@"{TestData.Usings}
 

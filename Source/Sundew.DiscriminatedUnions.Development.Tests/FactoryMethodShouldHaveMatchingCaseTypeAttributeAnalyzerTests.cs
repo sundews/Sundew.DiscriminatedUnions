@@ -8,17 +8,15 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class FactoryMethodShouldHaveMatchingCaseTypeAttributeAnalyzerTests
 {
-    [TestMethod]
+    [Test]
     public async Task Given_FactoryMethod_When_NoCaseTypeAttributeIsPresent_Then_DiagnosticsAreReported()
     {
         var test = $@"#nullable enable
@@ -45,7 +43,7 @@ internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : E
                 .WithSpan(19, 5, 19, 123));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_FactoryMethod_When_WrongCaseTypeAttributeIsPresent_Then_DiagnosticsAreReported()
     {
         var test = $@"#nullable enable
@@ -74,7 +72,7 @@ internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : E
                 .WithSpan(19, 6, 19, 78));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_FactoryMethod_When_CaseTypeAttributeIsPresent_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
@@ -98,7 +96,7 @@ internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : E
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_ConditionalFactoryMethod_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
@@ -132,7 +130,7 @@ internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : E
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_DifferentlyNamedFactoryMethod_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable
@@ -156,7 +154,7 @@ internal sealed record SubtractionExpression(Expression Lhs, Expression Rhs) : E
         await VerifyCS.VerifyAnalyzerAsync(test);
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_PropertyFactoryMethod_Then_NoDiagnosticsAreReported()
     {
         var test = $@"#nullable enable

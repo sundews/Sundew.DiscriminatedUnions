@@ -8,16 +8,14 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.PopulateFactoryMethodsMarkerAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class FactoryMethodsMarkerAnalyzerTests
 {
-    [TestMethod]
+    [Test]
     public async Task
         Given_DiscriminatedUnionWithUnnestedCases_When_UnionIsGenericAndIsPartial_Then_NotDiagnosticsAreReported()
     {

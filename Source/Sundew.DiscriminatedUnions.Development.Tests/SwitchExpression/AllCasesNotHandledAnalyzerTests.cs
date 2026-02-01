@@ -8,17 +8,15 @@
 namespace Sundew.DiscriminatedUnions.Development.Tests.SwitchExpression;
 
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sundew.DiscriminatedUnions.Analyzer;
 using VerifyCS = Sundew.DiscriminatedUnions.Development.Tests.Verifiers.CSharpCodeFixVerifier<
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionsAnalyzer,
     Sundew.DiscriminatedUnions.CodeFixes.DiscriminatedUnionsCodeFixProvider,
     Sundew.DiscriminatedUnions.Analyzer.DiscriminatedUnionSwitchWarningSuppressor>;
 
-[TestClass]
 public class AllCasesNotHandledAnalyzerTests
 {
-    [TestMethod]
+    [Test]
     public async Task
         Given_SwitchExpression_When_DefaultCaseIsHandledAndNotAllCasesAreHandled_Then_AllCasesNotHandledAndSwitchShouldNotHaveDefaultCaseAreReported()
     {
@@ -50,7 +48,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(20, 17, 20, 27));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchExpression_When_MultipleCasesAreMissing_Then_AllCasesNotHandledIsReported()
     {
         var test = $@"#nullable enable
@@ -78,7 +76,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(18, 16, 21, 14));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchExpression_When_ValueMayBeNullAndNullIsNotHandled_Then_AllCasesNotHandledIsReported()
     {
         var test = $@"#nullable enable
@@ -109,7 +107,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(18, 16, 24, 14));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_GenericSwitchExpressionInEnabledNullableContext_When_ValueMayBeNullAndNullIsNotHandled_Then_AllCasesNotHandledIsReported()
     {
         var test = $@"#nullable enable
@@ -138,7 +136,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(18, 16, 22, 14));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_GenericSwitchExpressionInDisabledNullableContext_When_AllCasesExceptNullAreHandled_Then_AllCasesNotHandledIsReported()
     {
         var test = $@"{TestData.Usings}
@@ -167,7 +165,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(18, 16, 22, 10));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_SwitchExpressionInEnabledNullableContext_When_MultipleCasesAreMissingForUnnestedCases_Then_AllCasesNotHandledIsReported()
     {
         var test = $@"#nullable enable
@@ -195,7 +193,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(18, 16, 21, 10));
     }
 
-    [TestMethod]
+    [Test]
     public async Task Given_GenericSwitchExpressionInEnabledNullableContext_When_MultipleCasesAreMissingForUnnestedCases_Then_AllCasesNotHandledIsReported()
     {
         var test = $@"#nullable enable
@@ -241,7 +239,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 .WithSpan(37, 16, 40, 10));
     }
 
-    [TestMethod]
+    [Test]
     public async Task
         Given_SwitchExpression_When_SomeCasesThrowNotImplementedExceptionAndNotAllCasesAreHandled_Then_CaseShouldBeImplementedAndAllCasesNotHandledAreReported()
     {
