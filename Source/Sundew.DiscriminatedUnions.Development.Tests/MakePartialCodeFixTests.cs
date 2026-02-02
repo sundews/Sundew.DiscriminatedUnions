@@ -28,6 +28,8 @@ public abstract record Result
 {{
     public sealed record Success : Result;
 }}
+
+public sealed record Error : Result;
 ";
 
         var fixtest = $@"{TestData.Usings}
@@ -37,15 +39,23 @@ namespace Unions;
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract partial record Result
 {{
-    public sealed record Success : Result;
+    public sealed partial record Success : Result;
 }}
+
+public sealed partial record Error : Result;
 ";
 
         var expected = new[]
         {
-            VerifyCS.Diagnostic(MakePartialMarkerAnalyzer.MakeUnionPartialRule)
+            VerifyCS.Diagnostic(MakePartialMarkerAnalyzer.MakePartialRule)
                 .WithArguments("Unions.Result")
                 .WithSpan(14, 24, 14, 30),
+            VerifyCS.Diagnostic(MakePartialMarkerAnalyzer.MakePartialRule)
+                .WithArguments("Unions.Result.Success")
+                .WithSpan(16, 26, 16, 33),
+            VerifyCS.Diagnostic(MakePartialMarkerAnalyzer.MakePartialRule)
+                .WithArguments("Unions.Error")
+                .WithSpan(19, 22, 19, 27),
         };
         await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
     }

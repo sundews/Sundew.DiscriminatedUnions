@@ -16,7 +16,7 @@ public abstract partial record Scope
     [Sundew.DiscriminatedUnions.CaseType(typeof(SingleInstancePerFuncResultScope))]
     public static Scope SingleInstancePerFuncResult(string method) => new SingleInstancePerFuncResultScope(method);
 
-    internal sealed record AutoScope : Scope;
+    internal sealed partial record AutoScope : Scope;
 
-    internal sealed record SingleInstancePerFuncResultScope(string Method) : Scope;
+    internal sealed partial record SingleInstancePerFuncResultScope(string Method) : Scope;
 }

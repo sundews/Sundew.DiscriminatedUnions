@@ -8,6 +8,7 @@
 namespace Sundew.DiscriminatedUnions.Generator.OutputStage;
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -46,6 +47,7 @@ internal static class DiscriminatedUnionOutputProvider
 
     public static void Generate(SourceProductionContext sourceProductionContext, (ImmutableArray<DiscriminatedUnionResult> DescriminatedUnionResults, FeatureSupport FeatureSupport) context)
     {
+        var hashSet = new HashSet<string>();
         foreach (var discriminatedUnionResult in context.DescriminatedUnionResults)
         {
             sourceProductionContext.CancellationToken.ThrowIfCancellationRequested();
@@ -59,6 +61,18 @@ internal static class DiscriminatedUnionOutputProvider
                     sourceProductionContext.AddSource(
                         discriminatedUnionNamespace + GetNestedName(discriminatedUnion.Type.ContainingTypes) + '.' + discriminatedUnion.Type.Name + genericParametersForFileName + GeneratedSuffix,
                         GetUnionSource(in discriminatedUnion, discriminatedUnionNamespace, context.FeatureSupport));
+
+                    foreach (var discriminatedUnionCase in discriminatedUnion.Cases)
+                    {
+                        if (hashSet.Add(discriminatedUnionCase.Type.TypeMetadata.FullName))
+                        {
+                            var discriminatedUnionCaseNamespace = discriminatedUnionCase.Type.Namespace;
+                            var caseGenericParametersForFileName = TryGetGenericParametersForFileName(discriminatedUnionCase.Type.TypeMetadata.TypeParameters);
+                            sourceProductionContext.AddSource(
+                                discriminatedUnionCaseNamespace + GetNestedName(discriminatedUnionCase.Type.ContainingTypes) + '.' + discriminatedUnionCase.Type.Name + caseGenericParametersForFileName + GeneratedSuffix,
+                                GetUnionCaseSource(in discriminatedUnionCase, discriminatedUnionCaseNamespace, context.FeatureSupport));
+                        }
+                    }
                 }
 
                 if (discriminatedUnion.GeneratorFeatures.HasFlag(GeneratorFeatures.Segregate))
@@ -79,6 +93,111 @@ internal static class DiscriminatedUnionOutputProvider
                 }
             }
         }
+    }
+
+    private static string GetUnionCaseSource(
+        in DiscriminatedUnionCase discriminatedUnionCase, string discriminatedUnionCaseNamespace, FeatureSupport featureSupport)
+    {
+        var discriminatedUnionCaseType = discriminatedUnionCase.Type;
+        var baseIndentationSpace = new string(' ', discriminatedUnionCaseType.ContainingTypes.Count * 4);
+        var stringBuilder = new StringBuilder();
+        var nestedClassIndentation = 0;
+        stringBuilder
+            .Append(NullableEnable)
+            .AppendLine()
+            .AppendLine()
+            .Append(Namespace)
+            .Append(' ')
+            .Append(discriminatedUnionCaseNamespace)
+            .AppendLine()
+            .Append('{')
+            .AppendLine()
+            .AppendItems(
+                discriminatedUnionCaseType.ContainingTypes,
+                (builder, containingType) => builder
+                    .Append(' ', 4 * nestedClassIndentation)
+                    .Append(SpaceIndentedBy4)
+                    .AppendAccessibility(containingType.Accessibility)
+                    .Append(' ')
+                    .Append(Partial)
+                    .Append(' ')
+                    .AppendUnderlyingType(containingType.UnderlyingType)
+                    .Append(' ')
+                    .Append(containingType.Name)
+                    .If(
+                        containingType.TypeParameters.HasAny,
+                        builder1 => builder1
+                            .Append('<')
+                            .AppendItems(
+                                containingType.TypeParameters,
+                                (builder1, typeParameter) => builder1.Append(typeParameter),
+                                GeneratorConstants.ListSeparator)
+                            .Append('>'))
+                    .AppendLine()
+                    .Append(' ', 4 * nestedClassIndentation++)
+                    .Append(SpaceIndentedBy4)
+                    .Append('{')
+                    .AppendLine())
+            .AppendPragmaWarning(false, Sa1601)
+            .AppendTypeAttributes(false, baseIndentationSpace)
+            .Append(baseIndentationSpace)
+            .Append(SpaceIndentedBy4)
+            .AppendAccessibility(discriminatedUnionCase.Accessibility)
+            .Append(' ')
+            .Append(Partial)
+            .Append(' ')
+            .AppendUnderlyingType(discriminatedUnionCase.UnderlyingType)
+            .Append(' ')
+            .AppendType(discriminatedUnionCase.Type, false, false, true)
+            .AppendLine()
+            .TryAppendConstraints(discriminatedUnionCase.Type.TypeMetadata.TypeParameters, SpaceIndentedBy8)
+            .AppendPragmaWarning(true, Sa1601)
+            .Append(baseIndentationSpace)
+            .Append(SpaceIndentedBy4)
+            .Append('{');
+
+        stringBuilder
+            .AppendLine()
+            .AppendDocumentation(baseIndentationSpace, SpaceIndentedBy8, GetsAllCasesInTheUnionText, returns: GetAllCasesReturnsText)
+            .Append(SpaceIndentedBy8)
+            .Append(' ', 4 * nestedClassIndentation)
+            .Append(Public)
+            .Append(' ')
+            .If(featureSupport.IsDefaultInterfaceMembersSupported && discriminatedUnionCase.HasImplementationTypeOwner, builder => builder.Append(New).Append(' '))
+            .Append(Static)
+            .Append(' ')
+            .Append(IReadonlylistOfSystemTypeTypeName)
+            .Append(' ')
+            .Append(CasesName)
+            .Append(' ')
+            .Append(Get)
+            .AppendLine()
+            .Append(SpaceIndentedBy12)
+            .Append(' ', 4 * nestedClassIndentation)
+            .Append('=')
+            .Append(' ')
+            .Append(New)
+            .Append(' ')
+            .Append(SystemTypeTypeName).Append('[').Append(']').Append(' ').Append('{').Append(' ')
+            .Append(Typeof).Append('(').AppendType(discriminatedUnionCase.Type).Append(')').Append(' ').Append('}')
+            .Append(';')
+            .AppendLine();
+
+        stringBuilder
+            .Append(baseIndentationSpace)
+            .Append(SpaceIndentedBy4)
+            .Append('}')
+            .AppendLine()
+            .AppendItems(
+                discriminatedUnionCaseType.ContainingTypes,
+                (builder, containingType) => builder
+                    .Append(' ', 4 * --nestedClassIndentation)
+                    .Append(SpaceIndentedBy4)
+                    .Append('}')
+                    .AppendLine())
+            .Append('}')
+            .AppendLine();
+        return stringBuilder.ToString();
     }
 
     private static string GetNestedName(ValueArray<ContainingType> containingTypes)

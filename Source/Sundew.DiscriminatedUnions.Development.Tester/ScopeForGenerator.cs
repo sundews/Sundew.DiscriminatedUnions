@@ -10,7 +10,7 @@ namespace Sundew.DiscriminatedUnions.Development.Tester;
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract partial record ScopeForGenerator
 {
-    internal sealed record Auto : ScopeForGenerator;
+    internal sealed partial record Auto : ScopeForGenerator;
 
-    internal sealed record SingleInstancePerFuncResult(string Method) : ScopeForGenerator;
+    internal sealed partial record SingleInstancePerFuncResult(string Method) : ScopeForGenerator;
 }

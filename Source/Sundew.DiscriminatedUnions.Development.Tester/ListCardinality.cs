@@ -15,11 +15,11 @@ public abstract partial class ListCardinality<TItem>
 {
 }
 
-public sealed class Empty<TItem> : ListCardinality<TItem>
+public sealed partial class Empty<TItem> : ListCardinality<TItem>
 {
 }
 
-public sealed class Single<TItem> : ListCardinality<TItem>
+public sealed partial class Single<TItem> : ListCardinality<TItem>
 {
     internal Single(TItem item)
     {
@@ -29,7 +29,7 @@ public sealed class Single<TItem> : ListCardinality<TItem>
     public TItem Item { get; }
 }
 
-public sealed class Multiple<TItem> : ListCardinality<TItem>, IEnumerable<TItem>
+public sealed partial class Multiple<TItem> : ListCardinality<TItem>, IEnumerable<TItem>
 {
     public Multiple(IEnumerable<TItem> items)
     {

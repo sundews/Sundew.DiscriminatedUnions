@@ -10,13 +10,13 @@ namespace Sundew.DiscriminatedUnions.Development.Tester;
 [DiscriminatedUnion(GeneratorFeatures.Segregate)]
 public abstract partial record Result<T>;
 
-public sealed record Success<T>(T Value, T? Optional) : Result<T>;
+public sealed partial record Success<T>(T Value, T? Optional) : Result<T>;
 
-public sealed record Warning<T>(string Message) : Result<T>;
+public sealed partial record Warning<T>(string Message) : Result<T>;
 
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract partial record ErrorResult<T> : Result<T>;
 
-public sealed record Error<T>(int Code) : ErrorResult<T>;
+public sealed partial record Error<T>(int Code) : ErrorResult<T>;
 
-public sealed record FatalError<T>(int Code) : ErrorResult<T>;
+public sealed partial record FatalError<T>(int Code) : ErrorResult<T>;

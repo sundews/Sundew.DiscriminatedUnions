@@ -22,11 +22,11 @@ Either specify the partial keyword to the union for a source generator to implem
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract partial record Result
 {
-    public sealed record Success : Result;
+    public sealed partial record Success : Result;
 
-    public sealed record Warning(string Message) : Result;
+    public sealed partial record Warning(string Message) : Result;
 
-    public sealed record Error(int Code) : Result;
+    public sealed partial record Error(int Code) : Result;
 }
 ```
 Alternatively, a union can be defined with unnested case classes and interfaces, allowing the possibility of creating dimensional unions (see below).
@@ -57,15 +57,15 @@ public partial interface IArithmeticExpression : IExpression;
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public partial interface ICommutativeExpression : IArithmeticExpression;
 
-public sealed record AdditionExpression(IExpression Lhs, IExpression Rhs) : ICommutativeExpression;
+public sealed partial record AdditionExpression(IExpression Lhs, IExpression Rhs) : ICommutativeExpression;
 
-public sealed record SubtractionExpression(IExpression Lhs, IExpression Rhs) : IArithmeticExpression;
+public sealed partial record SubtractionExpression(IExpression Lhs, IExpression Rhs) : IArithmeticExpression;
 
-public sealed record MultiplicationExpression(IExpression Lhs, IExpression Rhs) : ICommutativeExpression;
+public sealed partial record MultiplicationExpression(IExpression Lhs, IExpression Rhs) : ICommutativeExpression;
 
-public sealed record DivisionExpression(IExpression Lhs, IExpression Rhs) : IArithmeticExpression;
+public sealed partial record DivisionExpression(IExpression Lhs, IExpression Rhs) : IArithmeticExpression;
 
-public sealed record ValueExpression(int Value) : IExpression;
+public sealed partial record ValueExpression(int Value) : IExpression;
 ```
 
 #### Evaluating dimensional unions
@@ -120,7 +120,7 @@ In addition, the DiscriminatedUnion attribute can specify a flags enum (Generato
 | SDU0010       | Factory method should have correct CaseTypeAttribute                                                                      |   yes    |
 | SDU0011       | Reported when a case is implemented by throwing NotImplementedException, because CodeCleanup may siliently 'fix' SDU0001. |   yes    |
 | SDU0012       | Reported when a case contains type parameters that are not in the union type parameter list.                              |   yes    |
-| PDU0001       | Make union partial for code generator                                                                                     |   yes    |
+| PDU0001       | Make union/case partial for code generator                                                                                |   yes    |
 | PDU0002       | Populate union factory methods                                                                                            |   yes    |
 | SDU9999       | Switch should throw in default case                                                                                       |    no    |
 | GDU0001       | Discriminated union declaration could not be found                                                                        |    no    |

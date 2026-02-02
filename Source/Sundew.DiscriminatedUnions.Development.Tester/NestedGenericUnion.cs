@@ -13,9 +13,9 @@ using System.Linq;
 [Sundew.DiscriminatedUnions.DiscriminatedUnion]
 public abstract partial record NestedGenericUnion<TItem>
 {
-    public sealed record Target(TItem Item) : NestedGenericUnion<TItem>;
+    public sealed partial record Target(TItem Item) : NestedGenericUnion<TItem>;
 
-    public sealed record TargetList(List<TItem> Item) : NestedGenericUnion<TItem>;
+    public sealed partial record TargetList(List<TItem> Item) : NestedGenericUnion<TItem>;
 }
 
 public class NestedTest

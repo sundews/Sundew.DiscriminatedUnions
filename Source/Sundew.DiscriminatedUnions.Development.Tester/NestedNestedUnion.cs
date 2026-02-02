@@ -13,8 +13,8 @@ public abstract partial record NestedNestedUnion
     [DiscriminatedUnion]
     public abstract partial record NestedUnionA : NestedNestedUnion
     {
-        public sealed record CaseA1(int Value) : NestedUnionA;
+        public sealed partial record CaseA1(int Value) : NestedUnionA;
 
-        public sealed record CaseA2(string Text) : NestedUnionA;
+        public sealed partial record CaseA2(string Text) : NestedUnionA;
     }
 }

@@ -15,9 +15,9 @@ public abstract partial record DefiniteType(string Name, string Namespace, strin
     public string AssemblyQualifiedName => $"{this.FullName}, {this.AssemblyName}";
 }
 
-public sealed record NamedType(string Name, string Namespace, string? AssemblyName) : DefiniteType(Name, Namespace, AssemblyName);
+public sealed partial record NamedType(string Name, string Namespace, string? AssemblyName) : DefiniteType(Name, Namespace, AssemblyName);
 
-public sealed record DefiniteArrayType(DefiniteType ElementType) : DefiniteType(ElementType.Name, ElementType.Namespace, ElementType.AssemblyName)
+public sealed partial record DefiniteArrayType(DefiniteType ElementType) : DefiniteType(ElementType.Name, ElementType.Namespace, ElementType.AssemblyName)
 {
     public override string FullName => $"{this.Namespace}.{this.Name}";
 }

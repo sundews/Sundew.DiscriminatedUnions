@@ -60,7 +60,7 @@ internal static class StringBuilderExtensions
         {
             var actualFullType = fullType;
             stringBuilder.AppendItems(
-                fullType.ContainingTypes.Reverse(),
+                fullType.ContainingTypes,
                 (builder, type) => builder.Append(type.Name)
                     .If(type.TypeParameters.HasAny, builder1 => builder1.Append('<').Append(',', type.TypeParameters.Count - 1).Append('>').Append('.'), builder1 => builder1.Append('.')))
                 .Append(fullType.Name)

@@ -19,7 +19,7 @@ using System.Linq;
 /// <typeparam name="TResult">The result type.</typeparam>
 /// <typeparam name="TError">The error type.</typeparam>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "Discriminated union")]
-public sealed class All<TItem, TResult, TError> : AllOrFailed<TItem, TResult, TError>, IReadOnlyList<TResult>
+public sealed partial class All<TItem, TResult, TError> : AllOrFailed<TItem, TResult, TError>, IReadOnlyList<TResult>
     where TError : Exception, TItem
     where TResult : struct
     where TItem : class, IEquatable<TItem>

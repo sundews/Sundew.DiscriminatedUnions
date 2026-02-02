@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-internal sealed record InvocationExpression(Expression Expression, IReadOnlyList<Expression> Arguments) : InvocationExpressionBase(Arguments)
+internal sealed partial record InvocationExpression(Expression Expression, IReadOnlyList<Expression> Arguments) : InvocationExpressionBase(Arguments)
 {
     public InvocationExpression(Expression expression)
     : this(expression, Array.Empty<Expression>())

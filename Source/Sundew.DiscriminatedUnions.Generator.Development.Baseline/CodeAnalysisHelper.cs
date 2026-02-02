@@ -7,6 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Generator;
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -17,6 +18,7 @@ using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Sundew.DiscriminatedUnions.Shared;
 using static Sundew.DiscriminatedUnions.Generator.OutputStage.GeneratorConstants;
+using Accessibility = Sundew.DiscriminatedUnions.Generator.Model.Accessibility;
 using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
 
 internal static class CodeAnalysisHelper
@@ -212,6 +214,33 @@ internal static class CodeAnalysisHelper
         }
     }
 
+    internal static UnderlyingType GetUnderlyingType(this ITypeSymbol typeSymbol)
+    {
+        return typeSymbol.TypeKind switch
+        {
+            TypeKind.Class => typeSymbol.IsRecord ? UnderlyingType.RecordClass : UnderlyingType.Class,
+            TypeKind.Interface => UnderlyingType.Interface,
+            TypeKind.Struct => typeSymbol.IsRecord ? UnderlyingType.RecordStruct : UnderlyingType.Struct,
+            _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol.TypeKind), typeSymbol.TypeKind, FormattableString.Invariant($"Unexpected TypeKind on {typeSymbol.Name}")),
+        };
+    }
+
+    internal static bool TryGetSupportedAccessibility(this ITypeSymbol typeSymbol, out Accessibility accessibility)
+    {
+        switch (typeSymbol.DeclaredAccessibility)
+        {
+            case Microsoft.CodeAnalysis.Accessibility.Internal:
+                accessibility = Accessibility.Internal;
+                return true;
+            case Microsoft.CodeAnalysis.Accessibility.Public:
+                accessibility = Accessibility.Public;
+                return true;
+            default:
+                accessibility = default;
+                return false;
+        }
+    }
+
     private static IEnumerable<string> GetNewConstraints(ITypeParameterSymbol typeParameterSymbol)
     {
         if (typeParameterSymbol.HasConstructorConstraint)
@@ -281,14 +310,14 @@ internal static class CodeAnalysisHelper
             }
         }
 
-        return GetContainingTypes(typeSymbol.ContainingType).Select(x =>
+        return GetContainingTypes(typeSymbol.ContainingType).Reverse().Select(x =>
         {
-            DiscriminatedUnionDeclarationProvider.TryGetSupportedAccessibility(x, out var accessibility);
+            x.TryGetSupportedAccessibility(out var accessibility);
             return new ContainingType
             {
                 Name = x.Name,
                 Accessibility = accessibility,
-                UnderlyingType = DiscriminatedUnionDeclarationProvider.GetUnderlyingType(x),
+                UnderlyingType = x.GetUnderlyingType(),
                 TypeParameters = x.IsTypeGenericWithTypeParameters()
                         ? x.TypeParameters.Select(tp => tp.Name).ToValueArray()
                         : ValueArray<string>.Empty,

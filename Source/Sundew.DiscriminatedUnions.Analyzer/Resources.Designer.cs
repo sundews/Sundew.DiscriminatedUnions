@@ -19,7 +19,7 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -259,29 +259,29 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Makes the union partial for the code generator can create factory methods..
+        ///   Looks up a localized string similar to Makes the union/case partial for the code generator can create factory methods..
         /// </summary>
-        public static string MakeUnionPartialDescription {
+        public static string MakePartialDescription {
             get {
-                return ResourceManager.GetString("MakeUnionPartialDescription", resourceCulture);
+                return ResourceManager.GetString("MakePartialDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; should be partial to enable the code generator..
         /// </summary>
-        public static string MakeUnionPartialMessageFormat {
+        public static string MakePartialMessageFormat {
             get {
-                return ResourceManager.GetString("MakeUnionPartialMessageFormat", resourceCulture);
+                return ResourceManager.GetString("MakePartialMessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Make union partial..
+        ///   Looks up a localized string similar to Make union or case partial..
         /// </summary>
-        public static string MakeUnionPartialTitle {
+        public static string MakePartialTitle {
             get {
-                return ResourceManager.GetString("MakeUnionPartialTitle", resourceCulture);
+                return ResourceManager.GetString("MakePartialTitle", resourceCulture);
             }
         }
         

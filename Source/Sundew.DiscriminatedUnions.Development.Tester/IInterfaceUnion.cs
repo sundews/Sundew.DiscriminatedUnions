@@ -17,4 +17,4 @@ public abstract partial record InterfaceAbstractUnion : IInterfaceUnion
 {
 }
 
-public sealed record RecordUnion(int Number) : InterfaceAbstractUnion;
+public sealed partial record RecordUnion(int Number) : InterfaceAbstractUnion;

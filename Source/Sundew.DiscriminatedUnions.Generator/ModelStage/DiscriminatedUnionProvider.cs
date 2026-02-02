@@ -30,16 +30,26 @@ internal static class DiscriminatedUnionProvider
         });
     }
 
-    internal static ImmutableArray<DiscriminatedUnionResult> GetDiscriminatedUnionResults(ImmutableArray<DiscriminatedUnionDeclaration> declarations, ImmutableArray<DiscriminatedUnionCaseDeclaration> cases, CancellationToken cancellationToken)
+    internal static ImmutableArray<DiscriminatedUnionResult> GetDiscriminatedUnionResults(ImmutableArray<DiscriminatedUnionDeclaration> unionDeclarations, ImmutableArray<DiscriminatedUnionCaseDeclaration> casesDeclarations, CancellationToken cancellationToken)
     {
         var discriminatedUnions = new ConcurrentDictionary<Type, DiscriminatedUnionResult>();
-        foreach (var discriminatedUnionCase in cases)
+        foreach (var discriminatedUnionCaseDeclaration in casesDeclarations)
         {
-            var hasConflictingName = discriminatedUnionCase.Owners.Any(x => x.HasConflictingName);
-            foreach (var owner in discriminatedUnionCase.Owners)
+            var hasConflictingName = discriminatedUnionCaseDeclaration.Owners.Any(x => x.HasConflictingName);
+            var hasImplementationTypeOwner = !discriminatedUnionCaseDeclaration.Owners.All(x => x.IsInterface);
+            foreach (var owner in discriminatedUnionCaseDeclaration.Owners)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var discriminatedUnionDeclaration = declarations.FirstOrDefault(x => x.Type.Equals(owner.Type));
+                var discriminatedUnionDeclaration = unionDeclarations.FirstOrDefault(x => x.Type.Equals(owner.Type));
+                var discriminatedUnionCase = new DiscriminatedUnionCase(
+                    discriminatedUnionCaseDeclaration.Accessibility,
+                    discriminatedUnionCaseDeclaration.UnderlyingType,
+                    discriminatedUnionCaseDeclaration.CaseType,
+                    owner.ReturnType,
+                    discriminatedUnionCaseDeclaration.Parameters,
+                    hasConflictingName,
+                    discriminatedUnionCaseDeclaration.IsPartial,
+                    hasImplementationTypeOwner);
                 var discriminatedUnionResult = discriminatedUnionDeclaration != null
                     ? DiscriminatedUnionResult.Success(new DiscriminatedUnion(
                         new FullType(owner.Type, discriminatedUnionDeclaration.Type.TypeMetadata),
@@ -48,10 +58,9 @@ internal static class DiscriminatedUnionProvider
                         discriminatedUnionDeclaration.IsPartial,
                         discriminatedUnionDeclaration.IsConstrainingUnion,
                         discriminatedUnionDeclaration.GeneratorFeatures,
-                        ImmutableArray.Create((Type: discriminatedUnionCase.CaseType, owner.ReturnType,
-                            discriminatedUnionCase.Parameters, HasConflictingName: hasConflictingName))))
+                        ImmutableArray.Create(discriminatedUnionCase)))
                     : DiscriminatedUnionResult.Error(
-                        ImmutableArray.Create(new DeclarationNotFound(owner.Type, discriminatedUnionCase)));
+                        ImmutableArray.Create(new DeclarationNotFound(owner.Type, discriminatedUnionCaseDeclaration)));
 
                 discriminatedUnions.AddOrUpdate(
                     owner.Type,
@@ -62,14 +71,13 @@ internal static class DiscriminatedUnionProvider
                         {
                             var discriminatedUnion = result.DiscriminatedUnion with
                             {
-                                Cases = result.DiscriminatedUnion.Cases.Add(
-                                    (Type: discriminatedUnionCase.CaseType, owner.ReturnType, discriminatedUnionCase.Parameters, HasConflictingName: hasConflictingName)),
+                                Cases = result.DiscriminatedUnion.Cases.Add(discriminatedUnionCase),
                             };
                             return DiscriminatedUnionResult.Success(discriminatedUnion);
                         }
 
                         return DiscriminatedUnionResult.Error(discriminatedUnionResult.Errors.Add(
-                            new DeclarationNotFound(type, discriminatedUnionCase)));
+                            new DeclarationNotFound(type, discriminatedUnionCaseDeclaration)));
                     });
             }
         }
@@ -88,10 +96,10 @@ internal static class DiscriminatedUnionProvider
         }).ToImmutableArray();
     }
 
-    private static ImmutableArray<(FullType Type, FullType ReturnType, ValueArray<Parameter> Parameters, bool HasConflictingName)> GetDistinctOrdered(IEnumerable<(FullType Type, FullType ReturnType, ValueArray<Parameter> Parameters, bool HasConflictingName)> cases)
+    private static ImmutableArray<DiscriminatedUnionCase> GetDistinctOrdered(IEnumerable<DiscriminatedUnionCase> cases)
     {
-        var hashSet = new HashSet<(FullType Type, FullType ReturnType, ValueArray<Parameter> Parameters, bool HasConflictingName)>();
-        var immutableArrayBuilder = ImmutableArray.CreateBuilder<(FullType Type, FullType ReturnType, ValueArray<Parameter> Parameters, bool HasConflictingName)>();
+        var hashSet = new HashSet<DiscriminatedUnionCase>();
+        var immutableArrayBuilder = ImmutableArray.CreateBuilder<DiscriminatedUnionCase>();
         foreach (var valueTuple in cases)
         {
             if (hashSet.Add(valueTuple))

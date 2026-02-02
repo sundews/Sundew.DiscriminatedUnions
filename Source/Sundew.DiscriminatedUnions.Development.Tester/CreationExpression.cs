@@ -14,6 +14,6 @@ using System.Linq.Expressions;
 internal abstract partial record CreationExpression
     (IReadOnlyList<Expression> Arguments) : InvocationExpressionBase(Arguments)
 {
-    public sealed record ArrayCreationExpression
+    public sealed partial record ArrayCreationExpression
         (string ArrayCreation, IReadOnlyList<Expression> Arguments) : CreationExpression(Arguments);
 }

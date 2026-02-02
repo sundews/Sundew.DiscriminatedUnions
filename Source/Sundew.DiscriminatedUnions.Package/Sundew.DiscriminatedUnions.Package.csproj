@@ -19,6 +19,7 @@ The idea is that this package can be deleted once unions are supported in C#, wi
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
     <PackageReleaseNotes>
+6.0 - Cases now required to be partial.
 5.4 - Support IDiscriminatedUnion for enumerating cases.
 2.0 - Support matching unions in referenced projects, marker attributes included as source rather than library reference.
 1.0 - Initial version

@@ -18,10 +18,10 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="PolySharp" Version="1.15.0" />
     <PackageVersion Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556" />
-    <PackageVersion Include="Sundew.Generator.Code" Version="3.1.24" />
+    <PackageVersion Include="Sundew.Generator.Code" Version="3.1.25" />
     <PackageVersion Include="Sundew.Packaging.Publish" Version="10.0.12" />
     <PackageVersion Include="Sundew.DiscriminatedUnions" Version="5.4.0" />
-    <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.7-u20260201-015019-ci" />
+    <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.7" />
     <PackageVersion Include="TUnit" Version="1.12.111" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.5.0" />
     <PackageVersion Include="Verify.TUnit" Version="31.10.0" />

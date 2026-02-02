@@ -25,27 +25,27 @@ public class MakePartialMarkerAnalyzer : DiagnosticAnalyzer
     /// <summary>
     /// Diagnostic id  for a union partial.
     /// </summary>
-    public const string MakeUnionPartialDiagnosticId = "PDU0001";
+    public const string MakePartialDiagnosticId = "PDU0001";
 
     /// <summary>
     /// The switch should throw in default case rule.
     /// </summary>
-    public static readonly DiagnosticDescriptor MakeUnionPartialRule =
+    public static readonly DiagnosticDescriptor MakePartialRule =
         Sundew.DiscriminatedUnions.Analyzer.DiagnosticDescriptorHelper.Create(
-            MakeUnionPartialDiagnosticId,
-            nameof(Resources.MakeUnionPartialTitle),
-            nameof(Resources.MakeUnionPartialMessageFormat),
+            MakePartialDiagnosticId,
+            nameof(Resources.MakePartialTitle),
+            nameof(Resources.MakePartialMessageFormat),
             Category,
             DiagnosticSeverity.Info,
             true,
-            nameof(Resources.MakeUnionPartialDescription));
+            nameof(Resources.MakePartialDescription));
 
     private const string Category = "CodeGeneration";
 
     /// <summary>
     /// Gets a set of descriptors for the diagnostics that this analyzer is capable of producing.
     /// </summary>
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MakeUnionPartialRule);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MakePartialRule);
 
     /// <summary>
     /// Called once at session start to register actions in the analysis context.
@@ -64,19 +64,43 @@ public class MakePartialMarkerAnalyzer : DiagnosticAnalyzer
                     return;
                 }
 
-                if (namedTypeSymbol.IsDiscriminatedUnion() &&
-                    (namedTypeSymbol.IsAbstract || namedTypeSymbol.TypeKind == TypeKind.Interface) && !IsPartial(namedTypeSymbol))
+                if (IsPartial(namedTypeSymbol))
+                {
+                    return;
+                }
+
+                if (namedTypeSymbol.IsDiscriminatedUnion())
                 {
                     foreach (var location in namedTypeSymbol.Locations)
                     {
                         symbolAnalysisContext.ReportDiagnostic(
                             Diagnostic.Create(
-                                MakeUnionPartialRule,
+                                MakePartialRule,
                                 location,
                                 DiagnosticSeverity.Info,
                                 null,
                                 null,
                                 namedTypeSymbol));
+                    }
+                }
+                else
+                {
+                    foreach (var baseType in namedTypeSymbol.EnumerateBaseTypes().Concat(namedTypeSymbol.AllInterfaces))
+                    {
+                        if (baseType.IsDiscriminatedUnion())
+                        {
+                            foreach (var location in namedTypeSymbol.Locations)
+                            {
+                                symbolAnalysisContext.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        MakePartialRule,
+                                        location,
+                                        DiagnosticSeverity.Info,
+                                        null,
+                                        null,
+                                        namedTypeSymbol));
+                            }
+                        }
                     }
                 }
             },

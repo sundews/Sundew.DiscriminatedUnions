@@ -18,7 +18,7 @@ using Sundew.DiscriminatedUnions.Analyzer;
 
 internal class MakePartialCodeFixer : ICodeFixer
 {
-    public string DiagnosticId => MakePartialMarkerAnalyzer.MakeUnionPartialDiagnosticId;
+    public string DiagnosticId => MakePartialMarkerAnalyzer.MakePartialDiagnosticId;
 
     public CodeFixStatus GetCodeFixState(
         SyntaxNode syntaxNode,

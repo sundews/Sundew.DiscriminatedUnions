@@ -30,16 +30,16 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
     internal static DiscriminatedUnionCaseDeclaration? TryGetDiscriminatedUnionCaseDeclaration(SyntaxNode syntaxNode, SemanticModel semanticModel)
     {
         var symbol = semanticModel.GetDeclaredSymbol(syntaxNode);
-        if (symbol is INamedTypeSymbol caseNamedTypeSymbol)
+        if (symbol is INamedTypeSymbol caseNamedTypeSymbol && syntaxNode is MemberDeclarationSyntax memberDeclarationSyntax && caseNamedTypeSymbol.TryGetSupportedAccessibility(out var accessibility))
         {
-            var owners = FindOwners(caseNamedTypeSymbol).Select(x => (Type: x.GetSourceType(), ReturnType: x.GetFullType(true), HasConflictingName: HasConflictingName(x, caseNamedTypeSymbol))).ToImmutableArray();
+            var owners = FindOwners(caseNamedTypeSymbol).Select(x => (Type: x.GetSourceType(), ReturnType: x.GetFullType(true), HasConflictingName: HasConflictingName(x, caseNamedTypeSymbol), IsInterface: x.GetUnderlyingType() == UnderlyingType.Interface)).ToImmutableArray();
             var parameters = TryGetParameters(caseNamedTypeSymbol);
             if (parameters == default)
             {
                 return default;
             }
 
-            return new DiscriminatedUnionCaseDeclaration(caseNamedTypeSymbol.GetFullType(), owners, parameters.ToImmutableArray());
+            return new DiscriminatedUnionCaseDeclaration(caseNamedTypeSymbol.GetUnderlyingType(), accessibility, caseNamedTypeSymbol.GetFullType(), owners, parameters.ToImmutableArray(), memberDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword));
         }
 
         return default;

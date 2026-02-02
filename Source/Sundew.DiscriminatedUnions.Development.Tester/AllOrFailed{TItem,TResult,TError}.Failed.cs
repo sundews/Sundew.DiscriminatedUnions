@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <typeparam name="TResult">The result type.</typeparam>
 /// <typeparam name="TError">The error type.</typeparam>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "Discriminated union")]
-public sealed class Failed<TItem, TResult, TError> : AllOrFailed<TItem, TResult, TError>, IReadOnlyList<FailedItem<TItem, TError>>
+public sealed partial class Failed<TItem, TResult, TError> : AllOrFailed<TItem, TResult, TError>, IReadOnlyList<FailedItem<TItem, TError>>
     where TError : Exception, TItem
     where TResult : struct
     where TItem : class, IEquatable<TItem>

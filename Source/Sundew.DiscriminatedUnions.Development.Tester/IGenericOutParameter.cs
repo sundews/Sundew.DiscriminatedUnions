@@ -13,8 +13,8 @@ public partial interface IGenericOutParameter<out T>
 {
 }
 
-public sealed record GenericOutParameter<T>(T Value) : IGenericOutParameter<T>
+public sealed partial record GenericOutParameter<T>(T Value) : IGenericOutParameter<T>
     where T : notnull;
 
-public sealed record SpecialGenericOutParameter<T>(T Value) : IGenericOutParameter<T>
+public sealed partial record SpecialGenericOutParameter<T>(T Value) : IGenericOutParameter<T>
     where T : notnull;
