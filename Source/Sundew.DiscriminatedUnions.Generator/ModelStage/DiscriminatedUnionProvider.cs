@@ -56,7 +56,7 @@ internal static class DiscriminatedUnionProvider
                         discriminatedUnionDeclaration.UnderlyingType,
                         discriminatedUnionDeclaration.Accessibility,
                         discriminatedUnionDeclaration.IsPartial,
-                        discriminatedUnionDeclaration.IsConstrainingUnion,
+                        discriminatedUnionDeclaration.IsConstrainingUnionOfSameTypeKind,
                         discriminatedUnionDeclaration.GeneratorFeatures,
                         ImmutableArray.Create(discriminatedUnionCase)))
                     : DiscriminatedUnionResult.Error(

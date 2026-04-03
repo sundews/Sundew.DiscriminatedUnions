@@ -163,7 +163,7 @@ internal static class DiscriminatedUnionOutputProvider
             .Append(' ', 4 * nestedClassIndentation)
             .Append(Public)
             .Append(' ')
-            .If(featureSupport.IsDefaultInterfaceMembersSupported && discriminatedUnionCase.HasImplementationTypeOwner, builder => builder.Append(New).Append(' '))
+            .If(discriminatedUnionCase.HasImplementationTypeOwner, builder => builder.Append(New).Append(' '))
             .Append(Static)
             .Append(' ')
             .Append(IReadonlylistOfSystemTypeTypeName)
@@ -291,7 +291,7 @@ internal static class DiscriminatedUnionOutputProvider
             .AppendUnderlyingType(discriminatedUnion.UnderlyingType)
             .Append(' ')
             .AppendType(discriminatedUnion.Type, false, false, true)
-            .If(featureSupport.IsDefaultInterfaceMembersSupported, builder => builder.Append(' ').Append(':').Append(' ').Append(IDiscriminatedUnionTypeName))
+            .If(featureSupport.StaticsMembersInInterfaceSupport == StaticsMembersInInterfaceSupport.StaticAbstractInterfaceMember, builder => builder.Append(' ').Append(':').Append(' ').Append(IDiscriminatedUnionTypeName))
             .AppendLine()
             .TryAppendConstraints(discriminatedUnion.Type.TypeMetadata.TypeParameters, SpaceIndentedBy8)
             .AppendPragmaWarning(true, Sa1601)
@@ -320,7 +320,7 @@ internal static class DiscriminatedUnionOutputProvider
                 .Append(SpaceIndentedBy8)
                 .Append(Public)
                 .Append(' ');
-            if (discriminatedUnion.IsConstrainingUnion)
+            if (discriminatedUnion.IsConstrainingUnionOfSameTypeKind)
             {
                 stringBuilder.Append(New)
                     .Append(' ');
@@ -410,41 +410,44 @@ internal static class DiscriminatedUnionOutputProvider
             stringBuilder.AppendLine();
         }
 
-        stringBuilder
-            .AppendLine()
-            .AppendDocumentation(baseIndentationSpace, SpaceIndentedBy8, GetsAllCasesInTheUnionText, returns: GetAllCasesReturnsText)
-            .Append(SpaceIndentedBy8)
-            .Append(' ', 4 * nestedClassIndentation)
-            .Append(Public)
-            .Append(' ')
-            .If(featureSupport.IsDefaultInterfaceMembersSupported && (isInterface || discriminatedUnion.IsConstrainingUnion), builder => builder.Append(New).Append(' '))
-            .Append(Static)
-            .Append(' ')
-            .Append(IReadonlylistOfSystemTypeTypeName)
-            .Append(' ')
-            .Append(CasesName)
-            .Append(' ')
-            .Append(Get)
-            .AppendLine()
-            .Append(SpaceIndentedBy12)
-            .Append(' ', 4 * nestedClassIndentation)
-            .Append('=')
-            .Append(' ')
-            .Append(New)
-            .Append(' ')
-            .Append(SystemTypeTypeName).Append('[').Append(']').Append(' ').Append('{').Append(' ')
-            .AppendItems(
-                discriminatedUnion.Cases,
-                (builder, x) => builder.Append(Typeof).Append('(').AppendType(x.Type).Append(')'),
-                ListSeparator)
-            .Append(' ')
-            .Append('}')
-            .Append(';')
-            .AppendLine();
+        if (!isInterface || featureSupport.StaticsMembersInInterfaceSupport.HasFlag(StaticsMembersInInterfaceSupport.DefaultInterfaceMember))
+        {
+            stringBuilder
+                .AppendLine()
+                .AppendDocumentation(baseIndentationSpace, SpaceIndentedBy8, GetsAllCasesInTheUnionText, returns: GetAllCasesReturnsText)
+                .Append(SpaceIndentedBy8)
+                .Append(' ', 4 * nestedClassIndentation)
+                .Append(Public)
+                .Append(' ')
+                .If(discriminatedUnion.IsConstrainingUnionOfSameTypeKind || (isInterface && featureSupport.StaticsMembersInInterfaceSupport == StaticsMembersInInterfaceSupport.StaticAbstractInterfaceMember), builder => builder.Append(New).Append(' '))
+                .Append(Static)
+                .Append(' ')
+                .Append(IReadonlylistOfSystemTypeTypeName)
+                .Append(' ')
+                .Append(CasesName)
+                .Append(' ')
+                .Append(Get)
+                .AppendLine()
+                .Append(SpaceIndentedBy12)
+                .Append(' ', 4 * nestedClassIndentation)
+                .Append('=')
+                .Append(' ')
+                .Append(New)
+                .Append(' ')
+                .Append(SystemTypeTypeName).Append('[').Append(']').Append(' ').Append('{').Append(' ')
+                .AppendItems(
+                    discriminatedUnion.Cases,
+                    (builder, x) => builder.Append(Typeof).Append('(').AppendType(x.Type).Append(')'),
+                    ListSeparator)
+                .Append(' ')
+                .Append('}')
+                .Append(';')
+                .AppendLine();
+        }
 
         stringBuilder
             .If(
-                featureSupport.IsDefaultInterfaceMembersSupported && isInterface,
+                featureSupport.StaticsMembersInInterfaceSupport == StaticsMembersInInterfaceSupport.StaticAbstractInterfaceMember && isInterface,
                 builder => builder.AppendLine()
                 .AppendDocumentation(baseIndentationSpace, SpaceIndentedBy8, GetsAllCasesInTheUnionText, returns: GetAllCasesReturnsText)
                 .Append(SpaceIndentedBy8)

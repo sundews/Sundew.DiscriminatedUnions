@@ -11,5 +11,5 @@ namespace Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 /// Represents the set of feature flags indicating which language or runtime features are supported by the current
 /// environment.
 /// </summary>
-/// <param name="IsDefaultInterfaceMembersSupported">true if default interface member implementations are supported; otherwise, false.</param>
-public sealed record FeatureSupport(bool IsDefaultInterfaceMembersSupported);
+/// <param name="StaticsMembersInInterfaceSupport">Describes the supported static members by the runtime.</param>
+public sealed record FeatureSupport(StaticsMembersInInterfaceSupport StaticsMembersInInterfaceSupport);

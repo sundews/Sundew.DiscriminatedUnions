@@ -17,12 +17,5 @@ namespace Sundew.DiscriminatedUnions.Development.Tester
         [global::System.Diagnostics.DebuggerNonUserCode]
         public static global::Sundew.DiscriminatedUnions.Development.Tester.IDimensionalUnion1 TwoDimensionalUnion(int number)
             => new global::Sundew.DiscriminatedUnions.Development.Tester.TwoDimensionalUnion(number);
-
-        /// <summary>
-        /// Gets all cases in the union.
-        /// </summary>
-        /// <returns>A readonly list of types.</returns>
-        public static global::System.Collections.Generic.IReadOnlyList<global::System.Type> Cases { get; }
-            = new global::System.Type[] { typeof(global::Sundew.DiscriminatedUnions.Development.Tester.TwoDimensionalUnion) };
     }
 }

@@ -34,9 +34,9 @@ internal static class DiscriminatedUnionDeclarationProvider
         var declaredSymbol = semanticModel.GetDeclaredSymbol(syntaxNode);
         if (syntaxNode is MemberDeclarationSyntax memberDeclarationSyntax && declaredSymbol is ITypeSymbol typeSymbol && TryGetUnionWithFeatures(typeSymbol, out var generatorFeatures) && typeSymbol.TryGetSupportedAccessibility(out var accessibility))
         {
-            IEnumerable<INamedTypeSymbol> baseSymbol = typeSymbol.BaseType != null ? new[] { typeSymbol.BaseType } : Array.Empty<INamedTypeSymbol>();
-            var isConstrainingUnion = baseSymbol.Any(DiscriminatedUnionExtensions.IsDiscriminatedUnion);
-            return new DiscriminatedUnionDeclaration(typeSymbol.GetFullType(), typeSymbol.GetUnderlyingType(), accessibility, memberDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword), isConstrainingUnion, generatorFeatures);
+            IEnumerable<INamedTypeSymbol> baseSymbol = typeSymbol.Interfaces.Concat(typeSymbol.BaseType != null ? new[] { typeSymbol.BaseType } : Array.Empty<INamedTypeSymbol>());
+            var isConstrainingUnionOfSameTypeKind = baseSymbol.Where(DiscriminatedUnionExtensions.IsDiscriminatedUnion).Any(x => x.TypeKind == typeSymbol.TypeKind);
+            return new DiscriminatedUnionDeclaration(typeSymbol.GetFullType(), typeSymbol.GetUnderlyingType(), accessibility, memberDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword), isConstrainingUnionOfSameTypeKind, generatorFeatures);
         }
 
         return null;

@@ -15,7 +15,7 @@ internal static partial class FeatureSupportProvider
 {
     private const string FrameworkName = "Framework";
     private const string MajorName = "Major";
-    private const string NetstandardName = "netstandard";
+    private const string Net = "net";
     private const string BuildPropertyTargetFrameworkName = "build_property.TargetFramework";
     private static readonly Regex TargetFrameworkRegex = new("(?<Framework>\\D+)(?<Major>\\d+)\\.(?<Minor>\\d)", RegexOptions.Compiled);
 
@@ -30,12 +30,17 @@ internal static partial class FeatureSupportProvider
                 {
                     var framework = match.Groups[FrameworkName].Value;
                     var major = int.Parse(match.Groups[MajorName].Value);
-                    var isDefaultInterfaceMembersSupported = framework != NetstandardName && major >= 8;
-                    return new FeatureSupport(isDefaultInterfaceMembersSupported);
+                    var staticsMembersInInterfaceSupport = (framework, major) switch
+                    {
+                        (Net, >= 8) => StaticsMembersInInterfaceSupport.StaticAbstractInterfaceMember,
+                        (Net, < 8) => StaticsMembersInInterfaceSupport.DefaultInterfaceMember,
+                        _ => StaticsMembersInInterfaceSupport.None,
+                    };
+                    return new FeatureSupport(staticsMembersInInterfaceSupport);
                 }
             }
 
-            return new FeatureSupport(false);
+            return new FeatureSupport(StaticsMembersInInterfaceSupport.None);
         });
     }
 }

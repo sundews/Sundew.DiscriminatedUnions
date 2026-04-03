@@ -14,6 +14,6 @@ internal readonly record struct DiscriminatedUnion(
     UnderlyingType UnderlyingType,
     Accessibility Accessibility,
     bool IsPartial,
-    bool IsConstrainingUnion,
+    bool IsConstrainingUnionOfSameTypeKind,
     GeneratorFeatures GeneratorFeatures,
     ValueArray<DiscriminatedUnionCase> Cases);
