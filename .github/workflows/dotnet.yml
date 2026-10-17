@@ -29,16 +29,16 @@ jobs:
       source-packages-to-push: './Source/logs/packages.push'
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         submodules: 'true'
     - name: Setup .NET preview
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.x.x
         dotnet-quality: preview
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: |
             9.x.x
