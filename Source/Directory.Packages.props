@@ -19,8 +19,8 @@
     <PackageVersion Include="PolySharp" Version="1.16.0" />
     <PackageVersion Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556" />
     <PackageVersion Include="Sundew.Generator.Code" Version="3.1.25" />
-    <PackageVersion Include="Sundew.Packaging.Publish" Version="10.0.12" />
-    <PackageVersion Include="Sundew.DiscriminatedUnions" Version="6.0.1" />
+    <PackageVersion Include="Sundew.Packaging.Publish" Version="10.0.14" />
+    <PackageVersion Include="Sundew.DiscriminatedUnions" Version="6.0.3" />
     <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.7" />
     <PackageVersion Include="TUnit" Version="1.75.0" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.5.0" />
