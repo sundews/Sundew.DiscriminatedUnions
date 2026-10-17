@@ -25,4 +25,11 @@
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Generator\Sundew.DiscriminatedUnions.Generator.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Development.TestData\Sundew.DiscriminatedUnions.Development.TestData.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>

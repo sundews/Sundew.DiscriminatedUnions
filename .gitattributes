@@ -1,0 +1,3 @@
+# Verify requires its verified files to use LF line endings, regardless of
+# core.autocrlf on the checkout.
+*.verified.cs text eol=lf

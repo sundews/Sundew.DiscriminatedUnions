@@ -5,35 +5,34 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sundew.DiscriminatedUnions.Generator.Extensions
+namespace Sundew.DiscriminatedUnions.Generator.Extensions;
+
+using System;
+
+internal static class StringExtensions
 {
-    using System;
+    private const string S = "s";
+    private const string Es = "es";
+    private const string Ed = "ed";
+    private const string All = "all";
 
-    internal static class StringExtensions
+    public static string Pluralize(this string text, bool force = false)
     {
-        private const string S = "s";
-        private const string Es = "es";
-        private const string Ed = "ed";
-        private const string All = "all";
-
-        public static string Pluralize(this string text, bool force = false)
+        if (!force && IsInPluralForm(text))
         {
-            if (!force && IsInPluralForm(text))
-            {
-                return text;
-            }
-
-            if (text.EndsWith(S))
-            {
-                return text + Es;
-            }
-
-            return text + S;
+            return text;
         }
 
-        private static bool IsInPluralForm(string text)
+        if (text.EndsWith(S))
         {
-            return text.EndsWith(Ed) || text.Equals(All, StringComparison.InvariantCultureIgnoreCase);
+            return text + Es;
         }
+
+        return text + S;
+    }
+
+    private static bool IsInPluralForm(string text)
+    {
+        return text.EndsWith(Ed) || text.Equals(All, StringComparison.InvariantCultureIgnoreCase);
     }
 }
