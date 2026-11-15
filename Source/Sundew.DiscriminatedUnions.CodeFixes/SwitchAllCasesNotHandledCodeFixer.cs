@@ -10,6 +10,7 @@ namespace Sundew.DiscriminatedUnions.CodeFixes;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,6 +29,10 @@ using Sundew.DiscriminatedUnions.Text;
 
 internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
 {
+    private const string ArraySuffix = "Array";
+    private const string FallbackVariableName = "value";
+    private const string VerbatimPrefix = "@";
+
     public string DiagnosticId => DiscriminatedUnionsAnalyzer.SwitchAllCasesNotHandledDiagnosticId;
 
     public CodeFixStatus GetCodeFixState(
@@ -58,7 +63,7 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
 
         if (operation is ISwitchOperation switchOperation)
         {
-            return Fix(document, root, node, semanticModel, switchOperation, generator);
+            return Fix(document, root, node, semanticModel, switchOperation, generator, cancellationToken);
         }
 
         if (operation is IExpressionStatementOperation expressionStatementOperation && expressionStatementOperation.Operation is ISwitchExpressionOperation switchExpressionOperation2)
@@ -140,8 +145,14 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
         SyntaxNode node,
         SemanticModel semanticModel,
         ISwitchOperation switchOperation,
-        SyntaxGenerator generator)
+        SyntaxGenerator generator,
+        CancellationToken cancellationToken)
     {
+        if (LanguageUnionSwitchHelper.TryGetUnhandledCases(switchOperation, cancellationToken, out var unhandledCases))
+        {
+            return FixLanguageUnion(document, root, node, switchOperation, unhandledCases, generator);
+        }
+
         var switchType = switchOperation.Value.Type;
         if (!switchType.IsDiscriminatedUnion())
         {
@@ -204,6 +215,80 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
                     .WithAdditionalAnnotations(Formatter.Annotation)));
     }
 
+    private static Document FixLanguageUnion(
+        Document document,
+        SyntaxNode root,
+        SyntaxNode node,
+        ISwitchOperation switchOperation,
+        UnhandledCases unhandledCases,
+        SyntaxGenerator generator)
+    {
+        if (switchOperation.Syntax is not SwitchStatementSyntax switchStatementSyntax)
+        {
+            return document;
+        }
+
+        // A switch statement over a closed type or a union type is only reported when it has no default section,
+        // so a section for each case that is not handled can follow the ones that are there.
+        var sections = switchStatementSyntax.Sections;
+        var variableNames = new HashSet<string>();
+        foreach (var caseType in unhandledCases.CaseTypes)
+        {
+            var patternType = GetPatternType(caseType);
+            sections = sections.Add(
+                SyntaxFactory.SwitchSection(
+                    SyntaxFactory.List(
+                        new SwitchLabelSyntax[]
+                        {
+                            SyntaxFactory.CasePatternSwitchLabel(
+                                SyntaxFactory.DeclarationPattern(
+                                    (TypeSyntax)generator.TypeExpression(patternType),
+                                    SyntaxFactory.SingleVariableDesignation(
+                                        SyntaxFactory.ParseToken(GetVariableName(patternType, variableNames)))),
+                                SyntaxFactory.Token(SyntaxKind.ColonToken)),
+                        }),
+                    SyntaxFactory.List(new[] { ThrowNotImplementExceptionStatement(generator), })));
+        }
+
+        if (unhandledCases.IsNullUnhandled)
+        {
+            sections = sections.Add(
+                SyntaxFactory.SwitchSection(
+                    SyntaxFactory.List(
+                        new SwitchLabelSyntax[]
+                        {
+                            SyntaxFactory.CaseSwitchLabel((ExpressionSyntax)generator.NullLiteralExpression()),
+                        }),
+                    SyntaxFactory.List(new[] { ThrowNotImplementExceptionStatement(generator), })));
+        }
+
+        return document.WithSyntaxRoot(
+            root.ReplaceNode(
+                node,
+                switchStatementSyntax.WithSections(sections).WithAdditionalAnnotations(Formatter.Annotation)));
+    }
+
+    private static ITypeSymbol GetPatternType(ITypeSymbol caseType)
+    {
+        // A tuple is a positional pattern when it is written as one, so in a pattern it is written as the type it is.
+        var patternType = LanguageUnionSwitchHelper.GetPatternType(caseType);
+        return patternType is INamedTypeSymbol { IsTupleType: true, TupleUnderlyingType: { } tupleUnderlyingType } ? tupleUnderlyingType : patternType;
+    }
+
+    private static string GetVariableName(ITypeSymbol type, HashSet<string> variableNames)
+    {
+        var typeName = type is IArrayTypeSymbol arrayTypeSymbol ? arrayTypeSymbol.ElementType.Name + ArraySuffix : type.Name;
+        var name = string.IsNullOrEmpty(typeName) ? FallbackVariableName : typeName.Uncapitalize();
+        var uniqueName = name;
+        for (var number = 2; !variableNames.Add(uniqueName); number++)
+        {
+            uniqueName = name + number.ToString(CultureInfo.InvariantCulture);
+        }
+
+        // A case type such as string gives the name of a keyword, which has to be escaped to be a name.
+        return SyntaxFacts.GetKeywordKind(uniqueName) == SyntaxKind.None ? uniqueName : VerbatimPrefix + uniqueName;
+    }
+
     private static bool HasDefaultCase(SyntaxList<SwitchSectionSyntax> sections)
     {
         return sections.LastOrDefault()?.Labels.Any(x => x is DefaultSwitchLabelSyntax) ?? false;
@@ -240,9 +325,9 @@ internal class SwitchAllCasesNotHandledCodeFixer : ICodeFixer
 
         if (!hadMatch)
         {
-            return previousCaseType == null ?
-                (0, false) :
-                (handledCases.FindIndex((x) => SymbolEqualityComparer.Default.Equals(x.Symbol, previousCaseType)) + 1, false);
+            return previousCaseType == null
+                ? (0, false)
+                : (handledCases.FindIndex((x) => SymbolEqualityComparer.Default.Equals(x.Symbol, previousCaseType)) + 1, false);
         }
 
         return (insertionIndex, false);

@@ -11,9 +11,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 
 [DiscriminatedUnions.DiscriminatedUnion]
-internal abstract partial record CreationExpression
-    (IReadOnlyList<Expression> Arguments) : InvocationExpressionBase(Arguments)
+internal abstract partial record CreationExpression(IReadOnlyList<Expression> Arguments) : InvocationExpressionBase(Arguments)
 {
-    public sealed partial record ArrayCreationExpression
-        (string ArrayCreation, IReadOnlyList<Expression> Arguments) : CreationExpression(Arguments);
+    public sealed partial record ArrayCreationExpression(string ArrayCreation, IReadOnlyList<Expression> Arguments) : CreationExpression(Arguments);
 }

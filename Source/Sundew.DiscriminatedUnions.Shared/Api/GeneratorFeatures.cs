@@ -16,13 +16,13 @@ namespace Sundew.DiscriminatedUnions
     internal enum GeneratorFeatures
     {
         /// <summary>
-        /// Instructs the generator not to generate any sources.
+        /// Instructs the generator to generate the default sources without any additional features.
         /// </summary>
-        None,
+        None = 0,
 
         /// <summary>
         /// Instructs the generator to generate a segregate extension method for the discriminated union.
         /// </summary>
-        Segregate,
+        Segregate = 1,
     }
 }

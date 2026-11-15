@@ -8,7 +8,7 @@ namespace Sundew.DiscriminatedUnions.Development.Tester
         public partial record NestedUnionA
         {
 #pragma warning disable SA1601
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "6.0.0.0")]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "7.0.0.0")]
             public partial record CaseA1
 #pragma warning restore SA1601
             {

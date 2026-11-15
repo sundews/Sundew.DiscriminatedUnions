@@ -60,8 +60,7 @@ public static class UnionHelper
     /// <returns>The case type.</returns>
     public static INamedTypeSymbol? TryGetCaseType(ITypeSymbol unionType, ImmutableArray<AttributeData> attributes)
     {
-        var caseTypeAttribute = attributes.FirstOrDefault(x =>
-            x.AttributeClass?.ToDisplayString() == typeof(CaseTypeAttribute).FullName);
+        var caseTypeAttribute = attributes.FirstOrDefault(static x => x.AttributeClass.IsCaseTypeAttribute());
         if (caseTypeAttribute != null)
         {
             return GetEquatableCaseTypeForUnionType(caseTypeAttribute, unionType);
@@ -115,9 +114,9 @@ public static class UnionHelper
                     {
                         Operand: IObjectCreationOperation
                         {
-                            Type: INamedTypeSymbol namedTypeSymbol
-                        }
-                    }
+                            Type: INamedTypeSymbol namedTypeSymbol,
+                        },
+                    },
                 })
             {
                 return namedTypeSymbol;
@@ -129,19 +128,19 @@ public static class UnionHelper
         var name = factoryMethod.Name;
         return factoryMethod.DeclaringSyntaxReferences
             .Select(x => (
-                methodBodyOperation: compilation.GetSemanticModel(x.SyntaxTree)
+                MethodBodyOperation: compilation.GetSemanticModel(x.SyntaxTree)
                     .GetOperation(x.GetSyntax()) as IMethodBodyOperation, name))
-            .Where(x => x.methodBodyOperation != null)
-            .Select(x => (methodBodyOperation: x.methodBodyOperation!, name))
+            .Where(x => x.MethodBodyOperation != null)
+            .Select(x => (MethodBodyOperation: x.MethodBodyOperation!, name))
             .Select(x =>
             {
-                var blockBody = x.methodBodyOperation.BlockBody;
+                var blockBody = x.MethodBodyOperation.BlockBody;
                 if (blockBody != null)
                 {
                     return TryGetActualReturnType(blockBody, name);
                 }
 
-                var expressionBody = x.methodBodyOperation.ExpressionBody;
+                var expressionBody = x.MethodBodyOperation.ExpressionBody;
                 if (expressionBody != null)
                 {
                     return TryGetActualReturnType(expressionBody, name);

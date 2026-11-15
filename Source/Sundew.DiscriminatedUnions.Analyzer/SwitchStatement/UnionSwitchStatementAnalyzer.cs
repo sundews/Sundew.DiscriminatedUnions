@@ -7,6 +7,7 @@
 
 namespace Sundew.DiscriminatedUnions.Analyzer.SwitchStatement;
 
+using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -20,6 +21,13 @@ internal class UnionSwitchStatementAnalyzer
         if (!(operationAnalysisContext.Operation is ISwitchOperation switchOperation &&
               switchOperation.SemanticModel != null))
         {
+            return;
+        }
+
+        // The compiler checks switch expressions over closed types and union types, but it does not check switch statements over them.
+        if (LanguageUnionSwitchHelper.TryGetUnhandledCases(switchOperation, operationAnalysisContext.CancellationToken, out var unhandledCases))
+        {
+            ReportLanguageUnion(switchOperation, unhandledCases, operationAnalysisContext.ReportDiagnostic);
             return;
         }
 
@@ -78,6 +86,29 @@ internal class UnionSwitchStatementAnalyzer
             unionType,
             switchOperation,
             operationAnalysisContext.ReportDiagnostic);
+    }
+
+    private static void ReportLanguageUnion(ISwitchOperation switchOperation, UnhandledCases unhandledCases, Action<Diagnostic> reportDiagnostic)
+    {
+        foreach (var switchCaseOperation in switchOperation.Cases)
+        {
+            // A case that throws NotImplementedException is what the code fix leaves behind, so it is reported until it is implemented.
+            var throwingNotImplementedException = switchCaseOperation.Body.Select(UnionHelper.GetThrowingNotImplementedException).FirstOrDefault();
+            if (throwingNotImplementedException == null)
+            {
+                continue;
+            }
+
+            foreach (var name in switchCaseOperation.Clauses.SelectMany(LanguageUnionSwitchHelper.GetHandledNames))
+            {
+                reportDiagnostic(Diagnostic.Create(
+                    DiscriminatedUnionsAnalyzer.CaseShouldBeImplementedRule,
+                    throwingNotImplementedException.Syntax.GetLocation(),
+                    name));
+            }
+        }
+
+        DiagnosticReporterHelper.ReportUnhandledCases(unhandledCases.GetNames(), unhandledCases.UnionType, switchOperation, reportDiagnostic);
     }
 
     private static bool CanSwitchReachEnd(ISwitchOperation switchOperation)

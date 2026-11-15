@@ -126,4 +126,58 @@
   <data name="DiscriminatedUnionDeclarationNotFoundTitle" xml:space="preserve">
     <value>Discriminated Union declaration was not found</value>
   </data>
+  <data name="StructUnionMustBePartialStructDescription" xml:space="preserve">
+    <value>The members of a struct union are generated in another part of the struct, so the struct must be partial. Record structs and ref structs are not supported, because they come with members that conflict with the generated ones.</value>
+  </data>
+  <data name="StructUnionMustBePartialStructMessageFormat" xml:space="preserve">
+    <value>The struct union {0} must be declared as a partial struct that is neither a record struct nor a ref struct</value>
+  </data>
+  <data name="StructUnionMustBePartialStructTitle" xml:space="preserve">
+    <value>Struct unions must be partial structs</value>
+  </data>
+  <data name="StructUnionCasesAreAllReferenceTypesDescription" xml:space="preserve">
+    <value>A struct union exists to avoid boxing cases that are structs. When every case is a reference type nothing is boxed, and a union declaration is a single reference in size where a struct union needs a tag in addition. No members are generated for such a struct union.</value>
+  </data>
+  <data name="StructUnionCasesAreAllReferenceTypesMessageFormat" xml:space="preserve">
+    <value>All cases of the struct union {0} are reference types ({1}): declare it as a union instead, which stores a reference case without allocating and is smaller</value>
+  </data>
+  <data name="StructUnionCasesAreAllReferenceTypesTitle" xml:space="preserve">
+    <value>A union declaration is the better choice when all cases are reference types</value>
+  </data>
+  <data name="StructUnionHasMultipleDefaultCasesDescription" xml:space="preserve">
+    <value>The default case is the case that the default value of the union represents, so there can only be one. Declare the other cases with ICase.</value>
+  </data>
+  <data name="StructUnionHasMultipleDefaultCasesMessageFormat" xml:space="preserve">
+    <value>The struct union {0} declares more than one default case: {1}</value>
+  </data>
+  <data name="StructUnionHasMultipleDefaultCasesTitle" xml:space="preserve">
+    <value>Struct unions can only have one default case</value>
+  </data>
+  <data name="StructUnionDefaultCaseHasPayloadDescription" xml:space="preserve">
+    <value>The default value of a struct union has no values to give the default case, so the default case cannot have any. Declare the case with ICase to get a union whose default value has no value.</value>
+  </data>
+  <data name="StructUnionDefaultCaseHasPayloadMessageFormat" xml:space="preserve">
+    <value>The default case {1} of the struct union {0} must be a struct without instance fields</value>
+  </data>
+  <data name="StructUnionDefaultCaseHasPayloadTitle" xml:space="preserve">
+    <value>The default case of a struct union must be a struct without instance fields</value>
+  </data>
+  <data name="StructUnionCaseIsTypeParameterDescription" xml:space="preserve">
+    <value>Cases are told apart by their type. A type parameter can be substituted by the type of another case, in which case the two could not be told apart.</value>
+  </data>
+  <data name="StructUnionCaseIsTypeParameterMessageFormat" xml:space="preserve">
+    <value>The type parameter {1} cannot be a case of the struct union {0}: wrap it in a case type</value>
+  </data>
+  <data name="StructUnionCaseIsTypeParameterTitle" xml:space="preserve">
+    <value>A type parameter cannot be a case of a struct union</value>
+  </data>
+  <data name="UnionCannotBeSegregatedDescription" xml:space="preserve">
+    <value>The types that segregate a union are declared in the namespace of the union. From there they have to refer to the union and to each of its cases, which they cannot when one of those is private or protected within a type, or when the union and a type it is nested in have a type parameter of the same name.</value>
+  </data>
+  <data name="UnionCannotBeSegregatedMessageFormat" xml:space="preserve">
+    <value>The union {0} cannot be segregated, because the types that segregate it could not refer to {1} from the namespace of the union</value>
+  </data>
+  <data name="UnionCannotBeSegregatedTitle" xml:space="preserve">
+    <value>A union that is segregated and its cases must be accessible from the namespace of the union</value>
+  </data>
 </root>

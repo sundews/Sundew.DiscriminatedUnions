@@ -7,7 +7,6 @@
 
 namespace Sundew.DiscriminatedUnions.Generator.OutputStage;
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -47,13 +46,20 @@ internal static class DiscriminatedUnionOutputProvider
 
     public static void Generate(SourceProductionContext sourceProductionContext, (ImmutableArray<DiscriminatedUnionResult> DescriminatedUnionResults, FeatureSupport FeatureSupport) context)
     {
-        var hashSet = new HashSet<string>();
+        // A case can belong to several unions, but its source is generated once. The namespace is part of what identifies it:
+        // cases of the same name in different namespaces are different cases.
+        var hashSet = new HashSet<(string Namespace, string FullName)>();
         foreach (var discriminatedUnionResult in context.DescriminatedUnionResults)
         {
             sourceProductionContext.CancellationToken.ThrowIfCancellationRequested();
             if (discriminatedUnionResult.IsSuccess)
             {
                 var discriminatedUnion = discriminatedUnionResult.DiscriminatedUnion;
+                if (discriminatedUnion.IsGeneratorDisabled)
+                {
+                    continue;
+                }
+
                 var discriminatedUnionNamespace = discriminatedUnion.Type.Namespace;
                 var genericParametersForFileName = TryGetGenericParametersForFileName(discriminatedUnion.Type.TypeMetadata.TypeParameters);
                 if (discriminatedUnion.IsPartial)
@@ -64,7 +70,7 @@ internal static class DiscriminatedUnionOutputProvider
 
                     foreach (var discriminatedUnionCase in discriminatedUnion.Cases)
                     {
-                        if (hashSet.Add(discriminatedUnionCase.Type.TypeMetadata.FullName))
+                        if (hashSet.Add((discriminatedUnionCase.Type.Namespace, discriminatedUnionCase.Type.TypeMetadata.FullName)))
                         {
                             var discriminatedUnionCaseNamespace = discriminatedUnionCase.Type.Namespace;
                             var caseGenericParametersForFileName = TryGetGenericParametersForFileName(discriminatedUnionCase.Type.TypeMetadata.TypeParameters);

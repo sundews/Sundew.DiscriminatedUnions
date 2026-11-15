@@ -15,4 +15,5 @@ internal readonly record struct DiscriminatedUnionCaseDeclaration(
     Accessibility Accessibility,
     FullType CaseType,
     ValueArray<(Type Type, FullType ReturnType, bool HasConflictingName, bool IsInterface)> Owners,
-    ValueArray<Parameter> Parameters, bool IsPartial);
+    ValueArray<Parameter> Parameters,
+    bool IsPartial);

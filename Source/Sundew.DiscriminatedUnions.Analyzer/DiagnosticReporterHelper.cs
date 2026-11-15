@@ -63,6 +63,11 @@ internal static class DiagnosticReporterHelper
         var isNullCaseMissing = switchNullability == SwitchNullability.IsMissingNullCase;
         var missingNames = missingCaseTypes.Select(x => x.Name)
             .Concat(isNullCaseMissing ? new[] { Null } : Array.Empty<string>()).ToList();
+        ReportUnhandledCases(missingNames, unionType, operation, reportDiagnostic);
+    }
+
+    public static void ReportUnhandledCases(IReadOnlyList<string> missingNames, ITypeSymbol unionType, IOperation operation, Action<Diagnostic> reportDiagnostic)
+    {
         var hasMultiple = missingNames.Count > 1;
         if (missingNames.Any())
         {

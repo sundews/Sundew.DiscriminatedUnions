@@ -9,19 +9,17 @@ namespace Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Sundew.Base;
 using Sundew.DiscriminatedUnions.Generator;
+using Sundew.DiscriminatedUnions.Generator.Unions;
 using Sundew.DiscriminatedUnions.Shared;
 
 internal static class DiscriminatedUnionDeclarationProvider
 {
-    private const string GeneratorFeaturesText = "generatorFeatures";
-
     public static IncrementalValuesProvider<DiscriminatedUnionDeclaration> SetupDiscriminatedUnionDeclarationStage(this SyntaxValueProvider syntaxProvider)
     {
         return syntaxProvider.CreateSyntaxProvider(
@@ -32,44 +30,29 @@ internal static class DiscriminatedUnionDeclarationProvider
     internal static DiscriminatedUnionDeclaration? TryGetDiscriminatedUnionDeclaration(SyntaxNode syntaxNode, SemanticModel semanticModel)
     {
         var declaredSymbol = semanticModel.GetDeclaredSymbol(syntaxNode);
-        if (syntaxNode is MemberDeclarationSyntax memberDeclarationSyntax && declaredSymbol is ITypeSymbol typeSymbol && TryGetUnionWithFeatures(typeSymbol, out var generatorFeatures) && typeSymbol.TryGetSupportedAccessibility(out var accessibility))
+        if (syntaxNode is MemberDeclarationSyntax memberDeclarationSyntax && declaredSymbol is ITypeSymbol typeSymbol && TryGetUnionWithFeatures(typeSymbol, out var generatorFeatures, out var isGeneratorDisabled) && typeSymbol.TryGetSupportedAccessibility(out var accessibility))
         {
             IEnumerable<INamedTypeSymbol> baseSymbol = typeSymbol.Interfaces.Concat(typeSymbol.BaseType != null ? new[] { typeSymbol.BaseType } : Array.Empty<INamedTypeSymbol>());
             var isConstrainingUnionOfSameTypeKind = baseSymbol.Where(DiscriminatedUnionExtensions.IsDiscriminatedUnion).Any(x => x.TypeKind == typeSymbol.TypeKind);
-            return new DiscriminatedUnionDeclaration(typeSymbol.GetFullType(), typeSymbol.GetUnderlyingType(), accessibility, memberDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword), isConstrainingUnionOfSameTypeKind, generatorFeatures);
+            return new DiscriminatedUnionDeclaration(typeSymbol.GetFullType(), typeSymbol.GetUnderlyingType(), accessibility, memberDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword), isConstrainingUnionOfSameTypeKind, isGeneratorDisabled, generatorFeatures);
         }
 
         return null;
     }
 
-    private static bool TryGetUnionWithFeatures(ITypeSymbol typeSymbol, out GeneratorFeatures generatorFeatures)
+    private static bool TryGetUnionWithFeatures(ITypeSymbol typeSymbol, out GeneratorFeatures generatorFeatures, out bool isGeneratorDisabled)
     {
-        generatorFeatures = GeneratorFeatures.None;
-        var discriminatedUnionAttributeSyntax = typeSymbol.GetAttributes().FirstOrDefault(attribute =>
-        {
-            var containingClass = attribute.AttributeClass?.ToDisplayString();
-            return containingClass == typeof(Sundew.DiscriminatedUnions.DiscriminatedUnion).FullName;
-        })?.ApplicationSyntaxReference?.GetSyntax() as AttributeSyntax;
-
-        if (discriminatedUnionAttributeSyntax == null)
-        {
-            return false;
-        }
-
-        var generatorFeatureArgumentSyntax = discriminatedUnionAttributeSyntax?.ArgumentList?.Arguments.FirstOrDefault(x =>
-            x.NameColon == null || x.NameColon.Name.Identifier.ToString() == GeneratorFeaturesText);
-        if (generatorFeatureArgumentSyntax == null)
-        {
-            return true;
-        }
-
-        generatorFeatures = generatorFeatureArgumentSyntax.Expression.ToFullString().ParseFlagsEnum<GeneratorFeatures>(CultureInfo.InvariantCulture, '|');
-        return true;
+        var discriminatedUnionAttribute = UnionSymbolHelper.GetDiscriminatedUnionAttribute(typeSymbol);
+        generatorFeatures = UnionSymbolHelper.GetGeneratorFeatures(discriminatedUnionAttribute, CancellationToken.None);
+        isGeneratorDisabled = UnionSymbolHelper.IsGeneratorDisabled(discriminatedUnionAttribute, CancellationToken.None);
+        return discriminatedUnionAttribute?.ApplicationSyntaxReference != null;
     }
 
     private static bool IsDiscriminatedUnionCandidate(SyntaxNode syntaxNode)
     {
-        if (syntaxNode is TypeDeclarationSyntax typeDeclarationSyntax)
+        // A class union has the attribute, so a declaration without attributes is ruled out before anything is asked about its symbol.
+        // For a type that is declared in several parts, the part that has the attribute is the one that is found.
+        if (syntaxNode is TypeDeclarationSyntax { AttributeLists.Count: > 0 } typeDeclarationSyntax)
         {
             var kind = typeDeclarationSyntax.Kind();
             return kind switch

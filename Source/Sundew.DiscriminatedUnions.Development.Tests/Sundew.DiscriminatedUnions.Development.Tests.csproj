@@ -12,6 +12,8 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing" />
+    <!-- Not used directly: the testing packages above bring in NuGet.Packaging 7.0.3, which asks for a version of this package with known vulnerabilities. -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
     <PackageReference Include="Verify.TUnit" />
   </ItemGroup>
 
@@ -19,6 +21,7 @@
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Analyzer\Sundew.DiscriminatedUnions.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.CodeFixes\Sundew.DiscriminatedUnions.CodeFixes.csproj" />
     <ProjectReference Include="..\Sundew.DiscriminatedUnions.Development.TestData\Sundew.DiscriminatedUnions.Development.TestData.csproj" />
+    <ProjectReference Include="..\Sundew.DiscriminatedUnions.Development.Tester\Sundew.DiscriminatedUnions.Development.Tester.csproj" />
   </ItemGroup>
 
   <ItemGroup>

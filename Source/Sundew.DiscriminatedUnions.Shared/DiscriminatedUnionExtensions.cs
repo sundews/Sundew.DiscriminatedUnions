@@ -30,11 +30,8 @@ public static class DiscriminatedUnionExtensions
             return false;
         }
 
-        return unionType.GetAttributes().Any(attribute =>
-        {
-            var containingClass = attribute.AttributeClass?.ToDisplayString();
-            return containingClass == typeof(Sundew.DiscriminatedUnions.DiscriminatedUnion).FullName;
-        });
+        // A closed type and a union are checked by the compiler. The attribute then only configures the source generator.
+        return !unionType.IsClosed && !unionType.IsUnion && HasDiscriminatedUnionAttribute(unionType);
     }
 
     /// <summary>
@@ -77,5 +74,19 @@ public static class DiscriminatedUnionExtensions
     public static bool IsTypeGenericWithTypeParameters(this INamedTypeSymbol namedTypeSymbol)
     {
         return IsTypeGeneric(namedTypeSymbol) && namedTypeSymbol.TypeParameters.Length > 0;
+    }
+
+    private static bool HasDiscriminatedUnionAttribute(ITypeSymbol unionType)
+    {
+        // This runs for every type an analyzer looks at, so it neither creates a delegate nor a string per attribute.
+        foreach (var attribute in unionType.GetAttributes())
+        {
+            if (attribute.AttributeClass.IsDiscriminatedUnionAttribute())
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -5,6 +5,8 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <!-- Microsoft.SourceLink.GitHub brings in System.IO.Hashing 11.0.0, which warns that it does not support net8.0. Only the SourceLink build task uses it and nothing of it ends up in the package. -->
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -13,12 +15,13 @@
     <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>Sundew.DiscriminatedUnions, analyzers</PackageTags>
-    <Description>Sundew.DiscriminatedUnions implement discriminated unions for C#, until a future version of C# provides it out of the box.
-The idea is that this package can be deleted once unions are supported in C#, without requiring changes to switch expressions and statements.
+    <Description>Sundew.DiscriminatedUnions generates allocation free struct unions for C# 15, which the compiler matches exhaustively like union declarations but without boxing cases that are structs.
+It also implements discriminated unions for class hierarchies and enums with exhaustive switch expressions and statements.
     </Description>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
     <PackageReleaseNotes>
+7.0 - Major overhaul to support C# 15 union types. Requires the C# 15 compiler (.NET 11 SDK, Roslyn 5.12). See readme for details.
 6.0 - Cases now required to be partial.
 5.4 - Support IDiscriminatedUnion for enumerating cases.
 2.0 - Support matching unions in referenced projects, marker attributes included as source rather than library reference.

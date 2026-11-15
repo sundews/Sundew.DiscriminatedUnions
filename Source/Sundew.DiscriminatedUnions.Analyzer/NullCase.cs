@@ -12,4 +12,6 @@ using Microsoft.CodeAnalysis;
 /// <summary>
 /// Contains information about a case in a switch statement or expression.
 /// </summary>
+/// <param name="NullOperation">The operation of the null case.</param>
+/// <param name="ThrowingNotImplementedException">The operation throwing NotImplementedException if present.</param>
 public readonly record struct NullCase(IOperation NullOperation, IOperation? ThrowingNotImplementedException);

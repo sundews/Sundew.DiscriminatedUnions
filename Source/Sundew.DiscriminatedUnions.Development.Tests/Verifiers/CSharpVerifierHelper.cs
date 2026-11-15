@@ -18,6 +18,21 @@ internal static class CSharpVerifierHelper
 namespace System.Runtime.CompilerServices
 {
     internal static class IsExternalInit { }
+
+    // The compiler asks for the types below for closed types and union declarations. They are part of .NET 11, which the tests do not compile against.
+    [System.AttributeUsage(System.AttributeTargets.Class, Inherited = false)]
+    internal sealed class IsClosedTypeAttribute : System.Attribute
+    {
+        public System.Type[] DerivedTypes { get; set; } = new System.Type[0];
+    }
+
+    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct)]
+    internal sealed class UnionAttribute : System.Attribute { }
+
+    internal interface IUnion
+    {
+        object Value { get; }
+    }
 }
 
 namespace Sundew.DiscriminatedUnions

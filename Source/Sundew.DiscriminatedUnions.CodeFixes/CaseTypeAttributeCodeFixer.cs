@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
 using Sundew.DiscriminatedUnions.Analyzer;
+using Sundew.DiscriminatedUnions.Shared;
 
 internal class CaseTypeAttributeCodeFixer : ICodeFixer
 {
@@ -54,7 +55,7 @@ internal class CaseTypeAttributeCodeFixer : ICodeFixer
         {
             var attributes = factoryMethod.GetAttributes();
             var attributeList = attributes.Select(x => x.ApplicationSyntaxReference?.GetSyntax()).Where(x => x != null).Select(x => x!).ToImmutableArray();
-            var caseSyntaxReference = attributes.FirstOrDefault(x => x.AttributeClass?.ToDisplayString() == typeof(CaseTypeAttribute).FullName)?.ApplicationSyntaxReference;
+            var caseSyntaxReference = attributes.FirstOrDefault(static x => x.AttributeClass.IsCaseTypeAttribute())?.ApplicationSyntaxReference;
             var existingCaseTypeSyntaxNode = caseSyntaxReference != null ? await caseSyntaxReference.GetSyntaxAsync(cancellationToken) : default;
 
             var attributeCaseType = UnionHelper.GetInstantiatedCaseTypeSymbol(factoryMethod, semanticModel.Compilation);

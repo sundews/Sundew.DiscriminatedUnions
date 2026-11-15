@@ -14,9 +14,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Sundew.DiscriminatedUnions.Generator.Model;
-using Sundew.DiscriminatedUnions.Generator.OutputStage;
 using Sundew.DiscriminatedUnions.Shared;
-using Sundew.DiscriminatedUnions.Text;
 
 internal static class DiscriminatedUnionCaseDeclarationProvider
 {
@@ -33,6 +31,14 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
         if (symbol is INamedTypeSymbol caseNamedTypeSymbol && syntaxNode is MemberDeclarationSyntax memberDeclarationSyntax && caseNamedTypeSymbol.TryGetSupportedAccessibility(out var accessibility))
         {
             var owners = FindOwners(caseNamedTypeSymbol).Select(x => (Type: x.GetSourceType(), ReturnType: x.GetFullType(true), HasConflictingName: HasConflictingName(x, caseNamedTypeSymbol), IsInterface: x.GetUnderlyingType() == UnderlyingType.Interface)).ToImmutableArray();
+
+            // Every sealed class that has a base type is a candidate, and most of them are not a case of any union.
+            // Nothing is generated for those, so their constructors and names are not looked at.
+            if (owners.IsEmpty)
+            {
+                return default;
+            }
+
             var parameters = TryGetParameters(caseNamedTypeSymbol);
             if (parameters == default)
             {
@@ -64,23 +70,7 @@ internal static class DiscriminatedUnionCaseDeclarationProvider
             return default;
         }
 
-        return selectedConstructor.Parameters.Select(x =>
-        {
-            string GetDefaultValue(IParameterSymbol parameterSymbol)
-            {
-                return (parameterSymbol.ExplicitDefaultValue, parameterSymbol.Type.TypeKind) switch
-                {
-                    (bool value, _) => value ? GeneratorConstants.True : GeneratorConstants.False,
-                    ({ } enumValue, TypeKind.Enum) => x.Type.GetMembers().OfType<IFieldSymbol>().Where(x => x.IsStatic).First(x => x.ConstantValue == enumValue).ToDisplayString(CodeAnalysisHelper.FullyQualifiedParameterTypeFormat),
-                    ({ } enumValue, _) => enumValue.ToString(),
-                    _ => GeneratorConstants.Default,
-                };
-            }
-
-            var typeName = x.Type.ToDisplayString(CodeAnalysisHelper.FullyQualifiedParameterTypeFormat);
-            var defaultValue = x.HasExplicitDefaultValue ? GetDefaultValue(x) : default;
-            return new Parameter(typeName, x.Name.Uncapitalize().AvoidKeywordCollision(), defaultValue);
-        });
+        return selectedConstructor.Parameters.Select(x => x.GetParameter());
     }
 
     private static IEnumerable<INamedTypeSymbol> FindOwners(ITypeSymbol typeSymbol)

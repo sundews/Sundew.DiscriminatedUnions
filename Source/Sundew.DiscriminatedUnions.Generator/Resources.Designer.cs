@@ -86,5 +86,167 @@ namespace Sundew.DiscriminatedUnions.Generator {
                 return ResourceManager.GetString("DiscriminatedUnionDeclarationNotFoundTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The members of a struct union are generated in another part of the struct, so the struct must be partial. Record structs and ref structs are not supported, because they come with members that conflict with the generated ones..
+        /// </summary>
+        public static string StructUnionMustBePartialStructDescription {
+            get {
+                return ResourceManager.GetString("StructUnionMustBePartialStructDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The struct union {0} must be declared as a partial struct that is neither a record struct nor a ref struct.
+        /// </summary>
+        public static string StructUnionMustBePartialStructMessageFormat {
+            get {
+                return ResourceManager.GetString("StructUnionMustBePartialStructMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Struct unions must be partial structs.
+        /// </summary>
+        public static string StructUnionMustBePartialStructTitle {
+            get {
+                return ResourceManager.GetString("StructUnionMustBePartialStructTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A struct union exists to avoid boxing cases that are structs. When every case is a reference type nothing is boxed, and a union declaration is a single reference in size where a struct union needs a tag in addition. No members are generated for such a struct union..
+        /// </summary>
+        public static string StructUnionCasesAreAllReferenceTypesDescription {
+            get {
+                return ResourceManager.GetString("StructUnionCasesAreAllReferenceTypesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All cases of the struct union {0} are reference types ({1}): declare it as a union instead, which stores a reference case without allocating and is smaller.
+        /// </summary>
+        public static string StructUnionCasesAreAllReferenceTypesMessageFormat {
+            get {
+                return ResourceManager.GetString("StructUnionCasesAreAllReferenceTypesMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A union declaration is the better choice when all cases are reference types.
+        /// </summary>
+        public static string StructUnionCasesAreAllReferenceTypesTitle {
+            get {
+                return ResourceManager.GetString("StructUnionCasesAreAllReferenceTypesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default case is the case that the default value of the union represents, so there can only be one. Declare the other cases with ICase..
+        /// </summary>
+        public static string StructUnionHasMultipleDefaultCasesDescription {
+            get {
+                return ResourceManager.GetString("StructUnionHasMultipleDefaultCasesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The struct union {0} declares more than one default case: {1}.
+        /// </summary>
+        public static string StructUnionHasMultipleDefaultCasesMessageFormat {
+            get {
+                return ResourceManager.GetString("StructUnionHasMultipleDefaultCasesMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Struct unions can only have one default case.
+        /// </summary>
+        public static string StructUnionHasMultipleDefaultCasesTitle {
+            get {
+                return ResourceManager.GetString("StructUnionHasMultipleDefaultCasesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default value of a struct union has no values to give the default case, so the default case cannot have any. Declare the case with ICase to get a union whose default value has no value..
+        /// </summary>
+        public static string StructUnionDefaultCaseHasPayloadDescription {
+            get {
+                return ResourceManager.GetString("StructUnionDefaultCaseHasPayloadDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default case {1} of the struct union {0} must be a struct without instance fields.
+        /// </summary>
+        public static string StructUnionDefaultCaseHasPayloadMessageFormat {
+            get {
+                return ResourceManager.GetString("StructUnionDefaultCaseHasPayloadMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default case of a struct union must be a struct without instance fields.
+        /// </summary>
+        public static string StructUnionDefaultCaseHasPayloadTitle {
+            get {
+                return ResourceManager.GetString("StructUnionDefaultCaseHasPayloadTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cases are told apart by their type. A type parameter can be substituted by the type of another case, in which case the two could not be told apart..
+        /// </summary>
+        public static string StructUnionCaseIsTypeParameterDescription {
+            get {
+                return ResourceManager.GetString("StructUnionCaseIsTypeParameterDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type parameter {1} cannot be a case of the struct union {0}: wrap it in a case type.
+        /// </summary>
+        public static string StructUnionCaseIsTypeParameterMessageFormat {
+            get {
+                return ResourceManager.GetString("StructUnionCaseIsTypeParameterMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A type parameter cannot be a case of a struct union.
+        /// </summary>
+        public static string StructUnionCaseIsTypeParameterTitle {
+            get {
+                return ResourceManager.GetString("StructUnionCaseIsTypeParameterTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The types that segregate a union are declared in the namespace of the union. From there they have to refer to the union and to each of its cases, which they cannot when one of those is private or protected within a type, or when the union and a type it is nested in have a type parameter of the same name..
+        /// </summary>
+        public static string UnionCannotBeSegregatedDescription {
+            get {
+                return ResourceManager.GetString("UnionCannotBeSegregatedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The union {0} cannot be segregated, because the types that segregate it could not refer to {1} from the namespace of the union.
+        /// </summary>
+        public static string UnionCannotBeSegregatedMessageFormat {
+            get {
+                return ResourceManager.GetString("UnionCannotBeSegregatedMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A union that is segregated and its cases must be accessible from the namespace of the union.
+        /// </summary>
+        public static string UnionCannotBeSegregatedTitle {
+            get {
+                return ResourceManager.GetString("UnionCannotBeSegregatedTitle", resourceCulture);
+            }
+        }
     }
 }

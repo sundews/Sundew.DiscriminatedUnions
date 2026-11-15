@@ -13,10 +13,12 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Sundew.Base.Collections.Immutable;
 using Sundew.DiscriminatedUnions.Generator.DeclarationStage;
 using Sundew.DiscriminatedUnions.Generator.Model;
 using Sundew.DiscriminatedUnions.Shared;
+using Sundew.DiscriminatedUnions.Text;
 using static Sundew.DiscriminatedUnions.Generator.OutputStage.GeneratorConstants;
 using Accessibility = Sundew.DiscriminatedUnions.Generator.Model.Accessibility;
 using Type = Sundew.DiscriminatedUnions.Generator.Model.Type;
@@ -146,6 +148,14 @@ internal static class CodeAnalysisHelper
         }
 
         return value;
+    }
+
+    public static Parameter GetParameter(this IParameterSymbol parameterSymbol)
+    {
+        return new Parameter(
+            parameterSymbol.Type.ToDisplayString(FullyQualifiedParameterTypeFormat),
+            parameterSymbol.Name.Uncapitalize().AvoidKeywordCollision(),
+            parameterSymbol.HasExplicitDefaultValue ? GetDefaultValue(parameterSymbol) : default);
     }
 
     public static Type GetSourceType(this ITypeSymbol typeSymbol)
@@ -323,5 +333,45 @@ internal static class CodeAnalysisHelper
                         : ValueArray<string>.Empty,
             };
         }).ToValueArray();
+    }
+
+    private static string GetDefaultValue(IParameterSymbol parameterSymbol)
+    {
+        var value = parameterSymbol.ExplicitDefaultValue;
+        if (value == null)
+        {
+            return Default;
+        }
+
+        var literal = GetLiteral(value);
+        var type = parameterSymbol.Type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullableType ? nullableType.TypeArguments[0] : parameterSymbol.Type;
+        if (type.TypeKind != TypeKind.Enum)
+        {
+            return literal;
+        }
+
+        // The default value of an enum is its underlying value. It is written as the member that has the value, or as a cast when there is none.
+        var member = type.GetMembers().OfType<IFieldSymbol>().FirstOrDefault(x => x.HasConstantValue && Equals(x.ConstantValue, value));
+        return member != null
+            ? member.ToDisplayString(FullyQualifiedParameterTypeFormat)
+            : $"({type.ToDisplayString(FullyQualifiedParameterTypeFormat)}){literal}";
+    }
+
+    private static string GetLiteral(object value)
+    {
+        // The literal is written the same way on every machine. Formatting the value with the current culture would for example write 1.5 as 1,5 in Danish.
+        return value switch
+        {
+            float single when float.IsNaN(single) || float.IsInfinity(single) => $"float.{GetNotFiniteName(single)}",
+            double number when double.IsNaN(number) || double.IsInfinity(number) => $"double.{GetNotFiniteName(number)}",
+            float => SymbolDisplay.FormatPrimitive(value, true, false) + 'F',
+            decimal => SymbolDisplay.FormatPrimitive(value, true, false) + 'M',
+            _ => SymbolDisplay.FormatPrimitive(value, true, false) ?? Default,
+        };
+    }
+
+    private static string GetNotFiniteName(double value)
+    {
+        return double.IsNaN(value) ? nameof(double.NaN) : value > 0 ? nameof(double.PositiveInfinity) : nameof(double.NegativeInfinity);
     }
 }

@@ -509,5 +509,32 @@ namespace Sundew.DiscriminatedUnions.Analyzer {
                 return ResourceManager.GetString("UnnestedCasesShouldHaveFactoryMethodTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A struct union that does not declare a default case has a default value without a case. The compiler does not require a switch to handle that value, so a switch that handles every case throws when it is given the default value. Create the union from a case, declare a default case with IDefaultCase or handle null where the value is used..
+        /// </summary>
+        public static string StructUnionDefaultValueHasNoCaseDescription {
+            get {
+                return ResourceManager.GetString("StructUnionDefaultValueHasNoCaseDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default value of the struct union '{0}' contains no case and is only matched by null: create '{0}' from a case or declare a default case with IDefaultCase.
+        /// </summary>
+        public static string StructUnionDefaultValueHasNoCaseMessageFormat {
+            get {
+                return ResourceManager.GetString("StructUnionDefaultValueHasNoCaseMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default value of a struct union without a default case contains no case.
+        /// </summary>
+        public static string StructUnionDefaultValueHasNoCaseTitle {
+            get {
+                return ResourceManager.GetString("StructUnionDefaultValueHasNoCaseTitle", resourceCulture);
+            }
+        }
     }
 }

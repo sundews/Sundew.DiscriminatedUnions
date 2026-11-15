@@ -267,4 +267,13 @@
   <data name="CasesCannotContainTypeParametersWhichAreNotInTheUnionMessageFormat" xml:space="preserve">
     <value>The case '{0}' contains the type parameter '{1}' which is not present in the union type '{2}'.</value>
   </data>
+  <data name="StructUnionDefaultValueHasNoCaseDescription" xml:space="preserve">
+    <value>A struct union that does not declare a default case has a default value without a case. The compiler does not require a switch to handle that value, so a switch that handles every case throws when it is given the default value. Create the union from a case, declare a default case with IDefaultCase or handle null where the value is used.</value>
+  </data>
+  <data name="StructUnionDefaultValueHasNoCaseMessageFormat" xml:space="preserve">
+    <value>The default value of the struct union '{0}' contains no case and is only matched by null: create '{0}' from a case or declare a default case with IDefaultCase</value>
+  </data>
+  <data name="StructUnionDefaultValueHasNoCaseTitle" xml:space="preserve">
+    <value>The default value of a struct union without a default case contains no case</value>
+  </data>
 </root>

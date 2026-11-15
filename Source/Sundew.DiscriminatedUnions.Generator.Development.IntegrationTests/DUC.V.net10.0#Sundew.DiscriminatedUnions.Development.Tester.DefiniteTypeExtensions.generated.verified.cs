@@ -7,7 +7,7 @@ namespace Sundew.DiscriminatedUnions.Development.Tester
     /// Segregation extension method for DefiniteType.
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCode]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "6.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Sundew.DiscriminateUnions.Generator", "7.0.0.0")]
     public static partial class DefiniteTypeExtensions
     {
         /// <summary>

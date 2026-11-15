@@ -15,3 +15,6 @@ dotnet_sort_system_directives_first = true
 [**TestData/**/*.cs]
 dotnet_diagnostic.CS1591.severity = none  # Don't require XML comments in test projects
 
+[Sundew.DiscriminatedUnions.Development.{TestData,Tester}/**.cs]
+# These projects keep a union and its cases in one file (SA1402 is off for them), so SA1649 names a file after its first type of any kind and not after its first class.
+stylecop.maintainability.topLevelTypes = class, interface, struct, enum, delegate

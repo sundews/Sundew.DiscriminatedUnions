@@ -24,8 +24,7 @@ internal class FactoryMethodAnalyzer
                 SymbolEqualityComparer.Default.Equals(methodSymbol.ReturnType, unionType))
             {
                 var factoryMethod = methodSymbol;
-                var caseTypeAttribute = factoryMethod.GetAttributes().FirstOrDefault(x =>
-                    x.AttributeClass?.ToDisplayString() == typeof(CaseTypeAttribute).FullName);
+                var caseTypeAttribute = factoryMethod.GetAttributes().FirstOrDefault(static x => x.AttributeClass.IsCaseTypeAttribute());
                 var createdCaseTypeSymbol =
                     UnionHelper.GetInstantiatedCaseTypeSymbol(factoryMethod, symbolAnalysisContext.Compilation);
                 if (caseTypeAttribute != null)

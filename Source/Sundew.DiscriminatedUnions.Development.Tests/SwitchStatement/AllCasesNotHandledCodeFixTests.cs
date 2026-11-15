@@ -543,7 +543,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
     {{
         switch (listCardinality)
         {{
-        }};
+        }}
     }}
 }}
 {TestData.ValidGenericListCardinalityUnion}
@@ -566,7 +566,7 @@ public class DiscriminatedUnionSymbolAnalyzerTests
                 throw new System.NotImplementedException();
             case Single<string> single:
                 throw new System.NotImplementedException();
-        }};
+        }}
     }}
 }}
 {TestData.ValidGenericListCardinalityUnion}

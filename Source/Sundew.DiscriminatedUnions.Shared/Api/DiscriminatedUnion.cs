@@ -13,7 +13,7 @@ namespace Sundew.DiscriminatedUnions
     /// Attribute for indicating a discriminated union.
     /// </summary>
     /// <seealso cref="System.Attribute" />
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Enum)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Enum | AttributeTargets.Struct)]
     internal class DiscriminatedUnion : Attribute
     {
         /// <summary>
@@ -33,8 +33,22 @@ namespace Sundew.DiscriminatedUnions
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="DiscriminatedUnion"/> class.
+        /// </summary>
+        /// <param name="disableGenerator">A value indicating whether to opt out of generation.</param>
+        public DiscriminatedUnion(bool disableGenerator)
+        {
+            this.IsGeneratorDisabled = disableGenerator;
+        }
+
+        /// <summary>
         /// Gets the generator features.
         /// </summary>
         public GeneratorFeatures GeneratorFeatures { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether to opt out of generation.
+        /// </summary>
+        public bool IsGeneratorDisabled { get; }
     }
 }
