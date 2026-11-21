@@ -23,17 +23,12 @@
     <PackageVersion Include="Sundew.DiscriminatedUnions" Version="6.0.4" />
     <PackageVersion Include="Sundew.Testing.CodeAnalysis" Version="0.3.8" />
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
-    <PackageVersion Include="TUnit" Version="1.85.0" />
+    <PackageVersion Include="TUnit" Version="1.87.12" />
     <PackageVersion Include="Verify.SourceGenerators" Version="2.5.0" />
     <PackageVersion Include="Verify.TUnit" Version="32.0.1" />
     <PackageVersion Include="Verify" Version="32.0.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageVersion Include="Microsoft.Bcl.Hashcode" Version="6.0.0" />
-    <!-- Stays on the major version Roslyn depends on (10.0.x for Roslyn 5.12): Visual Studio and MSBuild cannot load a newer assembly version into an analyzer or generator. -->
-    <PackageVersion Include="System.Collections.Immutable" Version="11.0.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
-    <PackageVersion Include="System.Collections.Immutable" Version="11.0.0" />
-  </ItemGroup>
+    </ItemGroup>
 </Project>
